@@ -142,10 +142,8 @@ cover_raw <- read_excel(
   "data_raw/カラクサシダ図表.xlsx",
   sheet = 1)
 
-cover_raw
-
 cover <- cover_raw %>%
-  rename(date = "X__1", plot_1 = `No. 1`, plot_2 = `No. 2`, plot_3 = `No. 3`, plot_4 = `No. 4`) %>%
+  rename(date = "..1", plot_1 = `No. 1`, plot_2 = `No. 2`, plot_3 = `No. 3`, plot_4 = `No. 4`) %>%
   mutate(date = lubridate::date(date)) %>%
   rowwise %>%
   mutate(total_cover = sum(plot_1, plot_2, plot_3, plot_4)) %>%
@@ -181,7 +179,7 @@ gemmae_length_raw
 #' Split this up and manually add year.
 years <- c(rep(2009, 9),
            rep(2010, 12),
-           rep(2011, 12,),
+           rep(2011, 12),
            rep(2012, 12),
            rep(2013, 12),
            rep(2014, 3))
@@ -228,12 +226,12 @@ combined_morph <-
 # Select microclimate variables of interest
 selected_vars <- c("rh_min", "par_total", "temp_mean")
 
-daily_microclimate %>%
-  select(selected_vars, date, site) %>%
-  gather(var, value, -date, -site) %>% 
-  ggplot(aes(x = date, y = value, color = site)) +
-  geom_line(alpha = 0.5) +
-  facet_wrap(~var, scales = "free")
+# daily_microclimate %>%
+#   select(selected_vars, date, site) %>%
+#   gather(var, value, -date, -site) %>% 
+#   ggplot(aes(x = date, y = value, color = site)) +
+#   geom_line(alpha = 0.5) +
+#   facet_wrap(~var, scales = "free")
 
 # Fig 2: Change in morphology over time ----
 
@@ -304,7 +302,7 @@ number_subplot <-
     limits = c(start_date, end_date)) +
   labs(
     x = "Date",
-    y = expression("No. gemmae")
+    y = expression("Gemmae count")
   ) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 0.5))
 
@@ -319,7 +317,7 @@ combined_plots <- plot_grid(
 
 ggsave(
   plot = combined_plots,
-  file = "results/fig1_morph.pdf",
+  file = "results/fig2_morph.pdf",
   height = 7,
   width = 6.5)
 
@@ -435,7 +433,7 @@ legend <- get_legend(legend)
 
 combined_plot <- plot_grid(main_plot, legend, ncol = 1, rel_heights = c(1, .1))
 
-ggplot2::ggsave(plot = combined_plot, filename = "results/ridge_plots.pdf", height = 8, width = 6)
+ggplot2::ggsave(plot = combined_plot, filename = "results/fig3_climate_diff.pdf", height = 8, width = 6)
 
 # Fig 4: Relationship between morphology and mean monthly climate ----
 #' 
@@ -493,7 +491,7 @@ var_grid <-
   mutate(
     y_lab = case_when(
       y_var == "length_mean" ~ "Gemmae length (μm)", 
-      y_var == "count_mean" ~ "Gemmae number", 
+      y_var == "count_mean" ~ "Gemmae count", 
       y_var == "total_cover" ~ "Total cover (sq. cm)" 
     ),
     x_lab = case_when(
@@ -543,7 +541,7 @@ subplots <-
 
 #' Extract a legend to add to the combined plot.
 legend <- quick_plot_with_stats(
-  "rh_min", "length", 
+  "rh_min", "length_mean", 
   "minimum rh", "length", 
   combined_monthly_morph, model_results) + 
   labs(color = "Month") +
@@ -561,7 +559,9 @@ for(i in c(2,3,5,6,8,9) ) {
   subplots[[i]] <- subplots[[i]] + labs(y = "")
 }
 
-subplots[[1]] <- subplots[[1]] + labs(y = expression("Length ("~mu~"m)"))
+subplots[[1]] <- subplots[[1]] + labs(y = expression(paste("Gemmae\nlength (", mu, "m)", sep = "")))
+subplots[[7]] <- subplots[[7]] + labs(y = expression(paste("Total\ncover (", cm^2, ")", sep = "")))
+subplots[[8]] <- subplots[[8]] + labs(x = expression(paste("PAR (", mmol~cm^-2~s^-1, ")", sep = "")))
 
 #' Arrange plots are write out.
 main_plot <- plot_grid(plotlist = subplots, align = "hv")
@@ -573,7 +573,7 @@ okutama_model_plot <- plot_grid(main_plot, legend_plot, ncol = 1, rel_heights = 
 
 # Save plot
 ggsave(plot = okutama_model_plot,
-       filename = "results/Pleurosoriopsis_combined_plot.pdf", width = 7, height = 9)
+       filename = "results/fig4_morph_climate.pdf", width = 7, height = 9)
 
 #'
 # Render this script as a report
