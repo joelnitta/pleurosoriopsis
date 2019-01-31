@@ -163,14 +163,15 @@ cover
 gemmae_count_raw <- read_xlsx(
   "data_raw/カラクサシダ図表.xlsx",
   sheet = 3,
-  range = "A2:B62")
+  range = "A2:C62")
 
 gemmae_count_raw
 
 gemmae_length_raw <- read_xlsx(
   "data_raw/カラクサシダ図表.xlsx",
   sheet = 3,
-  range = "E2:G62")
+  range = "E2:G62",
+  col_types = c("text", "numeric", "numeric"))
 
 gemmae_length_raw
 
@@ -187,7 +188,7 @@ years <- c(rep(2009, 9),
 
 gemmae_count <- 
   gemmae_count_raw %>%
-  select(month = `採集月`, number = `数`) %>%
+  select(month = `採集月`, count_mean = `数`, count_sd = `標準偏差`) %>%
   mutate(
     month = str_remove_all(month, "月") %>% as.numeric,
     month = case_when(
@@ -199,7 +200,7 @@ gemmae_count <-
 
 gemmae_length <- 
   gemmae_length_raw %>%
-  select(month = `採集月`, length = `無性芽の平均の長さ(μm)`) %>%
+  select(month = `採集月`, length_mean = `無性芽の平均の長さ(μm)`, length_sd = `標準偏差`) %>%
   mutate(
     month = str_remove_all(month, "月") %>% as.numeric,
     month = case_when(
@@ -214,15 +215,113 @@ gemmae_data <- full_join(gemmae_count, gemmae_length) %>%
 
 gemmae_data
 
+combined_morph <- 
+  full_join(
+    select(cover, total_cover, month_year),
+    gemmae_data
+  ) %>%
+  mutate(day = 01,
+         date = paste(year, month, day, sep = "-") %>% as.Date)
+
 # Fig 1: Change in microclimate over time -----
+
+# Select microclimate variables of interest
+selected_vars <- c("rh_min", "par_total", "temp_mean")
+
 daily_microclimate %>%
-  select(-season, -month) %>%
+  select(selected_vars, date, site) %>%
   gather(var, value, -date, -site) %>% 
   ggplot(aes(x = date, y = value, color = site)) +
   geom_line(alpha = 0.5) +
   facet_wrap(~var, scales = "free")
 
 # Fig 2: Change in morphology over time ----
+
+# set x limits manually
+start_date <- combined_morph %>%
+  pull(date) %>%
+  min
+
+end_date <- combined_morph %>%
+  pull(date) %>%
+  max
+
+cover_subplot <- 
+  combined_morph %>%
+  select(total_cover, date) %>%
+  drop_na %>%
+  ggplot(aes(x = date, y = total_cover)) +
+  geom_line() +
+  geom_point(color = "blue") +
+  scale_x_date(
+    date_labels = "%b %y",
+    date_breaks = "6 months",
+    limits = c(start_date, end_date)
+  ) +
+  labs(
+    x = "",
+    y = expression("Total\ncover ("~cm^2~")")
+  ) +
+  theme(axis.text.x = element_blank())
+
+length_subplot <- 
+  combined_morph %>%
+  select(length_mean, length_sd, date) %>%
+  drop_na %>%
+  ggplot(aes(x = date, y = length_mean)) +
+  geom_errorbar(
+    aes(ymin=length_mean-length_sd, 
+        ymax=length_mean+length_sd), 
+    width=.1,
+    color = "dark grey") +
+  geom_line() +
+  geom_point(color = "blue") +
+  scale_x_date(
+    date_labels = "%b %y",
+    date_breaks = "6 months",
+    limits = c(start_date, end_date)) +
+  labs(
+    x = "",
+    y = expression("Gemmae\nlength ("~mu~"m)")
+  ) +
+  theme(axis.text.x = element_blank())
+
+number_subplot <- 
+  combined_morph %>%
+  select(count_mean, count_sd, date) %>%
+  drop_na %>%
+  ggplot(aes(x = date, y = count_mean)) +
+  geom_errorbar(
+    aes(ymin=count_mean-count_sd, 
+        ymax=count_mean+count_sd), 
+    width=.1,
+    color = "dark grey") +
+  geom_line() +
+  geom_point(color = "blue") +
+  scale_x_date(
+    date_labels = "%b %y",
+    date_breaks = "6 months",
+    limits = c(start_date, end_date)) +
+  labs(
+    x = "Date",
+    y = expression("No. gemmae")
+  ) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 0.5))
+
+combined_plots <- plot_grid(
+  cover_subplot,
+  length_subplot,
+  number_subplot,
+  align = "hv",
+  labels = "AUTO",
+  ncol = 1
+)
+
+ggsave(
+  plot = combined_plots,
+  file = "results/fig1_morph.pdf",
+  height = 7,
+  width = 6.5)
 
 # Fig 3: Compare microclimate between sites ----
 
@@ -242,8 +341,6 @@ paired_microclimate <- daily_microclimate %>%
 # Final plot includes multiple subplots. Each is a ridge plot showing 
 # the distribution of one of the variables between the two sites, with the
 # results of a paired t-test showing if they are different or not.
-
-selected_vars <- c("rh_min", "par_total", "temp_mean")
 
 # For looping across plots, make cross-product dataframe of all seasons and
 # selected variables.
@@ -372,12 +469,6 @@ okutama_monthly <-
     mean
   )
 
-combined_morph <- 
-full_join(
-  select(cover, total_cover, month_year),
-  select(gemmae_data, length, number, month_year, month, year)
-)
-
 combined_monthly_morph <- left_join(combined_morph, okutama_monthly) %>%
   ungroup %>% 
   mutate(month = as.factor(month))
@@ -397,12 +488,12 @@ combined_monthly_morph
 var_grid <-
   list(
     x_var = selected_vars,
-    y_var = c("length", "number", "total_cover")
+    y_var = c("length_mean", "count_mean", "total_cover")
   ) %>% cross_df() %>%
   mutate(
     y_lab = case_when(
-      y_var == "length" ~ "Gemmae length (μm)", 
-      y_var == "number" ~ "Gemmae number", 
+      y_var == "length_mean" ~ "Gemmae length (μm)", 
+      y_var == "count_mean" ~ "Gemmae number", 
       y_var == "total_cover" ~ "Total cover (sq. cm)" 
     ),
     x_lab = case_when(
