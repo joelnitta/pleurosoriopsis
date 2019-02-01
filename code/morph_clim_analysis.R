@@ -143,7 +143,7 @@ cover_raw <- read_excel(
   sheet = 1)
 
 cover <- cover_raw %>%
-  rename(date = "..1", plot_1 = `No. 1`, plot_2 = `No. 2`, plot_3 = `No. 3`, plot_4 = `No. 4`) %>%
+  rename(date = "X__1", plot_1 = `No. 1`, plot_2 = `No. 2`, plot_3 = `No. 3`, plot_4 = `No. 4`) %>%
   mutate(date = lubridate::date(date)) %>%
   rowwise %>%
   mutate(total_cover = sum(plot_1, plot_2, plot_3, plot_4)) %>%
