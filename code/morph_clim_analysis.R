@@ -221,7 +221,7 @@ combined_morph <-
   mutate(day = 01,
          date = paste(year, month, day, sep = "-") %>% as.Date)
 
-# Fig 1: Change in microclimate over time -----
+# Fig 2: Change in microclimate over time -----
 
 # Select microclimate variables of interest
 selected_vars <- c("rh_min", "par_total", "temp_mean")
@@ -233,7 +233,115 @@ selected_vars <- c("rh_min", "par_total", "temp_mean")
 #   geom_line(alpha = 0.5) +
 #   facet_wrap(~var, scales = "free")
 
-# Fig 2: Change in morphology over time ----
+start_date <- daily_microclimate %>% pull(date) %>% min
+end_date <- daily_microclimate %>% pull(date) %>% max
+all_days <- tibble( 
+  date = seq(start_date, end_date, by = "day")
+)
+
+daily_microclimate_okutama <- filter(daily_microclimate, site == "okutama") %>%
+  right_join(all_days)
+
+daily_microclimate_takao <- filter(daily_microclimate, site == "uratakao") %>%
+  right_join(all_days)
+
+daily_microclimate_with_na <- bind_rows(
+  daily_microclimate_okutama, daily_microclimate_takao)
+
+subplots <- list()
+
+subplots[[1]] <- 
+daily_microclimate_okutama %>%
+  ggplot(aes(x = date, y = rh_min)) +
+  geom_line() +
+  scale_x_date(
+    date_labels = "%b %y",
+    date_breaks = "6 months",
+    limits = c(start_date, end_date)
+  ) +
+  scale_y_continuous(limits = c(0, 100)) +
+  labs(y = "Rel. Humidity (%)",
+       x = "",
+       title = "Okutama")
+
+subplots[[2]] <- 
+  daily_microclimate_takao %>%
+  ggplot(aes(x = date, y = rh_min)) +
+  geom_line() +
+  scale_x_date(
+    date_labels = "%b %y",
+    date_breaks = "6 months",
+    limits = c(start_date, end_date)
+  ) +
+  scale_y_continuous(limits = c(0, 100)) +
+  labs(y = "",
+       x = "",
+       title = "Uratakao")
+
+subplots[[3]] <- 
+  daily_microclimate_okutama %>%
+  ggplot(aes(x = date, y = temp_mean)) +
+  geom_line() +
+  scale_x_date(
+    date_labels = "%b %y",
+    date_breaks = "6 months",
+    limits = c(start_date, end_date)
+  ) +
+  labs(y = "Temp. (°C)",
+       x = "")
+
+subplots[[4]] <- 
+  daily_microclimate_takao %>%
+  ggplot(aes(x = date, y = temp_mean)) +
+  geom_line() +
+  scale_x_date(
+    date_labels = "%b %y",
+    date_breaks = "6 months",
+    limits = c(start_date, end_date)
+  ) +
+  labs(y = "",
+       x = "")
+
+subplots[[5]] <- 
+  daily_microclimate_okutama %>%
+  ggplot(aes(x = date, y = par_total)) +
+  geom_line() +
+  scale_x_date(
+    date_labels = "%b %y",
+    date_breaks = "6 months",
+    limits = c(start_date, end_date)
+  )  +
+  scale_y_continuous(limits = c(0, 2500)) +
+  labs(y = expression(paste("PAR (", mmol~cm^-2~s^-1, ")", sep = "")),
+       x = "Date")
+
+subplots[[6]] <- 
+  daily_microclimate_takao %>%
+  ggplot(aes(x = date, y = par_total)) +
+  geom_line() +
+  scale_x_date(
+    date_labels = "%b %y",
+    date_breaks = "6 months",
+    limits = c(start_date, end_date)
+  ) +
+  scale_y_continuous(limits = c(0, 2500)) +
+  labs(y = "",
+       x = "Date")
+
+combined_clim_plots <- plot_grid(
+  plotlist = subplots,
+  labels = c("A", "", "B", "", "C", ""),
+  align = "hv",
+  ncol = 2
+)
+
+ggsave(
+  plot = combined_clim_plots,
+  file = "results/fig2_clim.pdf",
+  height = 7,
+  width = 8)
+
+# Fig 1: Change in morphology over time ----
 
 # set x limits manually
 start_date <- combined_morph %>%
@@ -260,7 +368,14 @@ cover_subplot <-
     x = "",
     y = expression("Total\ncover ("~cm^2~")")
   ) +
-  theme(axis.text.x = element_blank())
+  theme(
+    axis.text.x = element_text(
+      angle = 30, 
+      hjust = 1, 
+      vjust = 0.5, 
+      margin=margin(-10,0,0,0)
+    )
+  )
 
 length_subplot <- 
   combined_morph %>%
@@ -282,7 +397,14 @@ length_subplot <-
     x = "",
     y = expression("Gemmae\nlength ("~mu~"m)")
   ) +
-  theme(axis.text.x = element_blank())
+  theme(
+    axis.text.x = element_text(
+      angle = 30, 
+      hjust = 1, 
+      vjust = 0.5, 
+      margin=margin(-10,0,0,0)
+    )
+  )
 
 number_subplot <- 
   combined_morph %>%
@@ -301,10 +423,17 @@ number_subplot <-
     date_breaks = "6 months",
     limits = c(start_date, end_date)) +
   labs(
-    x = "Date",
+    x = "\nDate",
     y = expression("Gemmae count")
   ) +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 0.5))
+  theme(
+    axis.text.x = element_text(
+      angle = 30, 
+      hjust = 1, 
+      vjust = 0.5, 
+      margin=margin(-10,0,0,0)
+    )
+  )
 
 combined_plots <- plot_grid(
   cover_subplot,
@@ -312,14 +441,15 @@ combined_plots <- plot_grid(
   number_subplot,
   align = "hv",
   labels = "AUTO",
-  ncol = 1
+  ncol = 1,
+  hjust = -7
 )
 
 ggsave(
   plot = combined_plots,
-  file = "results/fig2_morph.pdf",
+  file = "results/fig1_morph.pdf",
   height = 7,
-  width = 6.5)
+  width = 8)
 
 # Fig 3: Compare microclimate between sites ----
 
@@ -411,17 +541,20 @@ plot_results$plot[[12]] <- plot_results$plot[[12]] +
   labs(x = expression("Temp. (°C)"))
 
 # Want to add y axis labels for season but this is not working.
-plot_results$plot[[1]] <- plot_results$plot[[1]] +
-  labs(y = "Winter")
+plot_results$plot <- map(plot_results$plot, 
+                              ~ . + labs(title = "") )
 
-plot_results$plot[[4]] <- plot_results$plot[[4]] +
-  labs(y = "Spring")
+plot_results$plot[[2]] <- plot_results$plot[[1]] +
+  labs(title = "Winter\n")
 
-plot_results$plot[[7]] <- plot_results$plot[[7]] +
-  labs(y = "Summer")
+plot_results$plot[[5]] <- plot_results$plot[[4]] +
+  labs(title = "Spring\n")
 
-plot_results$plot[[10]] <- plot_results$plot[[10]] +
-  labs(y = "Fall")
+plot_results$plot[[8]] <- plot_results$plot[[7]] +
+  labs(title = "Summer\n")
+
+plot_results$plot[[11]] <- plot_results$plot[[10]] +
+  labs(title = "Fall\n")
 
 main_plot <- plot_grid(plotlist = plot_results$plot, ncol = 3, align = "hv")
 
@@ -433,7 +566,10 @@ legend <- get_legend(legend)
 
 combined_plot <- plot_grid(main_plot, legend, ncol = 1, rel_heights = c(1, .1))
 
-ggplot2::ggsave(plot = combined_plot, filename = "results/fig3_climate_diff.pdf", height = 8, width = 6)
+ggplot2::ggsave(
+  plot = combined_plot, 
+  filename = "results/fig3_climate_diff.pdf", 
+  height = 8, width = 7)
 
 # Fig 4: Relationship between morphology and mean monthly climate ----
 #' 
@@ -557,6 +693,10 @@ for(i in 1:6) {
 
 for(i in c(2,3,5,6,8,9) ) {
   subplots[[i]] <- subplots[[i]] + labs(y = "")
+}
+
+for(i in c(2,5,8) ) {
+  subplots[[i]] <- subplots[[i]] + scale_x_continuous(breaks = c(200, 400, 600))
 }
 
 subplots[[1]] <- subplots[[1]] + labs(y = expression(paste("Gemmae\nlength (", mu, "m)", sep = "")))
