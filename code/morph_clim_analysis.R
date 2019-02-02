@@ -222,6 +222,108 @@ combined_morph <-
   mutate(day = 01,
          date = paste(year, month, day, sep = "-") %>% as.Date)
 
+# Fig 1: Change in morphology over time ----
+
+# set x limits manually
+start_date <- combined_morph %>%
+  pull(date) %>%
+  min
+
+end_date <- combined_morph %>%
+  pull(date) %>%
+  max
+
+subplots <- list()
+
+cover$date <- as.Date(cover$date)
+
+subplots[["cover"]] <- 
+  cover %>%
+  select(starts_with("plot"), date) %>%
+  gather(plot, area, -date) %>%
+  ggplot(aes(x = date, y = area, color = plot)) +
+  geom_line() +
+  # can't use Inf for dates.
+  annotate("text", end_date, Inf, label = "A", hjust = 1, vjust = 1, size = 6) +
+  labs(
+    x = "",
+    y = expression("Cover ("~cm^2~")")
+  ) +
+  theme(legend.position = "none")
+
+subplots[["gemmae_length"]] <- 
+  combined_morph %>%
+  select(length_mean, length_sd, date) %>%
+  drop_na %>%
+  ggplot(aes(x = date, y = length_mean)) +
+  geom_errorbar(
+    aes(ymin=length_mean-length_sd, 
+        ymax=length_mean+length_sd), 
+    width=.1,
+    color = "dark grey") +
+  geom_line() +
+  annotate("text", end_date, Inf, label = "B", hjust = 1, vjust = 1, size = 6) +
+  geom_point(color = "blue") +
+  labs(
+    x = "",
+    y = expression(paste("Gemmae len. (", mu, "m)"))
+  )
+
+subplots[["gemmae_count"]] <- 
+  combined_morph %>%
+  select(count_mean, count_sd, date) %>%
+  drop_na %>%
+  ggplot(aes(x = date, y = count_mean)) +
+  geom_errorbar(
+    aes(ymin=count_mean-count_sd, 
+        ymax=count_mean+count_sd), 
+    width=.1,
+    color = "dark grey") +
+  geom_line() +
+  geom_point(color = "blue") +
+  annotate("text", end_date, Inf, label = "C", hjust = 1, vjust = 1, size = 6) +
+  labs(
+    x = "\nDate",
+    y = expression("Gemmae count")
+  )
+
+# Apply common formatting to all subplots: x-axis labels rotated 30 degrees,
+# add 10 pt to R, L margin to make room for two-line labels, scale x-axis to print
+# month every 6 months and use common limits.
+subplots <- subplots %>%
+  map(~ . + 
+        theme(
+          axis.text.x = element_text(
+            angle = 30, 
+            hjust = 1, 
+            vjust = 0.5, 
+            margin=margin(-10,0,0,0)
+          ),
+          plot.margin = margin(0,10,0,10)
+        ) +
+        scale_x_date(
+          date_labels = "%b %y",
+          date_breaks = "6 months",
+          limits = c(start_date, end_date)
+        )
+  )
+
+subplots[1:2] <- subplots[1:2] %>%
+  map(~ . + theme(axis.text.x = element_blank()) 
+  )
+
+subplots[2:3] <- subplots[2:3] %>%
+  map(~ . + theme(plot.margin = margin(-10,10,0,10)) 
+  )
+
+combined_plots <- subplots[[1]] + subplots[[2]] + subplots[[3]] + plot_layout(ncol = 1)
+
+ggsave(
+  plot = combined_plots,
+  file = "results/fig1_morph.pdf",
+  height = 7,
+  width = 8)
+
 # Fig 2: Change in microclimate over time -----
 
 # Select microclimate variables of interest
@@ -342,107 +444,6 @@ ggsave(
   height = 7,
   width = 8)
 
-# Fig 1: Change in morphology over time ----
-
-# set x limits manually
-start_date <- combined_morph %>%
-  pull(date) %>%
-  min
-
-end_date <- combined_morph %>%
-  pull(date) %>%
-  max
-
-subplots <- list()
-
-cover$date <- as.Date(cover$date)
-
-subplots[["cover"]] <- 
-  cover %>%
-  select(starts_with("plot"), date) %>%
-  gather(plot, area, -date) %>%
-  ggplot(aes(x = date, y = area, color = plot)) +
-  geom_line() +
-    # can't use Inf for dates.
-  annotate("text", end_date, Inf, label = "A", hjust = 1, vjust = 1, size = 6) +
-  labs(
-    x = "",
-    y = expression("Cover ("~cm^2~")")
-  ) +
-  theme(legend.position = "none")
-
-subplots[["gemmae_length"]] <- 
-  combined_morph %>%
-  select(length_mean, length_sd, date) %>%
-  drop_na %>%
-  ggplot(aes(x = date, y = length_mean)) +
-  geom_errorbar(
-    aes(ymin=length_mean-length_sd, 
-        ymax=length_mean+length_sd), 
-    width=.1,
-    color = "dark grey") +
-  geom_line() +
-  annotate("text", end_date, Inf, label = "B", hjust = 1, vjust = 1, size = 6) +
-  geom_point(color = "blue") +
-  labs(
-    x = "",
-    y = expression(paste("Gemmae len. (", mu, "m)"))
-  )
-
-subplots[["gemmae_count"]] <- 
-  combined_morph %>%
-  select(count_mean, count_sd, date) %>%
-  drop_na %>%
-  ggplot(aes(x = date, y = count_mean)) +
-  geom_errorbar(
-    aes(ymin=count_mean-count_sd, 
-        ymax=count_mean+count_sd), 
-    width=.1,
-    color = "dark grey") +
-  geom_line() +
-  geom_point(color = "blue") +
-  annotate("text", end_date, Inf, label = "C", hjust = 1, vjust = 1, size = 6) +
-  labs(
-    x = "\nDate",
-    y = expression("Gemmae count")
-  )
-
-# Apply common formatting to all subplots: x-axis labels rotated 30 degrees,
-# add 10 pt to R, L margin to make room for two-line labels, scale x-axis to print
-# month every 6 months and use common limits.
-subplots <- subplots %>%
-  map(~ . + 
-        theme(
-          axis.text.x = element_text(
-            angle = 30, 
-            hjust = 1, 
-            vjust = 0.5, 
-            margin=margin(-10,0,0,0)
-          ),
-          plot.margin = margin(0,10,0,10)
-        ) +
-        scale_x_date(
-          date_labels = "%b %y",
-          date_breaks = "6 months",
-          limits = c(start_date, end_date)
-        )
-  )
-
-subplots[1:2] <- subplots[1:2] %>%
-  map(~ . + theme(axis.text.x = element_blank()) 
-  )
-
-subplots[2:3] <- subplots[2:3] %>%
-  map(~ . + theme(plot.margin = margin(-10,10,0,10)) 
-  )
-
-combined_plots <- subplots[[1]] + subplots[[2]] + subplots[[3]] + plot_layout(ncol = 1)
-
-ggsave(
-  plot = combined_plots,
-  file = "results/fig1_morph.pdf",
-  height = 7,
-  width = 8)
 
 # Fig 3: Compare microclimate between sites ----
 
