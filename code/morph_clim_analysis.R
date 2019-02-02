@@ -14,6 +14,7 @@ library(cowplot)
 library(broom)
 # library(viridis)
 library(ggridges)
+library(patchwork)
 
 source("code/functions.R")
 
@@ -352,32 +353,25 @@ end_date <- combined_morph %>%
   pull(date) %>%
   max
 
-cover_subplot <- 
-  combined_morph %>%
-  select(total_cover, date) %>%
-  drop_na %>%
-  ggplot(aes(x = date, y = total_cover)) +
+subplots <- list()
+
+cover$date <- as.Date(cover$date)
+
+subplots[["cover"]] <- 
+  cover %>%
+  select(starts_with("plot"), date) %>%
+  gather(plot, area, -date) %>%
+  ggplot(aes(x = date, y = area, color = plot)) +
   geom_line() +
-  geom_point(color = "blue") +
-  scale_x_date(
-    date_labels = "%b %y",
-    date_breaks = "6 months",
-    limits = c(start_date, end_date)
-  ) +
+    # can't use Inf for dates.
+  annotate("text", end_date, Inf, label = "A", hjust = 1, vjust = 1, size = 6) +
   labs(
     x = "",
-    y = expression("Total\ncover ("~cm^2~")")
+    y = expression("Cover ("~cm^2~")")
   ) +
-  theme(
-    axis.text.x = element_text(
-      angle = 30, 
-      hjust = 1, 
-      vjust = 0.5, 
-      margin=margin(-10,0,0,0)
-    )
-  )
+  theme(legend.position = "none")
 
-length_subplot <- 
+subplots[["gemmae_length"]] <- 
   combined_morph %>%
   select(length_mean, length_sd, date) %>%
   drop_na %>%
@@ -388,25 +382,14 @@ length_subplot <-
     width=.1,
     color = "dark grey") +
   geom_line() +
+  annotate("text", end_date, Inf, label = "B", hjust = 1, vjust = 1, size = 6) +
   geom_point(color = "blue") +
-  scale_x_date(
-    date_labels = "%b %y",
-    date_breaks = "6 months",
-    limits = c(start_date, end_date)) +
   labs(
     x = "",
-    y = expression("Gemmae\nlength ("~mu~"m)")
-  ) +
-  theme(
-    axis.text.x = element_text(
-      angle = 30, 
-      hjust = 1, 
-      vjust = 0.5, 
-      margin=margin(-10,0,0,0)
-    )
+    y = expression(paste("Gemmae len. (", mu, "m)"))
   )
 
-number_subplot <- 
+subplots[["gemmae_count"]] <- 
   combined_morph %>%
   select(count_mean, count_sd, date) %>%
   drop_na %>%
@@ -418,32 +401,42 @@ number_subplot <-
     color = "dark grey") +
   geom_line() +
   geom_point(color = "blue") +
-  scale_x_date(
-    date_labels = "%b %y",
-    date_breaks = "6 months",
-    limits = c(start_date, end_date)) +
+  annotate("text", end_date, Inf, label = "C", hjust = 1, vjust = 1, size = 6) +
   labs(
     x = "\nDate",
     y = expression("Gemmae count")
-  ) +
-  theme(
-    axis.text.x = element_text(
-      angle = 30, 
-      hjust = 1, 
-      vjust = 0.5, 
-      margin=margin(-10,0,0,0)
-    )
   )
 
-combined_plots <- plot_grid(
-  cover_subplot,
-  length_subplot,
-  number_subplot,
-  align = "hv",
-  labels = "AUTO",
-  ncol = 1,
-  hjust = -7
-)
+# Apply common formatting to all subplots: x-axis labels rotated 30 degrees,
+# add 10 pt to R, L margin to make room for two-line labels, scale x-axis to print
+# month every 6 months and use common limits.
+subplots <- subplots %>%
+  map(~ . + 
+        theme(
+          axis.text.x = element_text(
+            angle = 30, 
+            hjust = 1, 
+            vjust = 0.5, 
+            margin=margin(-10,0,0,0)
+          ),
+          plot.margin = margin(0,10,0,10)
+        ) +
+        scale_x_date(
+          date_labels = "%b %y",
+          date_breaks = "6 months",
+          limits = c(start_date, end_date)
+        )
+  )
+
+subplots[1:2] <- subplots[1:2] %>%
+  map(~ . + theme(axis.text.x = element_blank()) 
+  )
+
+subplots[2:3] <- subplots[2:3] %>%
+  map(~ . + theme(plot.margin = margin(-10,10,0,10)) 
+  )
+
+combined_plots <- subplots[[1]] + subplots[[2]] + subplots[[3]] + plot_layout(ncol = 1)
 
 ggsave(
   plot = combined_plots,
