@@ -2,11 +2,12 @@
 # Suppress chatty tidyverse messages when spinning
 knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
 
-#' ## Growth Dynamics of the Independent Gametophytes of *Pleurorosiopsis makinoi* (Polypodiaceae)
+#' # Growth Dynamics of the Independent Gametophytes of *Pleurorosiopsis makinoi* (Polypodiaceae)
 #' 
-#' Analyze correlation between microclimate and morphology in a colony of
+#' Analyze correlation between microclimate and growth in a colony of
 #' independent gametophytes of *Pleurosoriopsis makinoi* from Japan.
-
+#' 
+#' Load packages and custom functions.
 library(tidyverse)
 library(readxl)
 library(lubridate)
@@ -14,19 +15,34 @@ library(cowplot)
 library(broom)
 library(ggridges)
 library(patchwork)
-
 source("code/functions.R")
 
-# Load data ----
-
-#' Read in raw microclimate data. 
+#' ## Load and clean data
 #' 
-#' PAR, rel. humidity, and temperature
+#' ### Data sources
+#' 
+#' The raw data are in `xlsx` files. Some of the data are pre-processed
+#' (mean and sd of count and length of gemmae, 30 min averages of PPFD). 
+#' 
+#' The files include some additional analsyes and other data that won't 
+#' be used here.
+#'
+#' ### Microclimate data
+#'
+#' Microclimate variables include PPFD (photon flux density, in μmol of 
+#' light per sq m per sec), rel. humidity (%), and temperature (°C) 
 #' measured once every 30 min. 
 #' 
+#' PPFD is 30 min-averages of values taken every 4 minutes
+#' (raw 4 minute values not included).
+#' 
+#' There are two sites, Okutama (site of the independent gametophyte
+#' colony) and Uratakao (site of the sporophyte population). Additional
+#' sites were also measured, but not included in this analysis
+#' because of too much missing data due to mechanical failures.
+#' 
 #' For Okutama, the raw data are in different columns
-#' in the excel file, so read in each separately.
-
+#' in the `xlsx` file, so read in each separately.
 okutama_temp_raw <- read_excel(
   "data_raw/データロガー素データ.xlsm",
   sheet = 1,
@@ -53,7 +69,7 @@ okutama_microclimate_raw
 
 #' Tidy Okutama microclimate data.
 #' 
-#' Add 12 hours if time is PM. 
+#' Add 12 hours if time is PM ("午後"). 
 #' Time units are in seconds when adding.
 okutama_microclimate <- 
   okutama_microclimate_raw %>%
@@ -71,9 +87,7 @@ okutama_microclimate <-
 okutama_microclimate
 
 #' Uratakao data have a single column for time of the three microclimate
-#' variables, so these can be read-in all at once.
-
-#' Read in raw data.
+#' variables, so these can be read in all at once.
 takao_microclimate_raw <- read_excel(
   "data_raw/データロガー素データ.xlsm",
   sheet = 2,
@@ -93,28 +107,43 @@ takao_microclimate <- takao_microclimate_raw %>%
   ) %>%
   select(-pm)
 
-#' In order to compare data across sites, need to use daily values since
-#' the times are slightly different. Calculate daily min, mean,
-#' max, sd, and total values. We won't use all of these but it's
-#' easier to do them all at once using summarize_at(). Also add season.
-
+#' In order to compare data across sites, we need to use daily values since
+#' the measurement times are slightly different between sites. 
+#' 
+#' There are many different ways to calculate
+#' daily microclimate values (mean, max, min, sd, of temp, humidity, etc.). 
+#' 
+#' We will use three biologically relevant values: mean temp, min RH,
+#' and DLI (daily light integral, the sum of all PAR measurements for one day).
+#' 
+#' https://en.wikipedia.org/wiki/Daily_light_integral
+#' 
+#' To calculate DLI (moles of light per sq m per day), we need to integrate daily PPFD 
+#' (photon flux density, in μmol of light per sq m per sec) values.
+#' 
+#' PPFD was measured once every 4 minutes in then converted to a mean
+#' value once every 30 minutes. The values in the raw data are the 30
+#' minute averages. To get DLI:
+#' 
+#' μmol PAR per second * 1800 seconds in 30 min = μmol PAR in 30 min
+#' 
+#' sum of all μmol PAR in 30 min values in one day / 1,000,000 = total mol PAR for the day (DLI)
+#' 
 daily_microclimate <-
   bind_rows(
     mutate(okutama_microclimate, site = "okutama"),
     mutate(takao_microclimate, site = "uratakao")
   ) %>%
-  filter(complete.cases(.)) %>% # no missing values, so don't need na.rm
+  # only include days with data at both sites
+  filter(complete.cases(.)) %>% 
   group_by(date, site) %>%
-  summarize_at(
-    c("par", "temp", "rh"),
-    funs(
-      mean = mean,
-      max = max,
-      min = min,
-      sd = sd,
-      total = sum
-  )) %>%
+  summarize(
+    temp_mean = mean(temp, na.rm = TRUE),
+    rh_min = min(rh, na.rm = TRUE),
+    par_total = sum(1800*par) / 1000000
+  ) %>%
   ungroup %>%
+  # add season variable
   mutate(
     month = month(date),
     season = case_when(
@@ -128,15 +157,12 @@ daily_microclimate <-
 
 daily_microclimate
 
-#' ## Morphology data
-#' 
 #' ### Cover data
 #'
-#' Cover data was measured for four plots at a single site. 
-#' Since the values for each plots is the number of filled squares, we can 
-#' just sum them instead of looking at each separately or taking
-#' the mean. This also makes more sense since each plot started with a different
-#' number of filled squares, so not clear how to compare them.
+#' Cover data (area of gametophytes in sq. cm) was measured once per month for 
+#' four 10 x 10 cm plots at the Okutama site. 
+#' 
+#' Clean up and also calculate total cover, which will be used later.
 
 cover_raw <- read_excel(
   "data_raw/カラクサシダ図表.xlsx",
@@ -156,7 +182,9 @@ cover
 
 #' ### Gemmae
 #'
-#' Read in pre-processed data (need to get raw data from Ebihara)
+#' Gemmae count and length were measured in 10 individuals per
+#' monthly census. The data provided are mean values with standard deviation
+#' already cacluated.
 
 gemmae_count_raw <- read_xlsx(
   "data_raw/カラクサシダ図表.xlsx",
@@ -173,7 +201,7 @@ gemmae_length_raw <- read_xlsx(
 
 gemmae_length_raw
 
-#' Tidy data. "month" column originally includes the year only for March 
+#' Tidy gemmae data. "month" column originally includes the year only for March 
 #' the first time, then January.
 #' 
 #' Split this up and manually add year.
@@ -213,6 +241,10 @@ gemmae_data <- full_join(gemmae_count, gemmae_length) %>%
 
 gemmae_data
 
+#' Combine all growth (morphological) varibles into a single tibble.
+#' 
+#' Since these variables were measured once per month, treat day as 1st of
+#' each month for joining with monthly microclimate variables later.
 combined_morph <- 
   full_join(
     select(cover, total_cover, month_year),
@@ -221,9 +253,12 @@ combined_morph <-
   mutate(day = 01,
          date = paste(year, month, day, sep = "-") %>% as.Date)
 
-# Fig 1: Change in morphology over time ----
+combined_morph
 
-# set x limits manually
+#' ## Fig 1: Change in growth over time
+#'
+#' Set x-limits manually since the automatically set limits will vary
+#' when we subset the data.
 start_date <- combined_morph %>%
   pull(date) %>%
   min
@@ -232,21 +267,39 @@ end_date <- combined_morph %>%
   pull(date) %>%
   max
 
-subplots <- list()
+#' Make tibble of years for shading. This dataframe will be passed to `geom_rect()` when
+#' plotting.
+shading_dates <- 
+  tibble(date = seq.Date(from = start_date, to = end_date, by = "day")) %>%
+  mutate(year = year(date)) %>%
+  # shade by alternate years
+  filter(year %in% c(2009, 2011, 2013)) %>%
+  group_by(year) %>%
+  summarize(
+    year_start = min(date),
+    year_end = max(date)
+  )
+  
+#' I've also made a very specific function for adding rectangles to show
+#' the year:
 
-cover$date <- as.Date(cover$date)
+shade_years
+
+#' Make list of subplots. Build each one at a time, then add common
+#' formatting.
+subplots <- list()
 
 subplots[["cover"]] <- 
   cover %>%
   select(starts_with("plot"), date) %>%
   gather(plot, area, -date) %>%
-  ggplot(aes(x = date, y = area, color = plot)) +
+  ggplot(aes(x = date, y = area, color = plot)) %>%
+  shade_years(shading_dates) +
   geom_line() +
-  # can't use Inf for dates.
-  annotate("text", end_date, Inf, label = "A", hjust = 1, vjust = 1, size = 6) +
   labs(
     x = "",
-    y = expression("Cover ("~cm^2~")")
+    y = expression("Cover ("~cm^2~")"),
+    subtitle = "A"
   ) +
   theme(legend.position = "none")
 
@@ -254,25 +307,27 @@ subplots[["gemmae_length"]] <-
   combined_morph %>%
   select(length_mean, length_sd, date) %>%
   drop_na %>%
-  ggplot(aes(x = date, y = length_mean)) +
+  ggplot(aes(x = date, y = length_mean)) %>%
+  shade_years(shading_dates) +
   geom_errorbar(
     aes(ymin=length_mean-length_sd, 
         ymax=length_mean+length_sd), 
     width=.1,
     color = "dark grey") +
   geom_line() +
-  annotate("text", end_date, Inf, label = "B", hjust = 1, vjust = 1, size = 6) +
   geom_point(color = "blue") +
   labs(
     x = "",
-    y = expression(paste("Gemmae len. (", mu, "m)"))
+    y = expression(paste("Gemmae len. (", mu, "m)")),
+    subtitle = "B"
   )
 
 subplots[["gemmae_count"]] <- 
   combined_morph %>%
   select(count_mean, count_sd, date) %>%
   drop_na %>%
-  ggplot(aes(x = date, y = count_mean)) +
+  ggplot(aes(x = date, y = count_mean)) %>%
+  shade_years(shading_dates) +
   geom_errorbar(
     aes(ymin=count_mean-count_sd, 
         ymax=count_mean+count_sd), 
@@ -280,15 +335,15 @@ subplots[["gemmae_count"]] <-
     color = "dark grey") +
   geom_line() +
   geom_point(color = "blue") +
-  annotate("text", end_date, Inf, label = "C", hjust = 1, vjust = 1, size = 6) +
   labs(
     x = "\nDate",
-    y = expression("Gemmae count")
+    y = expression("Gemmae count"),
+    subtitle = "C"
   )
 
-# Apply common formatting to all subplots: x-axis labels rotated 30 degrees,
-# add 10 pt to R, L margin to make room for two-line labels, scale x-axis to print
-# month every 6 months and use common limits.
+#' Apply common formatting to all subplots: x-axis labels rotated 30 degrees,
+#' add 10 pt to R, L margin to make room for two-line labels, scale x-axis to print
+#' month every 6 months, and use common limits.
 subplots <- subplots %>%
   map(~ . + 
         theme(
@@ -315,28 +370,45 @@ subplots[2:3] <- subplots[2:3] %>%
   map(~ . + theme(plot.margin = margin(-10,10,0,10)) 
   )
 
-combined_plots <- subplots[[1]] + subplots[[2]] + subplots[[3]] + plot_layout(ncol = 1)
+#' Combine subplots and write out
+subplots[[1]] + subplots[[2]] + subplots[[3]] + plot_layout(ncol = 1)
 
 ggsave(
-  plot = combined_plots,
   file = "results/fig1_morph.pdf",
   height = 7,
   width = 8)
 
-# Fig 2: Change in microclimate over time -----
-
-# Select microclimate variables of interest
+#' ## Fig 2: Change in microclimate over time
+#'
+#' Select microclimate variables of interest
 selected_vars <- c("rh_min", "par_total", "temp_mean")
 
-# Extract common start and end dates so x-axis are same across subplots
+#' Extract common start and end dates so x-axis are same across subplots
 start_date <- daily_microclimate %>% pull(date) %>% min
 end_date <- daily_microclimate %>% pull(date) %>% max
 all_days <- tibble( 
   date = seq(start_date, end_date, by = "day")
 )
 
-# Insert NAs into microclimate for each site so that missing days
-# don't get connected by lines.
+#' Make tibble of years for shading.
+shading_dates <- 
+  tibble(date = seq.Date(from = start_date, to = end_date, by = "day")) %>%
+  mutate(year = year(date)) %>%
+  # shade by odd years
+  filter(year %in% c(2009, 2011, 2013)) %>%
+  group_by(year) %>%
+  summarize(
+    year_start = min(date),
+    year_end = max(date)
+  )
+
+#' PAR differs enough between sites that automatically set y-axis limits
+#' would be different. Use the common min and max between them.
+min_par <- daily_microclimate %>% pull(par_total) %>% min
+max_par <- daily_microclimate %>% pull(par_total) %>% max
+
+#' Insert NAs into microclimate for each site so that missing days
+#' don't get connected by lines.
 daily_microclimate_okutama <- filter(daily_microclimate, site == "okutama") %>%
   right_join(all_days)
 
@@ -346,12 +418,13 @@ daily_microclimate_takao <- filter(daily_microclimate, site == "uratakao") %>%
 daily_microclimate_with_na <- bind_rows(
   daily_microclimate_okutama, daily_microclimate_takao)
 
-# Make list of subplots
+#' Make list of subplots
 subplots <- list()
 
 subplots[[1]] <- 
 daily_microclimate_okutama %>%
-  ggplot(aes(x = date, y = rh_min)) +
+  ggplot(aes(x = date, y = rh_min)) %>%
+  shade_years(shading_dates) +
   geom_line() +
   scale_y_continuous(limits = c(0, 100)) +
   labs(y = "Rel. Humidity (%)",
@@ -361,7 +434,8 @@ daily_microclimate_okutama %>%
 
 subplots[[2]] <- 
   daily_microclimate_takao %>%
-  ggplot(aes(x = date, y = rh_min)) +
+  ggplot(aes(x = date, y = rh_min)) %>%
+  shade_years(shading_dates) +
   geom_line() +
   scale_y_continuous(limits = c(0, 100)) +
   labs(y = "",
@@ -371,7 +445,8 @@ subplots[[2]] <-
 
 subplots[[3]] <- 
   daily_microclimate_okutama %>%
-  ggplot(aes(x = date, y = temp_mean)) +
+  ggplot(aes(x = date, y = temp_mean)) %>%
+  shade_years(shading_dates) +
   geom_line() +
   labs(y = "Temp. (°C)",
        x = "",
@@ -379,7 +454,8 @@ subplots[[3]] <-
 
 subplots[[4]] <- 
   daily_microclimate_takao %>%
-  ggplot(aes(x = date, y = temp_mean)) +
+  ggplot(aes(x = date, y = temp_mean)) %>%
+  shade_years(shading_dates) +
   geom_line() +
   labs(y = "",
        x = "",
@@ -387,23 +463,25 @@ subplots[[4]] <-
 
 subplots[[5]] <- 
   daily_microclimate_okutama %>%
-  ggplot(aes(x = date, y = par_total)) +
+  ggplot(aes(x = date, y = par_total)) %>%
+  shade_years(shading_dates) +
   geom_line() +
-  scale_y_continuous(limits = c(0, 2500)) +
-  labs(y = expression(paste("PAR (", mmol~cm^-2~s^-1, ")", sep = "")),
+  scale_y_continuous(limits = c(min_par, max_par)) +
+  labs(y = expression(paste("DLI (", mol~m^-2~day^-1, ")", sep = "") ),
        x = "\nDate",
        subtitle = "E")
 
 subplots[[6]] <- 
   daily_microclimate_takao %>%
-  ggplot(aes(x = date, y = par_total)) +
+  ggplot(aes(x = date, y = par_total)) %>%
+  shade_years(shading_dates) +
   geom_line() +
-  scale_y_continuous(limits = c(0, 2500)) +
+  scale_y_continuous(limits = c(min_par, max_par)) +
   labs(y = "",
        x = "\nDate",
        subtitle = "F")
 
-# Apply common formatting
+#' Apply common formatting
 subplots <- subplots %>%
   map(~ . + 
         theme(
@@ -421,34 +499,33 @@ subplots <- subplots %>%
         )
   )
 
-# Remove x-axis lables from upper plots
+#' Remove x-axis lables from upper plots
 subplots[1:4] <- subplots[1:4] %>%
   map(~ . + theme(axis.text.x = element_blank()) 
   )
 
-# Close gaps on top margins for lower plots
+#' Close gaps on top margins for lower plots
 subplots[c(3,5)] <- subplots[c(3,5)] %>%
   map(~ . + theme(plot.margin = margin(-10,10,0,10)) 
   )
 
-# Close gaps on left side for RHS plots
+#' Close gaps on left side for RHS plots
 subplots[c(2,4,6)] <- subplots[c(2,4,6)] %>%
   map(~ . + theme(plot.margin = margin(-10,10,0,-40)) 
   )
 
-# Combine plots and write out
-combined_plots <- subplots[[1]] + subplots[[2]] + subplots[[3]] + 
+#' Combine plots and write out
+subplots[[1]] + subplots[[2]] + subplots[[3]] + 
   subplots[[4]] + subplots[[5]] + subplots[[6]] + 
   plot_layout(ncol = 2)
 
 ggsave(
-  plot = combined_plots,
   file = "results/fig2_clim.pdf",
   height = 7,
   width = 8)
 
-# Fig 3: Compare microclimate between sites ----
-
+#' ## Fig 3: Compare microclimate between sites
+#'
 #' For comparing microclimate between sites, subset the data to days only including
 #' means from both sites.
 both_days <-
@@ -461,27 +538,27 @@ both_days <-
 paired_microclimate <- daily_microclimate %>%
   filter(date %in% both_days)
 
-# Make plot including t-test on three microclimatic variables.
-# Final plot includes multiple subplots. Each is a ridge plot showing 
-# the distribution of one of the variables between the two sites, with the
-# results of a paired t-test showing if they are different or not.
-
-# For looping across plots, make cross-product dataframe of all seasons and
-# selected variables.
+#' Make plot including t-test on three microclimatic variables.
+#' Final plot includes multiple subplots. Each is a ridge plot showing 
+#' the distribution of one of the variables between the two sites, with the
+#' results of a paired t-test showing if they are different or not.
+#' 
+#' For looping across plots, make cross-product dataframe of all seasons and
+#' selected variables.
 var_grid <-
   list(
     var = selected_vars,
     season = c("winter", "spring", "summer", "fall")
   ) %>% cross_df()
 
-# Need to manually set x ranges to keep x-axis scale the same across plots
+#' Need to manually set x ranges to keep x-axis scale the same across plots
 x_ranges <- tibble(var = selected_vars) %>%
   mutate(
     min = map_dbl(var, ~ pull(paired_microclimate, .) %>% min ),
     max = map_dbl(var, ~ pull(paired_microclimate, .) %>% max )
   )
 
-# For looping across plots, make a nested dataframe by season.
+#' For looping across plots, make a nested dataframe by season.
 nested_paired_microclimate <-
 paired_microclimate %>%
   select(date, site, season, selected_vars) %>%
@@ -489,7 +566,7 @@ paired_microclimate %>%
   nest %>%
   right_join(var_grid)
 
-# Make plots by mapping across nested datasets.
+#' Make plots by mapping across nested datasets.
 plot_results <-
   nested_paired_microclimate %>%
   right_join(x_ranges) %>%
@@ -523,37 +600,38 @@ plot_results <-
   ) %>% 
   arrange(season, var)
 
-# Manually some subplots to remove redundant labels, etc.
-plot_results$plot[1:9] <- map(plot_results$plot[1:9], 
+subplots <- plot_results$plot
+
+#' Manually some subplots to remove redundant labels, etc.
+subplots[1:9] <- map(subplots[1:9], 
                              ~ . + theme(axis.title.x = element_blank(),
                                          axis.text.x = element_blank() ))
 
-plot_results$plot[[10]] <- plot_results$plot[[10]] +
-  labs(x = expression(paste("PAR (", mmol~cm^-2~s^-1, ")", sep = "")))
+subplots[[10]] <- subplots[[10]] +
+  labs(x = expression(paste("DLI (", mol~m^-2~day^-1, ")", sep = "")) )
 
-plot_results$plot[[11]] <- plot_results$plot[[11]] +
+subplots[[11]] <- subplots[[11]] +
   labs(x = expression("Rel. Humidity (%)"))
 
-plot_results$plot[[12]] <- plot_results$plot[[12]] +
+subplots[[12]] <- subplots[[12]] +
   labs(x = expression("Temp. (°C)"))
 
-# Want to add y axis labels for season but this is not working.
-# So use title instead.
-plot_results$plot <- map(plot_results$plot, 
-                              ~ . + labs(title = "") )
+#' Add titles.
+subplots <- map(subplots, ~ . + labs(title = "") )
 
-plot_results$plot[[2]] <- plot_results$plot[[2]] +
+subplots[[2]] <- subplots[[2]] +
   labs(title = "Winter\n")
 
-plot_results$plot[[5]] <- plot_results$plot[[5]] +
+subplots[[5]] <- subplots[[5]] +
   labs(title = "Spring\n")
 
-plot_results$plot[[8]] <- plot_results$plot[[8]] +
+subplots[[8]] <- subplots[[8]] +
   labs(title = "Summer\n")
 
-plot_results$plot[[11]] <- plot_results$plot[[11]] +
+subplots[[11]] <- subplots[[11]] +
   labs(title = "Fall\n")
 
+#' Extract legend
 legend <- paired_microclimate %>%
   ggplot(aes(x = temp_mean, y = site, fill = site)) +
   geom_density_ridges() +
@@ -562,19 +640,18 @@ legend <- paired_microclimate %>%
 
 legend <- get_legend(legend)
 
-combined_plot <- 
-  plot_results$plot[[1]] + plot_results$plot[[2]] + plot_results$plot[[3]] + 
-  plot_results$plot[[4]] +plot_results$plot[[5]] + plot_results$plot[[6]] + 
-  plot_results$plot[[7]] + plot_results$plot[[8]] + plot_results$plot[[9]] + 
-  plot_results$plot[[10]] + plot_results$plot[[11]] + plot_results$plot[[12]] +
-  plot_spacer() + legend + plot_spacer() + plot_layout(ncol = 3, heights = c(1, 1, 1, 1, 0.2))
+#' Combine and write out.
+subplots[[1]] +  subplots[[2]] +  subplots[[3]] + 
+subplots[[4]] +  subplots[[5]] +  subplots[[6]] + 
+subplots[[7]] +  subplots[[8]] +  subplots[[9]] + 
+subplots[[10]] + subplots[[11]] + subplots[[12]] +
+plot_spacer() + legend + plot_spacer() + plot_layout(ncol = 3, heights = c(1, 1, 1, 1, 0.2))
 
 ggplot2::ggsave(
-  plot = combined_plot, 
   filename = "results/fig3_climate_diff.pdf", 
   height = 8, width = 7)
 
-# Fig 4: Relationship between morphology and mean monthly climate ----
+#' ## Fig 4: Growth vs. mean monthly climate
 #' 
 #' Run in a loop and plot each combination of climate vars as indep var
 #' and morphology as dep var.
@@ -586,15 +663,11 @@ okutama_monthly <-
   okutama_microclimate %>%
   filter(complete.cases(.)) %>% # no missing values, so don't need na.rm
   group_by(date) %>%
-  summarize_at(
-    c("par", "temp", "rh"),
-    funs(
-      mean = mean,
-      max = max,
-      min = min,
-      sd = sd,
-      total = sum
-    )) %>%
+  summarize(
+    temp_mean = mean(temp, na.rm = TRUE),
+    rh_min = min(rh, na.rm = TRUE),
+    par_total = sum(1800*par) / 1000000
+  ) %>%
   ungroup %>%
   mutate(
     month = month(date),
@@ -612,13 +685,13 @@ combined_monthly_morph <- left_join(combined_morph, okutama_monthly) %>%
 
 combined_monthly_morph
 
-#' ## Fit models
-
+#' #### Fit models
+#'
 #' Loop through variables and make a model for each combination.
 #' Note that since var_grid includes additional columns that aren't used
 #' by the model function (y_lab and x_lab), need to include ... in 
 #' the make_lm() function arguments.
-
+#'
 #' Make dataframe of arguments to feed to the lm function. Includes all
 #' combination of dependent (y) and independent (x) variables, and the
 #' axis names to use for plotting.
@@ -643,7 +716,7 @@ var_grid <-
 var_grid
 
 #' Make tibble of data sets for looping. "data" column includes tibbles with
-#'  x var, y var, month, and year for each set of variables.
+#' x var, y var, month, and year for each set of variables.
 model_data_sets <- pmap(
   var_grid, ~select(combined_monthly_morph, .x, .y, month, year) %>% drop_na)
 
@@ -668,8 +741,8 @@ model_results <-
 
 model_results
 
-#' ## Plotting
-
+#' #### Plotting
+#' 
 #' Loop through all combination of dep and indep variables and their models,
 #' and make plots for each.
 subplots <- 
@@ -678,7 +751,7 @@ subplots <-
        plot_data = combined_monthly_morph, 
        model_data = model_results)
 
-# Remove redundant subplot axis labels
+#' Remove redundant subplot axis labels
 for(i in 1:6) {
   subplots[[i]] <- subplots[[i]] + labs(x = "")
 }
@@ -687,51 +760,44 @@ for(i in c(2,3,5,6,8,9) ) {
   subplots[[i]] <- subplots[[i]] + labs(y = "")
 }
 
-# Set breaks to be same in 
-for(i in c(2,5,8) ) {
-  subplots[[i]] <- subplots[[i]] + scale_x_continuous(breaks = c(200, 400, 600))
-}
-
-# Add axis titles
+#' Add axis titles
 subplots[[1]] <- subplots[[1]] + labs(y = expression(paste("Gemmae len. (", mu, "m)", sep = "")))
 subplots[[7]] <- subplots[[7]] + labs(y = expression(paste("Total cov. (", cm^2, ")", sep = "")))
-subplots[[8]] <- subplots[[8]] + labs(x = expression(paste("PAR (", mmol~cm^-2~s^-1, ")", sep = "")))
+subplots[[8]] <- subplots[[8]] + labs(x = expression(paste("DLI (", mol~m^-2~day^-1, ")", sep = "")) )
 
-# Set amount of gap to close on left and top
+#' Set amount of gap to close on left and top
 left_close <- -15
 top_close <- -10
 
-# Close gaps on left only: 2,3
+#' Close gaps on left only: 2,3
 subplots[2:3] <- subplots[2:3] %>%
   map(~ . + theme(plot.margin = margin(0,0,0,left_close)) 
   )
 
-# Close gaps on left side and top: 5,6,8,9
+#' Close gaps on left side and top: 5,6,8,9
 subplots[c(5,6,8,9)] <- subplots[c(5,6,8,9)] %>%
   map(~ . + theme(plot.margin = margin(top_close,0,0,left_close)) 
   )
 
-# Close gaps on top only: 4,7
+#' Close gaps on top only: 4,7
 subplots[c(4,7)] <- subplots[c(4,7)] %>%
   map(~ . + theme(plot.margin = margin(top_close,0,0,0)) 
   )
 
-# Add legend for middle bottom plot
+#' Add legend for middle bottom plot, combine, and write out.
 subplots[[8]] <- subplots[[8]] + 
   theme(legend.position="bottom") + 
   labs(color = "Month")
 
-combined_plot <- 
-  subplots[[1]] + subplots[[2]] + subplots[[3]] + 
+subplots[[1]] + subplots[[2]] + subplots[[3]] + 
   subplots[[4]] + subplots[[5]] + subplots[[6]] + 
   subplots[[7]] + subplots[[8]] + subplots[[9]] + 
   plot_layout(ncol = 3)
 
-ggplot2::ggsave(
-  plot = combined_plot, 
+ggplot2::ggsave( 
   filename = "results/fig4_morph_climate.pdf", 
   height = 8, width = 7)
 
 #'
 # Render this script as a report
-# rmarkdown::render("code/morph_clim_analysis.R", output_file = glue::glue("morph_clim_{Sys.Date()}.html"), output_dir = "reports/", knit_root_dir = here::here(), clean = TRUE)
+# rmarkdown::render("code/morph_clim_analysis.R", output_file = glue::glue("morph_clim_{Sys.Date()}.html"), output_dir = "results/", knit_root_dir = here::here(), clean = TRUE)

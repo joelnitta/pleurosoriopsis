@@ -160,3 +160,20 @@ quick_plot_with_stats <- function (x_var, y_var, x_lab, y_lab, plot_data, model_
   plot
   
 }
+
+#' Shade years on a plot where the x-axis is a date
+#'
+#' @param plot ggplot2 plot object
+#' @param rect_data dataframe including year_start and year_end columns,
+#' where the rectangle should start and end
+#'
+#' @return ggplot2 object
+shade_years <- function (plot, rect_data) {
+plot +
+geom_rect(
+  data = rect_data, 
+  mapping = aes(xmin = year_start, xmax = year_end, ymin = -Inf, ymax = +Inf),
+  fill="grey", alpha=0.3, color = NA,
+  inherit.aes = FALSE
+)
+}
