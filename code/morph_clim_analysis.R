@@ -12,7 +12,6 @@ library(readxl)
 library(lubridate)
 library(cowplot)
 library(broom)
-# library(viridis)
 library(ggridges)
 library(patchwork)
 
@@ -329,19 +328,15 @@ ggsave(
 # Select microclimate variables of interest
 selected_vars <- c("rh_min", "par_total", "temp_mean")
 
-# daily_microclimate %>%
-#   select(selected_vars, date, site) %>%
-#   gather(var, value, -date, -site) %>% 
-#   ggplot(aes(x = date, y = value, color = site)) +
-#   geom_line(alpha = 0.5) +
-#   facet_wrap(~var, scales = "free")
-
+# Extract common start and end dates so x-axis are same across subplots
 start_date <- daily_microclimate %>% pull(date) %>% min
 end_date <- daily_microclimate %>% pull(date) %>% max
 all_days <- tibble( 
   date = seq(start_date, end_date, by = "day")
 )
 
+# Insert NAs into microclimate for each site so that missing days
+# don't get connected by lines.
 daily_microclimate_okutama <- filter(daily_microclimate, site == "okutama") %>%
   right_join(all_days)
 
@@ -351,99 +346,106 @@ daily_microclimate_takao <- filter(daily_microclimate, site == "uratakao") %>%
 daily_microclimate_with_na <- bind_rows(
   daily_microclimate_okutama, daily_microclimate_takao)
 
+# Make list of subplots
 subplots <- list()
 
 subplots[[1]] <- 
 daily_microclimate_okutama %>%
   ggplot(aes(x = date, y = rh_min)) +
   geom_line() +
-  scale_x_date(
-    date_labels = "%b %y",
-    date_breaks = "6 months",
-    limits = c(start_date, end_date)
-  ) +
   scale_y_continuous(limits = c(0, 100)) +
   labs(y = "Rel. Humidity (%)",
        x = "",
-       title = "Okutama")
+       title = "Okutama",
+       subtitle = "A")
 
 subplots[[2]] <- 
   daily_microclimate_takao %>%
   ggplot(aes(x = date, y = rh_min)) +
   geom_line() +
-  scale_x_date(
-    date_labels = "%b %y",
-    date_breaks = "6 months",
-    limits = c(start_date, end_date)
-  ) +
   scale_y_continuous(limits = c(0, 100)) +
   labs(y = "",
        x = "",
-       title = "Uratakao")
+       title = "Uratakao",
+       subtitle = "B")
 
 subplots[[3]] <- 
   daily_microclimate_okutama %>%
   ggplot(aes(x = date, y = temp_mean)) +
   geom_line() +
-  scale_x_date(
-    date_labels = "%b %y",
-    date_breaks = "6 months",
-    limits = c(start_date, end_date)
-  ) +
   labs(y = "Temp. (°C)",
-       x = "")
+       x = "",
+       subtitle = "C")
 
 subplots[[4]] <- 
   daily_microclimate_takao %>%
   ggplot(aes(x = date, y = temp_mean)) +
   geom_line() +
-  scale_x_date(
-    date_labels = "%b %y",
-    date_breaks = "6 months",
-    limits = c(start_date, end_date)
-  ) +
   labs(y = "",
-       x = "")
+       x = "",
+       subtitle = "D")
 
 subplots[[5]] <- 
   daily_microclimate_okutama %>%
   ggplot(aes(x = date, y = par_total)) +
   geom_line() +
-  scale_x_date(
-    date_labels = "%b %y",
-    date_breaks = "6 months",
-    limits = c(start_date, end_date)
-  )  +
   scale_y_continuous(limits = c(0, 2500)) +
   labs(y = expression(paste("PAR (", mmol~cm^-2~s^-1, ")", sep = "")),
-       x = "Date")
+       x = "\nDate",
+       subtitle = "E")
 
 subplots[[6]] <- 
   daily_microclimate_takao %>%
   ggplot(aes(x = date, y = par_total)) +
   geom_line() +
-  scale_x_date(
-    date_labels = "%b %y",
-    date_breaks = "6 months",
-    limits = c(start_date, end_date)
-  ) +
   scale_y_continuous(limits = c(0, 2500)) +
   labs(y = "",
-       x = "Date")
+       x = "\nDate",
+       subtitle = "F")
 
-combined_clim_plots <- plot_grid(
-  plotlist = subplots,
-  labels = c("A", "", "B", "", "C", ""),
-  align = "hv",
-  ncol = 2
-)
+# Apply common formatting
+subplots <- subplots %>%
+  map(~ . + 
+        theme(
+          axis.text.x = element_text(
+            angle = 30, 
+            hjust = 1, 
+            vjust = 0.5, 
+            margin=margin(-10,0,0,0)
+          )
+        ) +
+        scale_x_date(
+          date_labels = "%b %y",
+          date_breaks = "6 months",
+          limits = c(start_date, end_date)
+        )
+  )
+
+# Remove x-axis lables from upper plots
+subplots[1:4] <- subplots[1:4] %>%
+  map(~ . + theme(axis.text.x = element_blank()) 
+  )
+
+# Close gaps on top margins for lower plots
+subplots[c(3,5)] <- subplots[c(3,5)] %>%
+  map(~ . + theme(plot.margin = margin(-10,10,0,10)) 
+  )
+
+# Close gaps on left side for RHS plots
+subplots[c(2,4,6)] <- subplots[c(2,4,6)] %>%
+  map(~ . + theme(plot.margin = margin(-10,10,0,-40)) 
+  )
+
+# Combine plots and write out
+combined_plots <- subplots[[1]] + subplots[[2]] + subplots[[3]] + 
+  subplots[[4]] + subplots[[5]] + subplots[[6]] + 
+  plot_layout(ncol = 2)
 
 ggsave(
-  plot = combined_clim_plots,
+  plot = combined_plots,
   file = "results/fig2_clim.pdf",
   height = 7,
   width = 8)
-
 
 # Fig 3: Compare microclimate between sites ----
 
@@ -521,12 +523,13 @@ plot_results <-
   ) %>% 
   arrange(season, var)
 
-# Manually tweak some subplots to remove redundant labels, etc.
+# Manually some subplots to remove redundant labels, etc.
 plot_results$plot[1:9] <- map(plot_results$plot[1:9], 
-                             ~ . + theme(axis.title.x = element_blank()) )
+                             ~ . + theme(axis.title.x = element_blank(),
+                                         axis.text.x = element_blank() ))
 
 plot_results$plot[[10]] <- plot_results$plot[[10]] +
-  labs(x = expression("PAR (mmol per sq. cm)"))
+  labs(x = expression(paste("PAR (", mmol~cm^-2~s^-1, ")", sep = "")))
 
 plot_results$plot[[11]] <- plot_results$plot[[11]] +
   labs(x = expression("Rel. Humidity (%)"))
@@ -535,30 +538,36 @@ plot_results$plot[[12]] <- plot_results$plot[[12]] +
   labs(x = expression("Temp. (°C)"))
 
 # Want to add y axis labels for season but this is not working.
+# So use title instead.
 plot_results$plot <- map(plot_results$plot, 
                               ~ . + labs(title = "") )
 
-plot_results$plot[[2]] <- plot_results$plot[[1]] +
+plot_results$plot[[2]] <- plot_results$plot[[2]] +
   labs(title = "Winter\n")
 
-plot_results$plot[[5]] <- plot_results$plot[[4]] +
+plot_results$plot[[5]] <- plot_results$plot[[5]] +
   labs(title = "Spring\n")
 
-plot_results$plot[[8]] <- plot_results$plot[[7]] +
+plot_results$plot[[8]] <- plot_results$plot[[8]] +
   labs(title = "Summer\n")
 
-plot_results$plot[[11]] <- plot_results$plot[[10]] +
+plot_results$plot[[11]] <- plot_results$plot[[11]] +
   labs(title = "Fall\n")
-
-main_plot <- plot_grid(plotlist = plot_results$plot, ncol = 3, align = "hv")
 
 legend <- paired_microclimate %>%
   ggplot(aes(x = temp_mean, y = site, fill = site)) +
   geom_density_ridges() +
-  theme(legend.position = "bottom")
+  theme(legend.position = "bottom") +
+  scale_fill_discrete(name = "Site", labels = c("Okutama", "Uratakao"))
+
 legend <- get_legend(legend)
 
-combined_plot <- plot_grid(main_plot, legend, ncol = 1, rel_heights = c(1, .1))
+combined_plot <- 
+  plot_results$plot[[1]] + plot_results$plot[[2]] + plot_results$plot[[3]] + 
+  plot_results$plot[[4]] +plot_results$plot[[5]] + plot_results$plot[[6]] + 
+  plot_results$plot[[7]] + plot_results$plot[[8]] + plot_results$plot[[9]] + 
+  plot_results$plot[[10]] + plot_results$plot[[11]] + plot_results$plot[[12]] +
+  plot_spacer() + legend + plot_spacer() + plot_layout(ncol = 3, heights = c(1, 1, 1, 1, 0.2))
 
 ggplot2::ggsave(
   plot = combined_plot, 
@@ -669,18 +678,7 @@ subplots <-
        plot_data = combined_monthly_morph, 
        model_data = model_results)
 
-#' Extract a legend to add to the combined plot.
-legend <- quick_plot_with_stats(
-  "rh_min", "length_mean", 
-  "minimum rh", "length", 
-  combined_monthly_morph, model_results) + 
-  labs(color = "Month") +
-  theme(legend.position="bottom")
-
-legend <- get_legend(legend)
-
-#' Additional formatting for subplots: remove redundant subplot axis labels,
-#' fix greek characters in labels.
+# Remove redundant subplot axis labels
 for(i in 1:6) {
   subplots[[i]] <- subplots[[i]] + labs(x = "")
 }
@@ -689,25 +687,50 @@ for(i in c(2,3,5,6,8,9) ) {
   subplots[[i]] <- subplots[[i]] + labs(y = "")
 }
 
+# Set breaks to be same in 
 for(i in c(2,5,8) ) {
   subplots[[i]] <- subplots[[i]] + scale_x_continuous(breaks = c(200, 400, 600))
 }
 
-subplots[[1]] <- subplots[[1]] + labs(y = expression(paste("Gemmae\nlength (", mu, "m)", sep = "")))
-subplots[[7]] <- subplots[[7]] + labs(y = expression(paste("Total\ncover (", cm^2, ")", sep = "")))
+# Add axis titles
+subplots[[1]] <- subplots[[1]] + labs(y = expression(paste("Gemmae len. (", mu, "m)", sep = "")))
+subplots[[7]] <- subplots[[7]] + labs(y = expression(paste("Total cov. (", cm^2, ")", sep = "")))
 subplots[[8]] <- subplots[[8]] + labs(x = expression(paste("PAR (", mmol~cm^-2~s^-1, ")", sep = "")))
 
-#' Arrange plots are write out.
-main_plot <- plot_grid(plotlist = subplots, align = "hv")
+# Set amount of gap to close on left and top
+left_close <- -15
+top_close <- -10
 
-# Use NULL plots to center legend (need to have same number of columns).
-legend_plot <- plot_grid(NULL, legend, NULL, nrow = 1)
+# Close gaps on left only: 2,3
+subplots[2:3] <- subplots[2:3] %>%
+  map(~ . + theme(plot.margin = margin(0,0,0,left_close)) 
+  )
 
-okutama_model_plot <- plot_grid(main_plot, legend_plot, ncol = 1, rel_heights = c(1, .2))
+# Close gaps on left side and top: 5,6,8,9
+subplots[c(5,6,8,9)] <- subplots[c(5,6,8,9)] %>%
+  map(~ . + theme(plot.margin = margin(top_close,0,0,left_close)) 
+  )
 
-# Save plot
-ggsave(plot = okutama_model_plot,
-       filename = "results/fig4_morph_climate.pdf", width = 7, height = 9)
+# Close gaps on top only: 4,7
+subplots[c(4,7)] <- subplots[c(4,7)] %>%
+  map(~ . + theme(plot.margin = margin(top_close,0,0,0)) 
+  )
+
+# Add legend for middle bottom plot
+subplots[[8]] <- subplots[[8]] + 
+  theme(legend.position="bottom") + 
+  labs(color = "Month")
+
+combined_plot <- 
+  subplots[[1]] + subplots[[2]] + subplots[[3]] + 
+  subplots[[4]] + subplots[[5]] + subplots[[6]] + 
+  subplots[[7]] + subplots[[8]] + subplots[[9]] + 
+  plot_layout(ncol = 3)
+
+ggplot2::ggsave(
+  plot = combined_plot, 
+  filename = "results/fig4_morph_climate.pdf", 
+  height = 8, width = 7)
 
 #'
 # Render this script as a report

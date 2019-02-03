@@ -49,6 +49,7 @@ plot_ridges <- function (x_var, y_var, data, x_min = NULL, x_max = NULL) {
   
   plot <- ggplot(data, aes_string(x = x_var, y = y_var, fill = y_var)) +
     geom_density_ridges() +
+    coord_cartesian(clip = "off") + # to prevent lines from getting clipped near edge of plot
     theme(
       legend.position = "none",
       axis.text.y = element_blank(),
