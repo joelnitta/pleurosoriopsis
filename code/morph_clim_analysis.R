@@ -17,6 +17,7 @@ library(ggridges)
 library(patchwork)
 source("code/functions.R")
 
+# ----
 #' ## Load and clean data
 #' 
 #' ### Data sources
@@ -255,6 +256,7 @@ combined_morph <-
 
 combined_morph
 
+# ----
 #' ## Fig 3: Change in growth over time
 #'
 #' Set x-limits manually since the automatically set limits will vary
@@ -378,7 +380,8 @@ ggsave(
   height = 7,
   width = 8)
 
-#' ## Fig 2: Change in microclimate over time
+# ----
+#' ## Fig 4: Change in microclimate over time
 #'
 #' Select microclimate variables of interest
 selected_vars <- c("rh_min", "par_total", "temp_mean")
@@ -481,7 +484,6 @@ subplots[[6]] <-
        x = "\nDate",
        subtitle = "F")
 
-
 #' Apply common formatting
 subplots <- subplots %>%
   map(~ . + 
@@ -521,11 +523,12 @@ subplots[[1]] + subplots[[2]] + subplots[[3]] +
   plot_layout(ncol = 2)
 
 ggsave(
-  file = "results/fig2_clim.pdf",
+  file = "results/fig4_clim.pdf",
   height = 7,
   width = 8)
 
-#' ## Fig 3: Compare microclimate between sites
+# ----
+#' ## Fig 5: Compare microclimate between sites
 #'
 #' For comparing microclimate between sites, subset the data to days only including
 #' means from both sites.
@@ -649,10 +652,11 @@ subplots[[10]] + subplots[[11]] + subplots[[12]] +
 plot_spacer() + legend + plot_spacer() + plot_layout(ncol = 3, heights = c(1, 1, 1, 1, 0.2))
 
 ggplot2::ggsave(
-  filename = "results/fig3_climate_diff.pdf", 
+  filename = "results/fig5_climate_diff.pdf", 
   height = 8, width = 7)
 
-#' ## Fig 4: Growth vs. mean monthly climate
+# ----
+#' ## Fig 6: Growth vs. mean monthly climate
 #' 
 #' Run in a loop and plot each combination of climate vars as indep var
 #' and morphology as dep var.
@@ -820,7 +824,7 @@ subplots[[7]] + subplots[[8]] + subplots[[9]] +
 plot_layout(ncol = 3)
 
 ggplot2::ggsave(
-  filename = "results/fig4_morph_climate.pdf", 
+  filename = "results/fig6_morph_climate.pdf", 
   height = 8, width = 7)
 
 #'
