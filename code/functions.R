@@ -93,8 +93,8 @@ make_lm <- function(x_var, y_var, data, ...) {
 #'
 #' @param x_var Name of x variable
 #' @param y_var Name of y data
-#' @param x_lab Label for x variable
-#' @param y_lab Label for y variable
+#' @param x_error Name of variable to use for error bars on x-axis
+#' @param y_error Name of variable to use for error bars on y-axis
 #' @param plot_data Data frame for plotting including x_var and y_var
 #' @param model_data Data frame of results of linear model fit. Regression
 #' line will be added only for models with p value < 0.05. 
@@ -108,7 +108,7 @@ make_lm <- function(x_var, y_var, data, ...) {
 #' combined_monthly_morph, model_results,
 #' no_legend = FALSE)
 
-quick_plot_with_stats <- function (x_var, y_var, x_lab, y_lab, plot_data, model_data, no_legend = TRUE, cols) {
+quick_plot_with_stats <- function (x_var, y_var, x_error, y_error, plot_data, model_data, no_legend = TRUE, cols) {
   
   x_filter <- x_var
   y_filter <- y_var
@@ -125,12 +125,24 @@ quick_plot_with_stats <- function (x_var, y_var, x_lab, y_lab, plot_data, model_
   
   x_var <- rlang::parse_expr(x_var)
   y_var <- rlang::parse_expr(y_var)
+  x_error <- ifelse(is.na(x_error), 0, rlang::parse_expr(x_error)) 
+  y_error <- ifelse(is.na(y_error), 0, rlang::parse_expr(y_error)) 
   
   plot <- ggplot(plot_data, aes(x = !!x_var, y = !!y_var)) +
     # color by month, which is an ordered factor 1-12
-    geom_point(aes(color = month)) +
-    labs(x = x_lab,
-         y = y_lab) +
+    geom_errorbar(
+      aes(ymin = !!y_var - !!y_error, 
+          ymax = !!y_var + !!y_error), 
+      width = 0,
+      color = "grey",
+      alpha = 0.5) + 
+    geom_errorbarh(
+      aes(xmin = !!x_var - !!x_error,
+          xmax = !!x_var + !!x_error),
+      height = 0,
+      color = "grey",
+      alpha = 0.5) + 
+    geom_point(aes(color = month, shape = as.factor(year))) +
     # start at a cool color for jan (teal-blue)
     scale_colour_hue(h.start = 180)
   

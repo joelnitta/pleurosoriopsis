@@ -656,9 +656,9 @@ ggplot2::ggsave(
 #' Run in a loop and plot each combination of climate vars as indep var
 #' and morphology as dep var.
 #' 
-#' Calculate monthly means of the three selected variables (daily min RH, daily total PAR, daily
-#' mean temp)
-
+#' Calculate monthly mean and sd of the three selected microclimate variables 
+#' (daily min RH, daily total PAR, daily
+#' mean temp).
 okutama_monthly <-
   okutama_microclimate %>%
   filter(complete.cases(.)) %>% # no missing values, so don't need na.rm
@@ -676,12 +676,26 @@ okutama_monthly <-
   group_by(month_year) %>%
   summarize_at(
     selected_vars,
-    mean
+    list(
+      ~ mean(., na.rm = TRUE),
+      ~ sd(., na.rm = TRUE)
+    )
+  ) %>%
+  # For clarity, drop extra "mean" from variable names.
+  # Remember that we're dealing with monthly means though.
+  rename(
+    rh_min = rh_min_mean,
+    temp_mean = temp_mean_mean,
+    par_total = par_total_mean
   )
+
+year_microclimate_start <- okutama_microclimate %>% pull(date) %>% year %>% min(na.rm = TRUE) %>% as.numeric
+year_microclimate_end <- okutama_microclimate %>% pull(date) %>% year %>% max(na.rm = TRUE) %>% as.numeric
 
 combined_monthly_morph <- left_join(combined_morph, okutama_monthly) %>%
   ungroup %>% 
-  mutate(month = as.factor(month))
+  mutate(month = as.factor(month)) %>%
+  filter(between(year, year_microclimate_start, year_microclimate_end))
 
 combined_monthly_morph
 
@@ -695,25 +709,35 @@ combined_monthly_morph
 #' Make dataframe of arguments to feed to the lm function. Includes all
 #' combination of dependent (y) and independent (x) variables, and the
 #' axis names to use for plotting.
+#' 
+#' For cover, since the values for each plot is the number of filled squares, 
+#' use the total area of all them instead of taking the mean. This 
+#' makes more sense since each plot started with a different
+#' number of filled squares, so it is not clear how to compare them.
 var_grid <-
   list(
     x_var = selected_vars,
     y_var = c("length_mean", "count_mean", "total_cover")
   ) %>% cross_df() %>%
   mutate(
-    y_lab = case_when(
-      y_var == "length_mean" ~ "Gemmae length (μm)", 
-      y_var == "count_mean" ~ "Gemmae count", 
-      y_var == "total_cover" ~ "Total cover (sq. cm)" 
+    y_error = case_when(
+      y_var == "length_mean" ~ "length_sd", 
+      y_var == "count_mean" ~ "count_sd"
     ),
-    x_lab = case_when(
-      str_detect(x_var, "rh") ~ "Rel. Humidity (%)", 
-      str_detect(x_var, "par") ~ "PAR (mmol per sq. cm)", 
-      str_detect(x_var, "temp") ~ "Temp. (°C)" 
+    x_error = case_when(
+      x_var == selected_vars[[1]] ~ paste0(selected_vars[[1]], "_sd"),
+      x_var == selected_vars[[2]] ~ paste0(selected_vars[[2]], "_sd"),
+      x_var == selected_vars[[3]] ~ paste0(selected_vars[[3]], "_sd")
     )
+  ) %>%
+  mutate(y_var = factor(y_var, levels = c("total_cover", "length_mean", "count_mean")),
+         x_var = factor(x_var, levels = sort(unique(x_var)))
+         ) %>%
+  arrange(y_var, x_var) %>%
+  mutate(
+    x_var = as.character(x_var),
+    y_var = as.character(y_var)
   )
-
-var_grid
 
 #' Make tibble of data sets for looping. "data" column includes tibbles with
 #' x var, y var, month, and year for each set of variables.
@@ -751,19 +775,19 @@ subplots <-
        plot_data = combined_monthly_morph, 
        model_data = model_results)
 
-#' Remove redundant subplot axis labels
-for(i in 1:6) {
-  subplots[[i]] <- subplots[[i]] + labs(x = "")
-}
-
-for(i in c(2,3,5,6,8,9) ) {
-  subplots[[i]] <- subplots[[i]] + labs(y = "")
-}
-
 #' Add axis titles
-subplots[[1]] <- subplots[[1]] + labs(y = expression(paste("Gemmae len. (", mu, "m)", sep = "")))
-subplots[[7]] <- subplots[[7]] + labs(y = expression(paste("Total cov. (", cm^2, ")", sep = "")))
-subplots[[8]] <- subplots[[8]] + labs(x = expression(paste("DLI (", mol~m^-2~day^-1, ")", sep = "")) )
+#' 
+#' First, remove all default titles, then add formatted titles.
+subplots <- map(subplots, ~ . + labs(x = "", y = ""))
+subplots[[1]] <- subplots[[1]] + labs(y = expression("Total cover ("~cm^2~")"))
+subplots[[4]] <- subplots[[4]] + labs(y = expression(paste("Gemmae len. (", mu, "m)", sep = "")))
+subplots[[7]] <- subplots[[7]] + 
+  labs(
+    y = expression("Gemmae count"),
+    x = expression(paste("DLI (", mol~m^-2~day^-1, ")", sep = ""))
+    )
+subplots[[8]] <- subplots[[8]] + labs(x = expression("Rel. Humidity (%)"))
+subplots[[9]] <- subplots[[9]] + labs(x = expression("Temp. (°C)"))
 
 #' Set amount of gap to close on left and top
 left_close <- -15
@@ -787,14 +811,14 @@ subplots[c(4,7)] <- subplots[c(4,7)] %>%
 #' Add legend for middle bottom plot, combine, and write out.
 subplots[[8]] <- subplots[[8]] + 
   theme(legend.position="bottom") + 
-  labs(color = "Month")
+  labs(color = "Month", shape = "Year")
 
 subplots[[1]] + subplots[[2]] + subplots[[3]] + 
-  subplots[[4]] + subplots[[5]] + subplots[[6]] + 
-  subplots[[7]] + subplots[[8]] + subplots[[9]] + 
-  plot_layout(ncol = 3)
+subplots[[4]] + subplots[[5]] + subplots[[6]] + 
+subplots[[7]] + subplots[[8]] + subplots[[9]] + 
+plot_layout(ncol = 3)
 
-ggplot2::ggsave( 
+ggplot2::ggsave(
   filename = "results/fig4_morph_climate.pdf", 
   height = 8, width = 7)
 
