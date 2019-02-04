@@ -255,7 +255,7 @@ combined_morph <-
 
 combined_morph
 
-#' ## Fig 1: Change in growth over time
+#' ## Fig 3: Change in growth over time
 #'
 #' Set x-limits manually since the automatically set limits will vary
 #' when we subset the data.
@@ -299,28 +299,9 @@ subplots[["cover"]] <-
   labs(
     x = "",
     y = expression("Cover ("~cm^2~")"),
-    subtitle = "A"
+    subtitle = "a"
   ) +
   theme(legend.position = "none")
-
-subplots[["gemmae_length"]] <- 
-  combined_morph %>%
-  select(length_mean, length_sd, date) %>%
-  drop_na %>%
-  ggplot(aes(x = date, y = length_mean)) %>%
-  shade_years(shading_dates) +
-  geom_errorbar(
-    aes(ymin=length_mean-length_sd, 
-        ymax=length_mean+length_sd), 
-    width=.1,
-    color = "dark grey") +
-  geom_line() +
-  geom_point(color = "blue") +
-  labs(
-    x = "",
-    y = expression(paste("Gemmae len. (", mu, "m)")),
-    subtitle = "B"
-  )
 
 subplots[["gemmae_count"]] <- 
   combined_morph %>%
@@ -336,9 +317,28 @@ subplots[["gemmae_count"]] <-
   geom_line() +
   geom_point(color = "blue") +
   labs(
-    x = "\nDate",
+    x = "",
     y = expression("Gemmae count"),
-    subtitle = "C"
+    subtitle = "b"
+  )
+
+subplots[["gemmae_length"]] <- 
+  combined_morph %>%
+  select(length_mean, length_sd, date) %>%
+  drop_na %>%
+  ggplot(aes(x = date, y = length_mean)) %>%
+  shade_years(shading_dates) +
+  geom_errorbar(
+    aes(ymin=length_mean-length_sd, 
+        ymax=length_mean+length_sd), 
+    width=.1,
+    color = "dark grey") +
+  geom_line() +
+  geom_point(color = "blue") +
+  labs(
+    x = "\nDate",
+    y = expression(paste("Gemmae len. (", mu, "m)")),
+    subtitle = "c"
   )
 
 #' Apply common formatting to all subplots: x-axis labels rotated 30 degrees,
@@ -374,7 +374,7 @@ subplots[2:3] <- subplots[2:3] %>%
 subplots[[1]] + subplots[[2]] + subplots[[3]] + plot_layout(ncol = 1)
 
 ggsave(
-  file = "results/fig1_morph.pdf",
+  file = "results/fig3_morph.pdf",
   height = 7,
   width = 8)
 
