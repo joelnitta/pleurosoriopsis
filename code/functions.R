@@ -164,7 +164,8 @@ quick_plot_with_stats <- function (x_var, y_var, x_error, y_error, plot_data, mo
           filter(x_var == x_filter, y_var == y_filter) %>% 
           pull(fits) %>%
           first,
-        aes(y = `.fitted`)
+        aes(y = `.fitted`),
+        alpha = 0.8
       ) +
       annotate("text", Inf, Inf, label = eq, hjust = 1, vjust = 1, parse = TRUE)
   }
