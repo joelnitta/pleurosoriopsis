@@ -422,6 +422,28 @@ daily_microclimate_with_na <- bind_rows(
 subplots <- list()
 
 subplots[[1]] <- 
+  daily_microclimate_okutama %>%
+  ggplot(aes(x = date, y = par_total)) %>%
+  shade_years(shading_dates) +
+  geom_line() +
+  scale_y_continuous(limits = c(min_par, max_par)) +
+  labs(y = expression(paste("DLI (", mol~m^-2~day^-1, ")", sep = "") ),
+       x = "",
+       title = "Okutama",
+       subtitle = "A")
+
+subplots[[2]] <- 
+  daily_microclimate_takao %>%
+  ggplot(aes(x = date, y = par_total)) %>%
+  shade_years(shading_dates) +
+  geom_line() +
+  scale_y_continuous(limits = c(min_par, max_par)) +
+  labs(y = "",
+       x = "",
+       title = "Uratakao",
+       subtitle = "B")
+
+subplots[[3]] <- 
 daily_microclimate_okutama %>%
   ggplot(aes(x = date, y = rh_min)) %>%
   shade_years(shading_dates) +
@@ -429,10 +451,9 @@ daily_microclimate_okutama %>%
   scale_y_continuous(limits = c(0, 100)) +
   labs(y = "Rel. Humidity (%)",
        x = "",
-       title = "Okutama",
-       subtitle = "A")
+       subtitle = "C")
 
-subplots[[2]] <- 
+subplots[[4]] <- 
   daily_microclimate_takao %>%
   ggplot(aes(x = date, y = rh_min)) %>%
   shade_years(shading_dates) +
@@ -440,46 +461,26 @@ subplots[[2]] <-
   scale_y_continuous(limits = c(0, 100)) +
   labs(y = "",
        x = "",
-       title = "Uratakao",
-       subtitle = "B")
+       subtitle = "D")
 
-subplots[[3]] <- 
+subplots[[5]] <- 
   daily_microclimate_okutama %>%
   ggplot(aes(x = date, y = temp_mean)) %>%
   shade_years(shading_dates) +
   geom_line() +
   labs(y = "Temp. (°C)",
-       x = "",
-       subtitle = "C")
-
-subplots[[4]] <- 
-  daily_microclimate_takao %>%
-  ggplot(aes(x = date, y = temp_mean)) %>%
-  shade_years(shading_dates) +
-  geom_line() +
-  labs(y = "",
-       x = "",
-       subtitle = "D")
-
-subplots[[5]] <- 
-  daily_microclimate_okutama %>%
-  ggplot(aes(x = date, y = par_total)) %>%
-  shade_years(shading_dates) +
-  geom_line() +
-  scale_y_continuous(limits = c(min_par, max_par)) +
-  labs(y = expression(paste("DLI (", mol~m^-2~day^-1, ")", sep = "") ),
        x = "\nDate",
        subtitle = "E")
 
 subplots[[6]] <- 
   daily_microclimate_takao %>%
-  ggplot(aes(x = date, y = par_total)) %>%
+  ggplot(aes(x = date, y = temp_mean)) %>%
   shade_years(shading_dates) +
   geom_line() +
-  scale_y_continuous(limits = c(min_par, max_par)) +
   labs(y = "",
        x = "\nDate",
        subtitle = "F")
+
 
 #' Apply common formatting
 subplots <- subplots %>%
