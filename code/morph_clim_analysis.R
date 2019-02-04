@@ -735,7 +735,7 @@ var_grid <-
       x_var == selected_vars[[3]] ~ paste0(selected_vars[[3]], "_sd")
     )
   ) %>%
-  mutate(y_var = factor(y_var, levels = c("total_cover", "length_mean", "count_mean")),
+  mutate(y_var = factor(y_var, levels = c("total_cover", "count_mean", "length_mean")),
          x_var = factor(x_var, levels = sort(unique(x_var)))
          ) %>%
   arrange(y_var, x_var) %>%
@@ -785,10 +785,10 @@ subplots <-
 #' First, remove all default titles, then add formatted titles.
 subplots <- map(subplots, ~ . + labs(x = "", y = ""))
 subplots[[1]] <- subplots[[1]] + labs(y = expression("Total cover ("~cm^2~")"))
-subplots[[4]] <- subplots[[4]] + labs(y = expression(paste("Gemmae len. (", mu, "m)", sep = "")))
+subplots[[4]] <- subplots[[4]] + labs(y = "Gemmae count")
 subplots[[7]] <- subplots[[7]] + 
   labs(
-    y = expression("Gemmae count"),
+    y = expression(paste("Gemmae len. (", mu, "m)", sep = "")),
     x = expression(paste("DLI (", mol~m^-2~day^-1, ")", sep = ""))
     )
 subplots[[8]] <- subplots[[8]] + labs(x = expression("Rel. Humidity (%)"))
