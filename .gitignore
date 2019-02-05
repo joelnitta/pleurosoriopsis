@@ -7,3 +7,7 @@ reports
 results
 temp
 ms
+.DS_Store
+.bash_history
+.gitconfig
+.rstudio
