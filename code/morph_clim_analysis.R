@@ -338,7 +338,7 @@ subplots[["gemmae_length"]] <-
   geom_line() +
   geom_point(color = "blue") +
   labs(
-    x = "\nDate",
+    x = "",
     y = expression(paste("Gemmae len. (", mu, "m)")),
     subtitle = "c"
   )
@@ -358,7 +358,7 @@ subplots <- subplots %>%
           plot.margin = margin(0,10,0,10)
         ) +
         scale_x_date(
-          date_labels = "%b %y",
+          date_labels = "%b %Y",
           date_breaks = "6 months",
           limits = c(start_date, end_date)
         )
@@ -433,7 +433,7 @@ subplots[[1]] <-
   labs(y = expression(paste("DLI (", mol~m^-2~day^-1, ")", sep = "") ),
        x = "",
        title = "Okutama",
-       subtitle = "A")
+       subtitle = "a")
 
 subplots[[2]] <- 
   daily_microclimate_takao %>%
@@ -444,7 +444,7 @@ subplots[[2]] <-
   labs(y = "",
        x = "",
        title = "Uratakao",
-       subtitle = "B")
+       subtitle = "b")
 
 subplots[[3]] <- 
 daily_microclimate_okutama %>%
@@ -452,9 +452,9 @@ daily_microclimate_okutama %>%
   shade_years(shading_dates) +
   geom_line() +
   scale_y_continuous(limits = c(0, 100)) +
-  labs(y = "Rel. Humidity (%)",
+  labs(y = "Min. Rel. Humidity (%)",
        x = "",
-       subtitle = "C")
+       subtitle = "c")
 
 subplots[[4]] <- 
   daily_microclimate_takao %>%
@@ -464,16 +464,16 @@ subplots[[4]] <-
   scale_y_continuous(limits = c(0, 100)) +
   labs(y = "",
        x = "",
-       subtitle = "D")
+       subtitle = "d")
 
 subplots[[5]] <- 
   daily_microclimate_okutama %>%
   ggplot(aes(x = date, y = temp_mean)) %>%
   shade_years(shading_dates) +
   geom_line() +
-  labs(y = "Temp. (°C)",
-       x = "\nDate",
-       subtitle = "E")
+  labs(y = "Mean Temp. (°C)",
+       x = "",
+       subtitle = "e")
 
 subplots[[6]] <- 
   daily_microclimate_takao %>%
@@ -481,8 +481,8 @@ subplots[[6]] <-
   shade_years(shading_dates) +
   geom_line() +
   labs(y = "",
-       x = "\nDate",
-       subtitle = "F")
+       x = "",
+       subtitle = "f")
 
 #' Apply common formatting
 subplots <- subplots %>%
@@ -496,7 +496,7 @@ subplots <- subplots %>%
           )
         ) +
         scale_x_date(
-          date_labels = "%b %y",
+          date_labels = "%b %Y",
           date_breaks = "6 months",
           limits = c(start_date, end_date)
         )
@@ -615,10 +615,10 @@ subplots[[10]] <- subplots[[10]] +
   labs(x = expression(paste("DLI (", mol~m^-2~day^-1, ")", sep = "")) )
 
 subplots[[11]] <- subplots[[11]] +
-  labs(x = expression("Rel. Humidity (%)"))
+  labs(x = expression("Min. Rel. Humidity (%)"))
 
 subplots[[12]] <- subplots[[12]] +
-  labs(x = expression("Temp. (°C)"))
+  labs(x = expression("Mean Temp. (°C)"))
 
 #' Add titles.
 subplots <- map(subplots, ~ . + labs(title = "") )
@@ -791,8 +791,8 @@ subplots[[7]] <- subplots[[7]] +
     y = expression(paste("Gemmae len. (", mu, "m)", sep = "")),
     x = expression(paste("DLI (", mol~m^-2~day^-1, ")", sep = ""))
     )
-subplots[[8]] <- subplots[[8]] + labs(x = expression("Rel. Humidity (%)"))
-subplots[[9]] <- subplots[[9]] + labs(x = expression("Temp. (°C)"))
+subplots[[8]] <- subplots[[8]] + labs(x = expression("Min. Rel. Humidity (%)"))
+subplots[[9]] <- subplots[[9]] + labs(x = expression("Mean Temp. (°C)"))
 
 #' Set amount of gap to close on left and top
 left_close <- -15
