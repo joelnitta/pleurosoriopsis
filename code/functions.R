@@ -1,3 +1,26 @@
+#' Clean times formatted with Japanese AM/PM characters.
+#' 
+#' @param data Tibble with column named 'date_time' which is
+#' a character formatted like "09/22/12 12:07:03.0" for AM times or 
+#' "09/24/13 03:52:44 午後" for PM times.
+#' 
+#' @return Tibble. "date_time" column is now a dttm, and a "date" column
+#' also added.
+clean_japanese_ampm <- function (data) {
+  mutate(data,
+         # Add 12 hours if time is PM ("午後")
+         pm = str_detect(date_time, "午後"),
+         date_time = mdy_hms(date_time, tz=Sys.timezone()),
+         date_time = case_when (
+           # Time units are in seconds when adding
+           pm == TRUE ~ date_time + 60*60*12,
+           TRUE ~ date_time
+         ),
+         date = date(date_time)
+  ) %>%
+    select(-pm)
+}
+
 #' Run a paired t-test comparing a microclimatic variable between
 #' two sites
 #'
