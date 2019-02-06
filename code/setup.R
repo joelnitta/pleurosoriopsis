@@ -1,3 +1,7 @@
+#' # setup.R
+#' This script executes code that needs to be run before running any
+#' other analyses.
+
 #' Load packages.
 library(conflicted)
 library(tidyverse)
@@ -22,3 +26,6 @@ conflict_prefer("Position", "ggplot2")
 conflict_prefer("scale_discrete_manual", "ggplot2")
 conflict_prefer("setdiff", "dplyr")
 conflict_prefer("union", "dplyr")
+
+#' Select microclimate variables of interest for analysis.
+selected_vars <- c("rh_min", "par_total", "temp_mean")
