@@ -29,3 +29,7 @@ conflict_prefer("union", "dplyr")
 
 #' Select microclimate variables of interest for analysis.
 selected_vars <- c("rh_min", "par_total", "temp_mean")
+
+#' Set order of microclimate variables for printing.
+order_vars <- c("par_total", "rh_min", "temp_mean")
+

@@ -122,9 +122,6 @@ t_test_results
 
 #' Format Table 1 and output to RTF using `gt` package.
 
-# order of variables for printing
-order_vars <- c("par_total", "rh_min", "temp_mean")
-
 table_1 <-
   t_test_results %>%
   arrange(factor(var, levels = order_vars)) %>%
