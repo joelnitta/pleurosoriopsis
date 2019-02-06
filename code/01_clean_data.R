@@ -37,19 +37,19 @@ source("code/setup.R")
 #' For Okutama, the raw data are in different columns
 #' in the `xlsx` file, so read in each separately.
 okutama_temp_raw <- read_excel(
-  "data_raw/データロガー素データ.xlsm",
+  "data_raw/datalogger_raw.xlsm",
   sheet = 1,
   range = "A2:B28683",
   col_names = c("date_time", "temp"))
 
 okutama_rh_raw <- read_excel(
-  "data_raw/データロガー素データ.xlsm",
+  "data_raw/datalogger_raw.xlsm",
   sheet = 1,
   range = "C2:D28683",
   col_names = c("date_time", "rh"))
 
 okutama_par_raw <- read_excel(
-  "data_raw/データロガー素データ.xlsm",
+  "data_raw/datalogger_raw.xlsm",
   sheet = 1,
   range = "F2:G28204",
   col_names = c("date_time", "par"))
@@ -84,7 +84,7 @@ write_csv(okutama_microclimate, "data/okutama_microclimate.csv")
 #' Uratakao data have a single column for time of the three microclimate
 #' variables, so these can be read in all at once.
 takao_microclimate_raw <- read_excel(
-  "data_raw/データロガー素データ.xlsm",
+  "data_raw/datalogger_raw.xlsm",
   sheet = 2,
   range = "D2:G21459",
   col_names = c("date_time", "par", "temp", "rh"))
@@ -162,7 +162,7 @@ write_csv(daily_microclimate, "data/daily_microclimate.csv")
 #' Clean up and also calculate total cover, which will be used later.
 
 cover_raw <- read_excel(
-  "data_raw/カラクサシダ図表.xlsx",
+  "data_raw/pleurosoriopsis_data_figs.xlsx",
   sheet = 1)
 
 cover <- cover_raw %>%
@@ -184,14 +184,14 @@ cover
 #' already cacluated.
 
 gemmae_count_raw <- read_xlsx(
-  "data_raw/カラクサシダ図表.xlsx",
+  "data_raw/pleurosoriopsis_data_figs.xlsx",
   sheet = 3,
   range = "A2:C62")
 
 gemmae_count_raw
 
 gemmae_length_raw <- read_xlsx(
-  "data_raw/カラクサシダ図表.xlsx",
+  "data_raw/pleurosoriopsis_data_figs.xlsx",
   sheet = 3,
   range = "E2:G62",
   col_types = c("text", "numeric", "numeric"))
