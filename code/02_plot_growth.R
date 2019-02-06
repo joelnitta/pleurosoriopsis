@@ -51,6 +51,7 @@ subplots <- list()
 subplots[["cover"]] <- 
   combined_morph %>%
   select(starts_with("q"), date) %>%
+  filter(complete.cases(.)) %>%
   gather(plot, area, -date) %>%
   ggplot(aes(x = date, y = area, color = plot)) %>%
   shade_years(shading_dates) +
@@ -148,6 +149,14 @@ subplots[[1]] + subplots[[2]] + subplots[[3]] +
   plot_layout(ncol = 1, heights = c(1,1,1,0.2))
 
 ggsave(
-  file = "results/fig3_morph.pdf",
+  file = "results/fig3_growth.pdf",
   height = 7,
   width = 8)
+
+#' Render this script as a report (keep the below code commented-out)
+# rmarkdown::render(
+#   "code/02_plot_growth.R",
+#   output_file = glue::glue("02_plot_growth_{Sys.Date()}.html"),
+#   output_dir = "results/",
+#   knit_root_dir = here::here(),
+#   clean = TRUE)
