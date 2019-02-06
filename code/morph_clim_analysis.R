@@ -170,10 +170,10 @@ cover_raw <- read_excel(
   sheet = 1)
 
 cover <- cover_raw %>%
-  rename(date = "X__1", plot_1 = `No. 1`, plot_2 = `No. 2`, plot_3 = `No. 3`, plot_4 = `No. 4`) %>%
+  rename(date = "X__1", q_1 = `No. 1`, q_2 = `No. 2`, q_3 = `No. 3`, q_4 = `No. 4`) %>%
   mutate(date = lubridate::date(date)) %>%
   rowwise %>%
-  mutate(total_cover = sum(plot_1, plot_2, plot_3, plot_4)) %>%
+  mutate(total_cover = sum(q_1, q_2, q_3, q_4)) %>%
   mutate(
     month = month(date),
     year = year(date),
@@ -291,9 +291,25 @@ shade_years
 #' formatting.
 subplots <- list()
 
+legend <- 
+  cover %>%
+  select(starts_with("q"), date) %>%
+  gather(plot, area, -date) %>%
+  ggplot(aes(x = date, y = area, color = plot)) %>%
+  shade_years(shading_dates) +
+  geom_line() +
+  labs(
+    x = "",
+    y = expression("Cover ("~cm^2~")"),
+    subtitle = "a"
+  ) +
+  theme(legend.position = "bottom")
+
+legend <- get_legend(legend)
+
 subplots[["cover"]] <- 
   cover %>%
-  select(starts_with("plot"), date) %>%
+  select(starts_with("q"), date) %>%
   gather(plot, area, -date) %>%
   ggplot(aes(x = date, y = area, color = plot)) %>%
   shade_years(shading_dates) +
