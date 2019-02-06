@@ -28,13 +28,15 @@ clean_japanese_ampm <- function (data) {
 #' @param paired_data Dataframe including measured variable at two sites
 #' @param site1 String; Name of first site
 #' @param site2 String; Name of second site
+#' @param p_only Logical; should the p-value only be returned? If false, the
+#' complete test results are returned as a dataframe.
 #'
 #' @return Numeric; p-value for null hypothesis that the difference between
 #' the two means is zero.
 #'
 #' @examples
 #' run_t_test("rh_min", paired_microclimate, "okutama", "uratakao")
-run_t_test <- function (var, paired_data, site1 = "okutama", site2 = "uratakao") {
+run_t_test <- function (var, paired_data, site1 = "okutama", site2 = "uratakao", p_only = TRUE, ...) {
   
   var <- rlang::sym(var)
   
@@ -44,10 +46,18 @@ run_t_test <- function (var, paired_data, site1 = "okutama", site2 = "uratakao")
     spread(site, !!var) %>%
     drop_na
   
+  result <- 
   t.test(test_data[[site1]], test_data[[site2]], mu = 0, paired = TRUE) %>%
-    tidy() %>%
+    tidy()
+  
+  if (isTRUE(p_only)) {
+    result <-
+    result %>%
     mutate(p.value = round(p.value, 3)) %>%
     pull(p.value)
+  }
+  
+  return(result)
   
 }
 
