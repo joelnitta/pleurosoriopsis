@@ -16,6 +16,7 @@ library(broom)
 library(ggridges)
 library(patchwork)
 library(gt)
+library(viridis)
 
 source("code/functions.R")
 
@@ -290,24 +291,8 @@ shading_dates <-
 shade_years
 
 #' Make list of subplots. Build each one at a time, then add common
-#' formatting.
+#' formatting. Use viridis for colorblind-friendly colors.
 subplots <- list()
-
-legend <- 
-  cover %>%
-  select(starts_with("q"), date) %>%
-  gather(plot, area, -date) %>%
-  ggplot(aes(x = date, y = area, color = plot)) %>%
-  shade_years(shading_dates) +
-  geom_line() +
-  labs(
-    x = "",
-    y = expression("Cover ("~cm^2~")"),
-    subtitle = "a"
-  ) +
-  theme(legend.position = "bottom")
-
-legend <- get_legend(legend)
 
 subplots[["cover"]] <- 
   cover %>%
@@ -321,6 +306,19 @@ subplots[["cover"]] <-
     y = expression("Cover ("~cm^2~")"),
     subtitle = "a"
   ) +
+  scale_color_viridis(discrete=TRUE,
+                      begin = 0.025,
+                      end = 0.97,
+                      name="Quadrat",
+                      breaks=c("q_1", "q_2", "q_3", "q_4"),
+                      labels=c("1", "2", "3", "4")) +
+  theme(legend.position = "bottom")
+
+# extract legend from first plot (to put at bottom), then drop
+legend <- get_legend(subplots[["cover"]])
+
+subplots[["cover"]] <- 
+  subplots[["cover"]] +
   theme(legend.position = "none")
 
 subplots[["gemmae_count"]] <- 
@@ -391,7 +389,9 @@ subplots[2:3] <- subplots[2:3] %>%
   )
 
 #' Combine subplots and write out
-subplots[[1]] + subplots[[2]] + subplots[[3]] + plot_layout(ncol = 1)
+subplots[[1]] + subplots[[2]] + subplots[[3]] + 
+legend +
+plot_layout(ncol = 1, heights = c(1,1,1,0.2))
 
 ggsave(
   file = "results/fig3_morph.pdf",
@@ -776,6 +776,11 @@ x_ranges <- tibble(var = selected_vars) %>%
     max = map_dbl(var, ~ pull(paired_microclimate, .) %>% max )
   )
 
+# light blue / light green colorblind-friendly from colorbrewer
+paired_colors <- c("#a6cee3", "#b2df8a")
+# OR dark blue / dark green colorblind-friendly from colorbrewer
+# paired_colors <- c("#1f78b4", "#33a02c")
+
 subplots <- list()
 
 subplots[["par_total"]] <-
@@ -797,6 +802,8 @@ subplots[["par_total"]] <-
   scale_y_continuous(expand = expand_scale(mult = c(0, .1))) +
   labs(y = expression(paste("DLI (", mol~m^-2~day^-1, ")", sep = ""))) +
   labs(x = "") +
+  scale_fill_manual(values = paired_colors,
+                    breaks=c("okutama", "uratakao")) +
   theme(
     legend.position = "none",
     axis.text.x = element_blank())
@@ -820,9 +827,12 @@ subplots[["rh_min"]] <-
   scale_y_continuous(expand = expand_scale(mult = c(0, .1))) +
   labs(y = expression("Min. Rel. Humidity (%)")) +
   labs(x = "") +
+  scale_fill_manual(values = paired_colors,
+                    breaks=c("okutama", "uratakao")) +
   theme(
     legend.position = "none",
     axis.text.x = element_blank())
+  
 
 subplots[["temp"]] <-
   ggplot(paired_means, aes(x = season, y = temp_mean_mean, fill = site)) +
@@ -844,11 +854,14 @@ subplots[["temp"]] <-
   labs(y = expression("Mean Temp. (°C)")) +
   labs(x = "") +
   theme(legend.position = "bottom") +
-  scale_fill_discrete(name = "Site", labels = c("Okutama", "Uratakao")) +
   scale_x_discrete(labels = c("winter" = "Winter",
                      "spring" = "Spring",
                      "fall" = "Fall",
-                     "summer" = "Summer"))
+                     "summer" = "Summer")) +
+  scale_fill_manual(values = paired_colors,
+                     name="Site",
+                     breaks=c("okutama", "uratakao"),
+                     labels=c("Okutama", "Uratakao"))
 
 subplots[[1]] +  subplots[[2]] +  subplots[[3]] + plot_layout(ncol = 1)
 
@@ -897,6 +910,15 @@ subplots[1:9] <- map(subplots[1:9],
                              ~ . + theme(axis.title.x = element_blank(),
                                          axis.text.x = element_blank() ))
 
+
+subplots[1:12] <- map(subplots[1:12], 
+                     ~ . + scale_fill_manual(
+                       values = paired_colors,
+                       name="Site",
+                       breaks=c("okutama", "uratakao"),
+                       labels=c("Okutama", "Uratakao"))
+)
+
 subplots[[10]] <- subplots[[10]] +
   labs(x = expression(paste("DLI (", mol~m^-2~day^-1, ")", sep = "")) )
 
@@ -926,7 +948,11 @@ legend <- paired_microclimate %>%
   ggplot(aes(x = temp_mean, y = site, fill = site)) +
   geom_density_ridges() +
   theme(legend.position = "bottom") +
-  scale_fill_discrete(name = "Site", labels = c("Okutama", "Uratakao"))
+  scale_fill_manual(
+    values = paired_colors,
+    name="Site",
+    breaks=c("okutama", "uratakao"),
+    labels=c("Okutama", "Uratakao"))
 
 legend <- get_legend(legend)
 
@@ -1120,7 +1146,6 @@ table_2
 as_rtf(table_2) %>%
   write_lines("results/table2.rtf")
 
-
 #' #### Plotting
 #' 
 #' Loop through all combination of dep and indep variables and their models,
@@ -1178,6 +1203,6 @@ ggplot2::ggsave(
   filename = "results/fig6_morph_climate.pdf", 
   height = 8, width = 7)
 
-#'
+# ----
 # Render this script as a report
 # rmarkdown::render("code/morph_clim_analysis.R", output_file = glue::glue("morph_clim_{Sys.Date()}.html"), output_dir = "results/", knit_root_dir = here::here(), clean = TRUE)
