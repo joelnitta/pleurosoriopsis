@@ -259,7 +259,7 @@ combined_morph <-
 combined_morph
 
 # ----
-#' ## Fig 3 and Table 1: Change in growth over time
+#' ## Fig 3: Change in growth over time
 #'
 #' Set x-limits manually since the automatically set limits will vary
 #' when we subset the data.
@@ -546,7 +546,7 @@ ggsave(
   width = 8)
 
 # ----
-#' ## Fig 5: Compare microclimate between sites
+#' ## Fig 5 and Table 1: Compare microclimate between sites
 #'
 #' Subset the data to days only including means from both sites so they can
 #' be compared.
@@ -683,7 +683,8 @@ table_1 <-
   ) %>%
   cols_label(
     var = "",
-    statistic = "tval",
+    statistic = "t",
+    pval = "p",
     parameter = "df",
     conf.low = "Lower",
     conf.high = "Upper",
@@ -1054,6 +1055,71 @@ model_results <-
   )
 
 model_results
+
+#' Table 2: model results
+cols <- colnames(model_results)
+cols_numeric <- cols[map_lgl(model_results, is.numeric)]
+no_fmt_num <- c("p.value", "df", "df.residual", "deviance")
+cols_numeric <- cols_numeric[!cols_numeric %in% no_fmt_num]
+
+table_2 <- 
+  model_results %>%
+  select(-fits) %>%
+  arrange(factor(x_var, levels = order_vars)) %>%
+  mutate(
+    x_var = case_when(
+      x_var == "rh_min" ~    "Min. Rel. Humidity",
+      x_var == "par_total" ~ "DLI",
+      x_var == "temp_mean" ~ "Mean Temp."
+    ),
+    y_var = case_when(
+      y_var == "total_cover" ~ "Total cover",
+      y_var == "count_mean" ~ "Gemmae count",
+      y_var == "length_mean" ~ "Gemmae length"
+    )
+  ) %>%
+  group_by(x_var) %>%
+  gt() %>%
+  cols_move_to_start(vars(y_var)) %>%
+  cols_move(
+    columns = vars(df.residual),
+    after = vars(df)
+  ) %>%
+  fmt_number(
+    columns = vars(cols_numeric)
+  ) %>%
+  fmt_number(
+    columns = vars(p.value),
+    decimals = 3
+  ) %>%
+  fmt_number(
+    columns = vars(deviance),
+    decimals = 0
+  ) %>%
+  cols_label(
+    y_var = "",
+    r.squared = "r-squared",
+    adj.r.squared = "adj. r-squared",
+    statistic = "t",
+    p.value = "p",
+    df.residual = "df residual"
+    ) %>%
+  tab_style(
+    style = cells_styles(
+      bkgd_color = "white"),
+    locations = cells_data(
+      columns = everything()
+    )
+  ) %>%
+  tab_header(
+    title = "Table 2"
+  )
+
+table_2
+
+as_rtf(table_2) %>%
+  write_lines("results/table2.rtf")
+
 
 #' #### Plotting
 #' 
