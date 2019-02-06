@@ -777,9 +777,9 @@ x_ranges <- tibble(var = selected_vars) %>%
   )
 
 # light blue / light green colorblind-friendly from colorbrewer
-paired_colors <- c("#a6cee3", "#b2df8a")
+# paired_colors <- c("#a6cee3", "#b2df8a")
 # OR dark blue / dark green colorblind-friendly from colorbrewer
-# paired_colors <- c("#1f78b4", "#33a02c")
+paired_colors <- c("#1f78b4", "#33a02c")
 
 subplots <- list()
 

@@ -175,7 +175,7 @@ quick_plot_with_stats <- function (x_var, y_var, x_error, y_error, plot_data, mo
       height = 0,
       color = "grey",
       alpha = 0.5) + 
-    geom_point(aes(color = month, shape = as.factor(year))) +
+    geom_point(aes(color = month, shape = as.factor(year)), size = 2.25) +
     # start at a cool color for jan (teal-blue)
     scale_colour_hue(h.start = 180)
   
