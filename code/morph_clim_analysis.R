@@ -798,7 +798,8 @@ subplots[["par_total"]] <-
     y = pval_plot_data$par_total * 1.05,
     label = pval_plot_data$par_total_pval
   ) +
-  geom_bar(stat = "identity", position=position_dodge()) +
+  geom_bar(stat = "identity", position=position_dodge(), 
+           color = "black") +
   scale_y_continuous(expand = expand_scale(mult = c(0, .1))) +
   labs(y = expression(paste("DLI (", mol~m^-2~day^-1, ")", sep = ""))) +
   labs(x = "") +
@@ -823,7 +824,8 @@ subplots[["rh_min"]] <-
     y = pval_plot_data$rh_min * 1.05,
     label = pval_plot_data$rh_min_pval
   ) +
-  geom_bar(stat = "identity", position=position_dodge()) +
+  geom_bar(stat = "identity", position=position_dodge(), 
+           color = "black") +
   scale_y_continuous(expand = expand_scale(mult = c(0, .1))) +
   labs(y = expression("Min. Rel. Humidity (%)")) +
   labs(x = "") +
@@ -849,7 +851,8 @@ subplots[["temp"]] <-
     y = pval_plot_data$temp_mean * 1.05,
     label = pval_plot_data$temp_mean_pval
   ) +
-  geom_bar(stat = "identity", position=position_dodge()) +
+  geom_bar(stat = "identity", position=position_dodge(), 
+           color = "black") +
   scale_y_continuous(expand = expand_scale(mult = c(0, .1))) +
   labs(y = expression("Mean Temp. (°C)")) +
   labs(x = "") +
