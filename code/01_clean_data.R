@@ -244,7 +244,7 @@ gemmae_data
 #' each month for joining with monthly microclimate variables later.
 combined_morph <- 
   full_join(
-    select(cover, total_cover, month_year),
+    cover,
     gemmae_data
   ) %>%
   mutate(day = 01,
