@@ -2,12 +2,12 @@
 .Rhistory
 .RData
 .Ruserdata
-data_raw
-reports
-results
-temp
-ms
 .DS_Store
 .bash_history
 .gitconfig
 .rstudio
+data
+reports
+results
+temp
+ms
