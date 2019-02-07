@@ -238,7 +238,65 @@ gemmae_data <- full_join(gemmae_count, gemmae_length) %>%
 
 gemmae_data
 
-#' Combine all growth (morphological) varibles into a single tibble.
+#' Gametophyte size data
+#'
+#' Size data include length and width of invididuals, split into different sheets based 
+#' on presence or absence of gametangia.
+#'
+#' Read in and clean size data for individuals without gametangia
+size_asexual_raw <- read_excel(
+  "data_raw/okutama_gameto_size.xlsx",
+  sheet = 1,
+  range = "B4:D94")
+
+# The id column actually includes dates in parentheses in some cells 
+# but others. Presumably the same date applies down the column until 
+# the next date. Separate these into their own column.
+size_asexual <- 
+  size_asexual_raw %>%
+  select(id = `番号`, length = `長さ(mm)`, width = `幅(mm)`) %>%
+  mutate(id = str_split(id, "\\)") %>% map_chr(last))
+
+size_asexual_dates <- size_asexual_raw %>% pull(`番号`)
+size_asexual_dates[!str_detect(size_asexual_dates, "\\)")] <- NA
+size_asexual_dates <-
+  size_asexual_dates %>% 
+  str_split("\\)") %>% 
+  map_chr(first) %>%
+  str_remove_all("\\(") %>%
+  str_replace("\\/", "-") %>%
+  rollForward
+
+size_asexual <- mutate(size_asexual, date = size_asexual_dates, sex = "asexual")
+  
+#' Read in and clean size data for individuals with gametangia.
+# No dates here.
+size_with_archegonia <- read_excel(
+  "data_raw/okutama_gameto_size.xlsx",
+  sheet = 2,
+  range = "B4:D36") %>%
+  rename(id = `番号`, length = `長さ（㎜）`, width = `　幅（㎜）`) %>%
+  mutate(sex = "female")
+
+size_with_antheridia <- read_excel(
+  "data_raw/okutama_gameto_size.xlsx",
+  sheet = 2,
+  range = "O5:Q9")  %>%
+  rename(id = `番号`, length = `長さ（㎜）　`, width = `幅（㎜）`) %>%
+  mutate(sex = "male")
+
+size_sexual <- bind_rows(
+  size_with_archegonia,
+  size_with_antheridia
+)
+
+gameto_size <- bind_rows(size_asexual, size_sexual)
+
+gameto_size
+
+write_csv(gameto_size, "data/gameto_size.csv")
+
+#' Combine cover and gemmae size varibles into a single tibble.
 #' 
 #' Since these variables were measured once per month, treat day as 1st of
 #' each month for joining with monthly microclimate variables later.

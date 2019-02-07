@@ -1,3 +1,26 @@
+#' Fill NAs with last non-NA value in vector
+#'
+#' Copied from Claus Wilke's answer on SO:
+#' https://stackoverflow.com/questions/7735647/replacing-nas-with-latest-non-na-value
+#'
+#' @param x A vector with NAs
+#'
+#' @return Vector with NAs filled in with last non-NA value
+rollForward <- function(x){
+  curr <- 0
+  for (i in 1:length(x)){
+    if (is.na(x[i])){
+      x[i] <- curr
+    }
+    else{
+      curr <- x[i]
+    }
+  }
+  return(x)
+}
+
+
+
 #' Clean times formatted with Japanese AM/PM characters.
 #' 
 #' @param data Tibble with column named 'date_time' which is
