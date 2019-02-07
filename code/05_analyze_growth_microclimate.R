@@ -138,10 +138,7 @@ model_results <-
 model_results
 
 #' Table 2: model results
-cols <- colnames(model_results)
-cols_numeric <- cols[map_lgl(model_results, is.numeric)]
-no_fmt_num <- c("p.value", "df", "df.residual", "deviance")
-cols_numeric <- cols_numeric[!cols_numeric %in% no_fmt_num]
+cols_numeric <- c("r.squared", "adj.r.squared", "sigma", "statistic", "logLik", "AIC", "BIC")
 
 table_2 <- 
   model_results %>%
