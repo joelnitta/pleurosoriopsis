@@ -16,7 +16,7 @@ setwd(here::here())
 source("code/setup.R")
 
 #' ### Load pre-processed data.
-daily_microclimate <- read_csv("data/daily_microclimate.csv")
+daily_microclimate <- read_csv("data/daily_microclimate_add.csv")
 
 #' ## Fig 5 and Table 1: Compare microclimate between sites
 #'
@@ -26,8 +26,8 @@ daily_microclimate <- read_csv("data/daily_microclimate.csv")
 # First get vector of days present in both sites, then use this to filter.
 both_days <-
   daily_microclimate %>%
-  select(date, site, temp_mean) %>%
-  spread(site, temp_mean) %>%
+  select(date, site, rh_min) %>%
+  spread(site, rh_min) %>%
   drop_na() %>%
   pull(date)
 
@@ -176,7 +176,7 @@ table_1 <-
 table_1
 
 as_rtf(table_1) %>%
-  write_lines("results/table1.rtf")
+  write_lines("results/table1_add.rtf")
 
 #' Extract p-values for plotting, and put into data frame
 #' with xvals specifying season and yvals specifying height 
@@ -438,7 +438,7 @@ subplots[[1]] +  subplots[[2]] +  subplots[[3]] +
   plot_spacer() + legend + plot_spacer() + plot_layout(ncol = 3, heights = c(1, 1, 1, 1, 0.2))
 
 ggplot2::ggsave(
-  filename = "results/fig5_climate_diff.pdf", 
+  filename = "results/fig5_climate_diff_add.pdf", 
   height = 8, width = 7)
 
 #' Render this script as a report (keep the below code commented-out)

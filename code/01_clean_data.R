@@ -154,6 +154,114 @@ daily_microclimate
 
 write_csv(daily_microclimate, "data/daily_microclimate.csv")
 
+#' ### Additional climate data
+#' 
+#' These weren't included in the other raw data files. Means have already been
+#' calculated.
+
+add_takao_rh_min <- read_excel(
+  "data_raw/uratakao_summary_data.xlsx",
+  range = "F2:H1273") %>%
+  select(date = X__1, rh_min = `最低湿度`) %>%
+  mutate(site = "uratakao") %>%
+  mutate(date = date(date))
+
+add_takao_par_total <- read_excel(
+  "data_raw/uratakao_summary_data.xlsx",
+  range = "K2:M1273") %>%
+  select(date = X__1, par_total = `積算光量`) %>%
+  mutate(
+    site = "uratakao",
+    par_total = 1800*par_total / 1000000) %>%
+  mutate(date = date(date))
+
+add_okutama_rh_min <- read_excel(
+  "data_raw/okutama_summary_data.xlsx",
+  range = "F2:H1548") %>%
+  select(date = `日毎`, rh_min = `最低湿度`) %>%
+  mutate(site = "okutama") %>%
+  mutate(date = date(date))
+
+add_okutama_par_total <- read_excel(
+  "data_raw/okutama_summary_data.xlsx",
+  range = "K2:M1616") %>%
+  select(date = `日毎`, par_total = `積算光量`) %>%
+  mutate(
+    site = "okutama",
+    par_total = 1800*par_total / 1000000) %>%
+  filter(par_total > 0) %>%
+  mutate(date = date(date))
+
+# Make sure overlapping days between values I calculated from
+# raw data and these pre-processed data match
+p1 <-
+daily_microclimate %>%
+  left_join(select(add_takao_rh_min, date, site, preproc_rh_min = rh_min)) %>%
+  ggplot(aes(x = rh_min, y = preproc_rh_min)) +
+  geom_point() +
+  labs(title = "Pre-processed min. RH vs. raw min. RH",
+       subtitle = "Uratakao") +
+  geom_abline(intercept = 0, slope = 1, color = "blue")
+
+p2 <-
+daily_microclimate %>%
+  left_join(select(add_okutama_rh_min, date, site, preproc_rh_min = rh_min)) %>%
+  ggplot(aes(x = rh_min, y = preproc_rh_min)) +
+  geom_point() +
+  labs(title = "Pre-processed min. RH vs. raw min. RH",
+       subtitle = "Okutama") +
+  geom_abline(intercept = 0, slope = 1, color = "blue")
+
+p3 <-
+daily_microclimate %>%
+  left_join(select(add_okutama_par_total, date, site, preproc_par_total = par_total)) %>%
+  ggplot(aes(x = par_total, y = preproc_par_total)) +
+  geom_point() +
+  labs(title = "Pre-processed PAR vs. raw PAR",
+       subtitle = "Okutama") +
+  geom_abline(intercept = 0, slope = 1, color = "blue")
+
+p4 <-
+daily_microclimate %>%
+  left_join(select(add_takao_par_total, date, site, preproc_par_total = par_total)) %>%
+  ggplot(aes(x = par_total, y = preproc_par_total)) +
+  geom_point() +
+  labs(title = "Pre-processed PAR vs. raw PAR",
+       subtitle = "Uratakao")  +
+  geom_abline(intercept = 0, slope = 1, color = "blue")
+
+combined_plot <- p1 + p2 + p3 + p4 + plot_layout(ncol = 2, nrow = 2)
+
+ggsave(plot = combined_plot, 
+       filename = "results/compare_preproc_raw_climate.pdf",
+       height = 10,
+       width = 10)
+
+# Combine additional pre-processed data with exisiting data
+add_data <- bind_rows(
+  left_join(add_takao_rh_min, add_takao_par_total),
+  left_join(add_okutama_rh_min, add_okutama_par_total))
+
+new_days <- setdiff(
+  unique(add_data$date), unique(daily_microclimate$date)
+) %>% as_date(origin = lubridate::origin)
+
+add_data <- filter(add_data, date %in% new_days) %>% 
+  mutate(
+    month = month(date),
+    season = case_when(
+      month >= 1 & month < 3 ~ "winter",
+      month >= 3 & month < 6 ~ "spring",
+      month >= 6 & month < 9 ~ "summer",
+      month >= 9 & month < 12 ~ "fall",
+      month == 12 ~ "winter"
+    )
+  )
+  
+daily_microclimate_with_add <- bind_rows(daily_microclimate, add_data)
+
+write_csv(daily_microclimate_with_add, "data/daily_microclimate_add.csv")
+
 #' ### Cover data
 #'
 #' Cover data (area of gametophytes in sq. cm) was measured once per month for 
