@@ -255,6 +255,21 @@ ggplot2::ggsave(
   filename = "results/fig6_morph_climate.pdf", 
   height = 8, width = 7)
 
+#' Black and white version if needed.
+subplots <- 
+  map(subplots,
+      ~ . + scale_color_grey() 
+  )
+
+subplots[[1]] + subplots[[2]] + subplots[[3]] + 
+  subplots[[4]] + subplots[[5]] + subplots[[6]] + 
+  subplots[[7]] + subplots[[8]] + subplots[[9]] + 
+  plot_layout(ncol = 3)
+
+ggplot2::ggsave(
+  filename = "results/fig6_morph_climate_bw.pdf", 
+  height = 8, width = 7)
+
 #' Render this script as a report (keep the below code commented-out)
 # rmarkdown::render(
 #   "code/05_analyze_growth_microclimate.R",

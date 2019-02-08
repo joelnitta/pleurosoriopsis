@@ -249,6 +249,8 @@ x_ranges <- tibble(var = selected_vars) %>%
 # paired_colors <- c("#a6cee3", "#b2df8a")
 # OR dark blue / dark green colorblind-friendly from colorbrewer
 paired_colors <- c("#1f78b4", "#33a02c")
+# OR dark grey / light grey for bw
+# paired_colors <- c("dark grey", "light grey")
 
 subplots <- list()
 

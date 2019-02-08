@@ -40,10 +40,15 @@ gameto_size
 # Use colorbrewer palette: 3 diverging, color-blind friendly colors
 cols <- c("#1b9e77","#d95f02","#7570b3")
 
+# Try to make sure dots stay in the same place, but doesn't work
+set.seed(1000)
+
+# Color version
+
 subplots <- list()
 
 subplots[["length"]] <- 
-ggplot(gameto_size, aes(y = length, x = sex, color = sex)) +
+  ggplot(gameto_size, aes(y = length, x = sex, color = sex)) +
   labs(
     subtitle = "a",
     y = "Length (mm)",
@@ -51,21 +56,22 @@ ggplot(gameto_size, aes(y = length, x = sex, color = sex)) +
     color = "")
 
 subplots[["width"]] <-
-ggplot(gameto_size, aes(y = width, x = sex, color = sex)) +
+  ggplot(gameto_size, aes(y = width, x = sex, color = sex)) +
   labs(
     subtitle = "b",
     y = "Width (mm)",
     x = "")
-  
+
 subplots <- 
   map(subplots,
-      ~ . +
+      ~ . + 
+        geom_jitter(size = 3) +
         geom_boxplot(
           outlier.shape = NA,
           fill = NA,
-          color = "dark grey"
+          color = "dark grey",
+          alpha = 0.7
         ) +
-        geom_jitter(size = 3) +
         scale_color_manual(values = cols) +
         theme(legend.position = "none")
   )
@@ -73,6 +79,24 @@ subplots <-
 subplots[[1]] + subplots[[2]] + plot_layout(ncol = 2) 
 
 ggsave(
-  file = "results/fig7_size.pdf",
+  file = "results/fig7_size_color.pdf",
+  height = 4,
+  width = 7)
+
+# Black and white version
+subplots <- 
+  map(subplots,
+      ~ . + 
+        scale_color_grey() +
+        theme(legend.position = "none")
+  )
+
+plot <- subplots[[1]] + subplots[[2]] + plot_layout(ncol = 2) 
+
+plot
+
+ggsave(
+  plot,
+  file = "results/fig7_size_bw.pdf",
   height = 4,
   width = 7)
