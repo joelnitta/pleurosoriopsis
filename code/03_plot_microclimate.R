@@ -16,7 +16,7 @@ setwd(here::here())
 source("code/setup.R")
 
 #' ### Load pre-processed data.
-daily_microclimate <- read_csv("data/daily_microclimate_add.csv")
+daily_microclimate <- read_csv("data/daily_microclimate.csv")
 
 #' Extract common start and end dates so x-axis are same across subplots.
 start_date <- daily_microclimate %>% pull(date) %>% min
@@ -155,7 +155,7 @@ subplots[[1]] + subplots[[2]] + subplots[[3]] +
   plot_layout(ncol = 2)
 
 ggsave(
-  file = "results/fig4_clim_add.pdf",
+  file = "results/fig4_clim.pdf",
   height = 7,
   width = 8)
 

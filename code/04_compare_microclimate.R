@@ -16,7 +16,7 @@ setwd(here::here())
 source("code/setup.R")
 
 #' ### Load pre-processed data.
-daily_microclimate <- read_csv("data/daily_microclimate_add.csv")
+daily_microclimate <- read_csv("data/daily_microclimate.csv")
 
 #' ## Fig 5 and Table 1: Compare microclimate between sites
 #'
@@ -176,7 +176,7 @@ table_1 <-
 table_1
 
 as_rtf(table_1) %>%
-  write_lines("results/table1_add.rtf")
+  write_lines("results/table1.rtf")
 
 #' Extract p-values for plotting, and put into data frame
 #' with xvals specifying season and yvals specifying height 
@@ -248,102 +248,13 @@ x_ranges <- tibble(var = selected_vars) %>%
 # light blue / light green colorblind-friendly from colorbrewer
 # paired_colors <- c("#a6cee3", "#b2df8a")
 # OR dark blue / dark green colorblind-friendly from colorbrewer
-paired_colors <- c("#1f78b4", "#33a02c")
+# paired_colors <- c("#1f78b4", "#33a02c")
 # OR dark grey / light grey for bw
-# paired_colors <- c("dark grey", "light grey")
+paired_colors <- c("grey55", "grey90")
 
 subplots <- list()
 
-subplots[["par_total"]] <-
-  ggplot(paired_means, aes(x = season, y = par_total_mean, fill = site)) +
-  geom_errorbar(
-    aes(
-      ymin = par_total_mean - par_total_sd,
-      ymax = par_total_mean + par_total_sd
-    ),
-    position=position_dodge(.9),
-    width = 0.3) +
-  annotate(
-    "text",
-    x = pval_plot_data$season,
-    y = pval_plot_data$par_total * 1.05,
-    label = pval_plot_data$par_total_pval
-  ) +
-  geom_bar(stat = "identity", position=position_dodge(), 
-           color = "black") +
-  scale_y_continuous(expand = expand_scale(mult = c(0, .1))) +
-  labs(y = expression(paste("DLI (", mol~m^-2~day^-1, ")", sep = ""))) +
-  labs(x = "") +
-  scale_fill_manual(values = paired_colors,
-                    breaks=c("okutama", "uratakao")) +
-  theme(
-    legend.position = "none",
-    axis.text.x = element_blank())
-
-subplots[["rh_min"]] <-
-  ggplot(paired_means, aes(x = season, y = rh_min_mean, fill = site)) +
-  geom_errorbar(
-    aes(
-      ymin = rh_min_mean - rh_min_sd,
-      ymax = rh_min_mean + rh_min_sd
-    ),
-    position=position_dodge(.9),
-    width = 0.3) +
-  annotate(
-    "text",
-    x = pval_plot_data$season,
-    y = pval_plot_data$rh_min * 1.05,
-    label = pval_plot_data$rh_min_pval
-  ) +
-  geom_bar(stat = "identity", position=position_dodge(), 
-           color = "black") +
-  scale_y_continuous(expand = expand_scale(mult = c(0, .1))) +
-  labs(y = expression("Min. Rel. Humidity (%)")) +
-  labs(x = "") +
-  scale_fill_manual(values = paired_colors,
-                    breaks=c("okutama", "uratakao")) +
-  theme(
-    legend.position = "none",
-    axis.text.x = element_blank())
-
-
-subplots[["temp"]] <-
-  ggplot(paired_means, aes(x = season, y = temp_mean_mean, fill = site)) +
-  geom_errorbar(
-    aes(
-      ymin = ifelse(temp_mean_mean - temp_mean_sd > 0, temp_mean_mean - temp_mean_sd , 0),
-      ymax = temp_mean_mean + temp_mean_sd
-    ),
-    position=position_dodge(.9),
-    width = 0.3) +
-  annotate(
-    "text",
-    x = pval_plot_data$season,
-    y = pval_plot_data$temp_mean * 1.05,
-    label = pval_plot_data$temp_mean_pval
-  ) +
-  geom_bar(stat = "identity", position=position_dodge(), 
-           color = "black") +
-  scale_y_continuous(expand = expand_scale(mult = c(0, .1))) +
-  labs(y = expression("Mean Temp. (°C)")) +
-  labs(x = "") +
-  theme(legend.position = "bottom") +
-  scale_x_discrete(labels = c("winter" = "Winter",
-                              "spring" = "Spring",
-                              "fall" = "Fall",
-                              "summer" = "Summer")) +
-  scale_fill_manual(values = paired_colors,
-                    name="Site",
-                    breaks=c("okutama", "uratakao"),
-                    labels=c("Okutama", "Uratakao"))
-
-subplots[[1]] +  subplots[[2]] +  subplots[[3]] + plot_layout(ncol = 1)
-
-ggplot2::ggsave(
-  filename = "results/fig5_climate_bars.pdf", 
-  height = 8, width = 7)
-
-#' Make plots by mapping across nested datasets.
+#' Make ridge plots by mapping across nested datasets.
 plot_results <-
   nested_paired_microclimate %>%
   right_join(x_ranges) %>%
@@ -438,7 +349,7 @@ subplots[[1]] +  subplots[[2]] +  subplots[[3]] +
   plot_spacer() + legend + plot_spacer() + plot_layout(ncol = 3, heights = c(1, 1, 1, 1, 0.2))
 
 ggplot2::ggsave(
-  filename = "results/fig5_climate_diff_add.pdf", 
+  filename = "results/fig5_climate_diff.pdf", 
   height = 8, width = 7)
 
 #' Render this script as a report (keep the below code commented-out)
