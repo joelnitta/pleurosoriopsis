@@ -1,0 +1,542 @@
+---
+title: Growth Dynamics of the Independent Gametophytes of *Pleurorosiopsis makinoi* (Polypodiaceae)
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+
+# Load packages
+library(conflicted)
+library(tidyverse)
+library(drake)
+library(here)
+library(cowplot)
+library(ggplot2)
+library(scales)
+library(here)
+library(patchwork)
+library(lubridate)
+library(gt)
+library(ggridges)
+
+# Resolve conflicts
+col_factor <- conflict_prefer("col_factor", "readr")
+discard    <- conflict_prefer("discard", "purrr")
+expand     <- conflict_prefer("expand", "tidyr")
+filter     <- conflict_prefer("filter", "dplyr")
+gather     <- conflict_prefer("gather", "tidyr")
+ggsave     <- conflict_prefer("ggsave", "ggplot2")
+here       <- conflict_prefer("here", "here")
+intersect  <- conflict_prefer("intersect", "dplyr")
+lag        <- conflict_prefer("lag", "dplyr")
+Position   <- conflict_prefer("Position", "ggplot2")
+setdiff    <- conflict_prefer("setdiff", "dplyr")
+union      <- conflict_prefer("union", "dplyr")
+
+source(here("code/functions.R"))
+
+#' Set order of microclimate variables for printing.
+order_vars <- c("par_total", "rh_min", "temp_mean")
+
+#' Select microclimate variables of interest for analysis.
+selected_vars <- c("rh_min", "par_total", "temp_mean")
+
+# Load objects from drake workflow into memory
+loadd(combined_morph)
+loadd(daily_microclimate)
+loadd(t_test_results)
+loadd(paired_microclimate)
+loadd(nested_paired_microclimate)
+```
+
+```{r fig-3, fig.width=8, fig.height=7}
+#' Set x-limits manually since the automatically set limits will vary
+#' when we subset the data.
+start_date <- combined_morph %>%
+  pull(date) %>%
+  min
+
+end_date <- combined_morph %>%
+  pull(date) %>%
+  max
+
+#' Make tibble of years for shading. This dataframe will be passed to `geom_rect()` when
+#' plotting.
+shading_dates <- 
+  tibble(date = seq.Date(from = start_date, to = end_date, by = "day")) %>%
+  mutate(year = year(date)) %>%
+  # shade by alternate years
+  filter(year %in% c(2009, 2011, 2013)) %>%
+  group_by(year) %>%
+  summarize(
+    year_start = min(date),
+    year_end = max(date)
+  )
+
+#' Make list of subplots. Build each one at a time, then add common
+#' formatting. 
+subplots <- list()
+
+subplots[["cover"]] <- 
+  combined_morph %>%
+  ungroup %>%
+  select(starts_with("q"), date) %>%
+  filter(complete.cases(.)) %>%
+  gather(plot, area, -date) %>%
+  ggplot(aes(x = date, y = area, linetype = plot)) %>%
+  shade_years(shading_dates) +
+  geom_line() +
+  scale_linetype_manual(
+    name="Quadrat",
+    breaks=c("q_1", "q_2", "q_3", "q_4"),
+    labels=c("1", "2", "3", "4"),
+    values=c("solid", "dashed", "dotted", "dotdash")
+  ) +
+  labs(
+    x = "",
+    y = expression("Cover ("~cm^2~")"),
+    subtitle = "a"
+  ) +
+  theme(legend.position = "bottom")
+
+legend <- get_legend(subplots[["cover"]])
+
+subplots[["cover"]] <- 
+  subplots[["cover"]] +
+  theme(legend.position = "none")
+
+subplots[["gemmae_count"]] <- 
+  combined_morph %>%
+  select(count_mean, count_sd, date) %>%
+  drop_na %>%
+  ggplot(aes(x = date, y = count_mean)) %>%
+  shade_years(shading_dates) +
+  geom_errorbar(
+    aes(ymin=count_mean-count_sd, 
+        ymax=count_mean+count_sd), 
+    width=.1,
+    color = "dark grey") +
+  geom_line() +
+  geom_point(color = "black") +
+  labs(
+    x = "",
+    y = expression("Gemmae count"),
+    subtitle = "b"
+  )
+
+subplots[["gemmae_length"]] <- 
+  combined_morph %>%
+  select(length_mean, length_sd, date) %>%
+  drop_na %>%
+  ggplot(aes(x = date, y = length_mean)) %>%
+  shade_years(shading_dates) +
+  geom_errorbar(
+    aes(ymin=length_mean-length_sd, 
+        ymax=length_mean+length_sd), 
+    width=.1,
+    color = "dark grey") +
+  geom_line() +
+  geom_point(color = "black") +
+  labs(
+    x = "",
+    y = expression(paste("Gemmae len. (", mu, "m)")),
+    subtitle = "c"
+  )
+
+subplots <- subplots %>%
+  map(~ . + 
+        theme(
+          axis.text.x = element_text(
+            angle = 30, 
+            hjust = 1, 
+            vjust = 0.5, 
+            margin=margin(-10,0,0,0)
+          ),
+          plot.margin = margin(0,10,0,10)
+        ) +
+        scale_x_date(
+          date_labels = "%b %Y",
+          date_breaks = "6 months",
+          limits = c(start_date, end_date)
+        )
+  )
+
+subplots[1:2] <- subplots[1:2] %>%
+  map(~ . + theme(axis.text.x = element_blank()) 
+  )
+
+subplots[2:3] <- subplots[2:3] %>%
+  map(~ . + theme(plot.margin = margin(-10,10,0,10)) 
+  )
+
+#' Combine subplots and write out
+subplots[[1]] + subplots[[2]] + subplots[[3]] + 
+  legend +
+  plot_layout(ncol = 1, heights = c(1,1,1,0.2))
+
+```
+
+```{r fig-4, fig.width=8, fig.height=7}
+
+#' Extract common start and end dates so x-axis are same across subplots.
+start_date <- daily_microclimate %>% pull(date) %>% min
+end_date <- daily_microclimate %>% pull(date) %>% max
+all_days <- tibble( 
+  date = seq(start_date, end_date, by = "day")
+)
+
+#' Make tibble of years for shading.
+shading_dates <- 
+  tibble(date = seq.Date(from = start_date, to = end_date, by = "day")) %>%
+  mutate(year = year(date)) %>%
+  # shade by odd years
+  filter(year %in% c(2009, 2011, 2013)) %>%
+  group_by(year) %>%
+  summarize(
+    year_start = min(date),
+    year_end = max(date)
+  )
+
+#' PAR differs enough between sites that automatically set y-axis limits
+#' would be different. Use the common min and max between them.
+min_par <- daily_microclimate %>% pull(par_total) %>% min
+max_par <- daily_microclimate %>% pull(par_total) %>% max
+
+#' Insert NAs into microclimate for each site so that missing days
+#' don't get connected by lines.
+daily_microclimate_okutama <- filter(daily_microclimate, site == "okutama") %>%
+  right_join(all_days)
+
+daily_microclimate_takao <- filter(daily_microclimate, site == "uratakao") %>%
+  right_join(all_days)
+
+daily_microclimate_with_na <- bind_rows(
+  daily_microclimate_okutama, daily_microclimate_takao)
+
+#' Make list of subplots.
+subplots <- list()
+
+subplots[[1]] <- 
+  daily_microclimate_okutama %>%
+  ggplot(aes(x = date, y = par_total)) %>%
+  shade_years(shading_dates) +
+  geom_line() +
+  scale_y_continuous(limits = c(min_par, max_par)) +
+  labs(y = expression(paste("DLI (", mol~m^-2~day^-1, ")", sep = "") ),
+       x = "",
+       title = "Okutama",
+       subtitle = "a")
+
+subplots[[2]] <- 
+  daily_microclimate_takao %>%
+  ggplot(aes(x = date, y = par_total)) %>%
+  shade_years(shading_dates) +
+  geom_line() +
+  scale_y_continuous(limits = c(min_par, max_par)) +
+  labs(y = "",
+       x = "",
+       title = "Uratakao",
+       subtitle = "b")
+
+subplots[[3]] <- 
+  daily_microclimate_okutama %>%
+  ggplot(aes(x = date, y = rh_min)) %>%
+  shade_years(shading_dates) +
+  geom_line() +
+  scale_y_continuous(limits = c(0, 100)) +
+  labs(y = "Min. Rel. Humidity (%)",
+       x = "",
+       subtitle = "c")
+
+subplots[[4]] <- 
+  daily_microclimate_takao %>%
+  ggplot(aes(x = date, y = rh_min)) %>%
+  shade_years(shading_dates) +
+  geom_line() +
+  scale_y_continuous(limits = c(0, 100)) +
+  labs(y = "",
+       x = "",
+       subtitle = "d")
+
+subplots[[5]] <- 
+  daily_microclimate_okutama %>%
+  ggplot(aes(x = date, y = temp_mean)) %>%
+  shade_years(shading_dates) +
+  geom_line() +
+  labs(y = "Mean Temp. (°C)",
+       x = "",
+       subtitle = "e")
+
+subplots[[6]] <- 
+  daily_microclimate_takao %>%
+  ggplot(aes(x = date, y = temp_mean)) %>%
+  shade_years(shading_dates) +
+  geom_line() +
+  labs(y = "",
+       x = "",
+       subtitle = "f")
+
+#' Apply common formatting.
+subplots <- subplots %>%
+  map(~ . + 
+        theme(
+          axis.text.x = element_text(
+            angle = 30, 
+            hjust = 1, 
+            vjust = 0.5, 
+            margin=margin(-10,0,0,0)
+          )
+        ) +
+        scale_x_date(
+          date_labels = "%b %Y",
+          date_breaks = "6 months",
+          limits = c(start_date, end_date)
+        )
+  )
+
+#' Remove x-axis lables from upper plots.
+subplots[1:4] <- subplots[1:4] %>%
+  map(~ . + theme(axis.text.x = element_blank()) 
+  )
+
+#' Close gaps on top margins for lower plots.
+subplots[c(3,5)] <- subplots[c(3,5)] %>%
+  map(~ . + theme(plot.margin = margin(-10,10,0,10)) 
+  )
+
+#' Close gaps on left side for RHS plots.
+subplots[c(2,4,6)] <- subplots[c(2,4,6)] %>%
+  map(~ . + theme(plot.margin = margin(-10,10,0,-40)) 
+  )
+
+#' Combine plots and write out.
+subplots[[1]] + subplots[[2]] + subplots[[3]] + 
+  subplots[[4]] + subplots[[5]] + subplots[[6]] + 
+  plot_layout(ncol = 2)
+
+```
+
+```{r table-1}
+#' Format Table 1 and output to RTF using `gt` package.
+t_test_results %>%
+  arrange(factor(var, levels = order_vars)) %>%
+  mutate(season = stringr::str_to_title(season)) %>%
+  mutate(var = case_when(
+    var == "rh_min" ~    "Min. Rel. Humidity",
+    var == "par_total" ~ "DLI",
+    var == "temp_mean" ~ "Mean Temp."
+  )) %>%
+  group_by(season) %>%
+  gt() %>%
+  fmt_number(
+    columns = vars(estimate, statistic, conf.low, conf.high, 
+                   okutama_mean, okutama_sd, 
+                   uratakao_mean, uratakao_sd)
+  ) %>%
+  cols_move(
+    columns = vars(okutama_mean, okutama_sd),
+    after = vars(conf.high)
+  ) %>%
+  tab_spanner(
+    label = "Okutama",
+    columns = vars(okutama_mean, okutama_sd)
+  ) %>%
+  tab_spanner(
+    label = "Uratakao",
+    columns = vars(uratakao_mean, uratakao_sd)
+  ) %>%
+  cols_label(
+    var = "",
+    statistic = "t",
+    pval = "p",
+    parameter = "df",
+    conf.low = "Lower",
+    conf.high = "Upper",
+    okutama_mean = "Mean",
+    okutama_sd = "SD",
+    uratakao_mean = "Mean",
+    uratakao_sd = "SD"
+  ) %>%
+  tab_style(
+    style = cells_styles(
+      bkgd_color = "white"),
+    locations = cells_data(
+      columns = everything()
+    )
+  ) %>%
+  tab_header(
+    title = "Table 1"
+  )
+
+```
+
+```{r fig-5, fig.width=7, fig.height=8}
+#' Extract p-values for plotting, and put into data frame
+#' with xvals specifying season and yvals specifying height 
+#' to plot asterisks.
+p_vals <-
+  t_test_results %>%
+  mutate(pval = case_when(
+    pval < 0.0001 ~ "***",
+    pval < 0.001 ~ "**",
+    pval < 0.05 ~ "*",
+    TRUE ~ ""
+  )) %>%
+  select(season, var, pval) %>%
+  spread(var, pval) %>%
+  rename(
+    par_total_pval = par_total,
+    rh_min_pval = rh_min,
+    temp_mean_pval = temp_mean
+  )
+
+# Simple function to calculate maximum y-position for plotting asterisks.
+# Should be just above the mean + error bar height (1 sd).
+maxy <- function(x) {mean(x, na.rm = TRUE) + sd(x, na.rm = TRUE)}
+
+pval_plot_data <- 
+  paired_microclimate %>%
+  select(-date, -month) %>%
+  group_by(season, site) %>%
+  summarize_all(
+    maxy
+  ) %>%
+  group_by(season) %>%
+  summarize_all(
+    max
+  ) %>%
+  select(-site) %>%
+  left_join(p_vals)
+
+#' Format data for plotting: need columns to be mean and sd, by site and season.
+paired_means <- 
+  paired_microclimate %>%
+  select(-date) %>%
+  group_by(site, season) %>%
+  summarize_all(
+    list(~mean(., na.rm = TRUE),
+         ~sd(., na.rm = TRUE))
+  ) %>%
+  mutate(
+    season = factor(season, levels = c("winter", "spring", "summer", "fall"))
+  )
+
+#' Make plot including t-test on three microclimatic variables.
+#' 
+#' The final plot includes multiple subplots. Each is a ridge plot showing 
+#' the distribution of one of the variables between the two sites, with the
+#' results of a paired t-test showing if they are different or not.
+#' 
+#' Need to manually set x ranges to keep x-axis scale the same across plots
+x_ranges <- tibble(var = selected_vars) %>%
+  mutate(
+    min = map_dbl(var, ~ pull(paired_microclimate, .) %>% min ),
+    max = map_dbl(var, ~ pull(paired_microclimate, .) %>% max )
+  )
+
+# light blue / light green colorblind-friendly from colorbrewer
+# paired_colors <- c("#a6cee3", "#b2df8a")
+# OR dark blue / dark green colorblind-friendly from colorbrewer
+# paired_colors <- c("#1f78b4", "#33a02c")
+# OR dark grey / light grey for bw
+paired_colors <- c("grey55", "grey90")
+
+subplots <- list()
+
+#' Make ridge plots by mapping across nested datasets.
+plot_results <-
+  nested_paired_microclimate %>%
+  right_join(x_ranges) %>%
+  mutate(min = min - 0.05 * min,
+         max = max + 0.05 * max,
+         plot = pmap(list(var, data, x_min = min, x_max = max), 
+                     plot_ridges, 
+                     y_var = "site"),
+         pval = map2(var, data, run_t_test),
+         pval = case_when(
+           pval < 0.0001 ~ "***",
+           pval < 0.001 ~ "**",
+           pval < 0.05 ~ "*",
+           TRUE ~ ""
+         ),
+         plot = map2(
+           plot, pval, 
+           ~ .x + annotate("text", Inf, Inf, 
+                           label = .y, hjust = 1, vjust = 1))
+         
+         # If needed, add annotation for season to make sure subplots
+         # are positioned correctly
+         
+         # ,plot = map2(
+         #   plot, season,
+         #   ~ .x + annotate("text", -Inf, Inf,
+         #                   label = .y, hjust = -1, vjust = 1)),
+         # season = as_factor(season),
+         # season = fct_relevel(season, "winter", "spring", "summer", "fall")
+         
+  ) %>% 
+  arrange(season, var)
+
+subplots <- plot_results$plot
+
+#' Manually some subplots to remove redundant labels, etc.
+subplots[1:9] <- map(subplots[1:9], 
+                     ~ . + theme(axis.title.x = element_blank(),
+                                 axis.text.x = element_blank() ))
+
+
+subplots[1:12] <- map(subplots[1:12], 
+                      ~ . + scale_fill_manual(
+                        values = paired_colors,
+                        name="Site",
+                        breaks=c("okutama", "uratakao"),
+                        labels=c("Okutama", "Uratakao"))
+)
+
+subplots[[10]] <- subplots[[10]] +
+  labs(x = expression(paste("DLI (", mol~m^-2~day^-1, ")", sep = "")) )
+
+subplots[[11]] <- subplots[[11]] +
+  labs(x = expression("Min. Rel. Humidity (%)"))
+
+subplots[[12]] <- subplots[[12]] +
+  labs(x = expression("Mean Temp. (°C)"))
+
+#' Add titles.
+subplots <- map(subplots, ~ . + labs(title = "") )
+
+subplots[[2]] <- subplots[[2]] +
+  labs(title = "Winter\n")
+
+subplots[[5]] <- subplots[[5]] +
+  labs(title = "Spring\n")
+
+subplots[[8]] <- subplots[[8]] +
+  labs(title = "Summer\n")
+
+subplots[[11]] <- subplots[[11]] +
+  labs(title = "Fall\n")
+
+#' Extract legend
+legend <- paired_microclimate %>%
+  ggplot(aes(x = temp_mean, y = site, fill = site)) +
+  geom_density_ridges() +
+  theme(legend.position = "bottom") +
+  scale_fill_manual(
+    values = paired_colors,
+    name="Site",
+    breaks=c("okutama", "uratakao"),
+    labels=c("Okutama", "Uratakao"))
+
+legend <- get_legend(legend)
+
+#' Combine and write out.
+subplots[[1]] +  subplots[[2]] +  subplots[[3]] + 
+  subplots[[4]] +  subplots[[5]] +  subplots[[6]] + 
+  subplots[[7]] +  subplots[[8]] +  subplots[[9]] + 
+  subplots[[10]] + subplots[[11]] + subplots[[12]] +
+  plot_spacer() + legend + plot_spacer() + plot_layout(ncol = 3, heights = c(1, 1, 1, 1, 0.2))
+```

@@ -6,8 +6,10 @@
 .bash_history
 .gitconfig
 .rstudio
+.drake/
 data
 reports
 results
 temp
 ms
+*.html
