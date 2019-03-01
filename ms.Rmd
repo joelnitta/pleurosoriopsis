@@ -8,48 +8,19 @@ editor_options:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
 
-# Load packages
-library(conflicted)
-library(tidyverse)
-library(drake)
-library(here)
-library(cowplot)
-library(ggplot2)
-library(scales)
-library(here)
-library(patchwork)
-library(lubridate)
-library(gt)
-library(ggridges)
-
-# Resolve conflicts
-col_factor <- conflict_prefer("col_factor", "readr")
-discard    <- conflict_prefer("discard", "purrr")
-expand     <- conflict_prefer("expand", "tidyr")
-filter     <- conflict_prefer("filter", "dplyr")
-gather     <- conflict_prefer("gather", "tidyr")
-ggsave     <- conflict_prefer("ggsave", "ggplot2")
-here       <- conflict_prefer("here", "here")
-intersect  <- conflict_prefer("intersect", "dplyr")
-lag        <- conflict_prefer("lag", "dplyr")
-Position   <- conflict_prefer("Position", "ggplot2")
-setdiff    <- conflict_prefer("setdiff", "dplyr")
-union      <- conflict_prefer("union", "dplyr")
-
-source(here("code/functions.R"))
-
-#' Set order of microclimate variables for printing.
+# Set order of microclimate variables for printing.
 order_vars <- c("par_total", "rh_min", "temp_mean")
 
-#' Select microclimate variables of interest for analysis.
-selected_vars <- c("rh_min", "par_total", "temp_mean")
-
 # Load objects from drake workflow into memory
+loadd(selected_vars)
 loadd(combined_morph)
 loadd(daily_microclimate)
 loadd(t_test_results)
 loadd(paired_microclimate)
 loadd(nested_paired_microclimate)
+loadd(combined_monthly_morph)
+loadd(linear_model_results)
+loadd(gameto_size)
 ```
 
 ```{r fig-3, fig.width=8, fig.height=7}
@@ -373,170 +344,359 @@ t_test_results %>%
 
 ```
 
-```{r fig-5, fig.width=7, fig.height=8}
-#' Extract p-values for plotting, and put into data frame
-#' with xvals specifying season and yvals specifying height 
-#' to plot asterisks.
-p_vals <-
-  t_test_results %>%
-  mutate(pval = case_when(
-    pval < 0.0001 ~ "***",
-    pval < 0.001 ~ "**",
-    pval < 0.05 ~ "*",
-    TRUE ~ ""
-  )) %>%
-  select(season, var, pval) %>%
-  spread(var, pval) %>%
-  rename(
-    par_total_pval = par_total,
-    rh_min_pval = rh_min,
-    temp_mean_pval = temp_mean
-  )
+```{r fig-5, evaluate = FALSE, fig.width=7, fig.height=8}
+# #' Extract p-values for plotting, and put into data frame
+# #' with xvals specifying season and yvals specifying height 
+# #' to plot asterisks.
+# p_vals <-
+#   t_test_results %>%
+#   mutate(pval = case_when(
+#     pval < 0.0001 ~ "***",
+#     pval < 0.001 ~ "**",
+#     pval < 0.05 ~ "*",
+#     TRUE ~ ""
+#   )) %>%
+#   select(season, var, pval) %>%
+#   spread(var, pval) %>%
+#   rename(
+#     par_total_pval = par_total,
+#     rh_min_pval = rh_min,
+#     temp_mean_pval = temp_mean
+#   )
+# 
+# # Simple function to calculate maximum y-position for plotting asterisks.
+# # Should be just above the mean + error bar height (1 sd).
+# maxy <- function(x) {mean(x, na.rm = TRUE) + sd(x, na.rm = TRUE)}
+# 
+# pval_plot_data <- 
+#   paired_microclimate %>%
+#   select(-date, -month) %>%
+#   group_by(season, site) %>%
+#   summarize_all(
+#     maxy
+#   ) %>%
+#   group_by(season) %>%
+#   summarize_all(
+#     max
+#   ) %>%
+#   select(-site) %>%
+#   left_join(p_vals)
+# 
+# #' Format data for plotting: need columns to be mean and sd, by site and season.
+# paired_means <- 
+#   paired_microclimate %>%
+#   select(-date) %>%
+#   group_by(site, season) %>%
+#   summarize_all(
+#     list(~mean(., na.rm = TRUE),
+#          ~sd(., na.rm = TRUE))
+#   ) %>%
+#   mutate(
+#     season = factor(season, levels = c("winter", "spring", "summer", "fall"))
+#   )
+# 
+# #' Make plot including t-test on three microclimatic variables.
+# #' 
+# #' The final plot includes multiple subplots. Each is a ridge plot showing 
+# #' the distribution of one of the variables between the two sites, with the
+# #' results of a paired t-test showing if they are different or not.
+# #' 
+# #' Need to manually set x ranges to keep x-axis scale the same across plots
+# x_ranges <- tibble(var = selected_vars) %>%
+#   mutate(
+#     min = map_dbl(var, ~ pull(paired_microclimate, .) %>% min ),
+#     max = map_dbl(var, ~ pull(paired_microclimate, .) %>% max )
+#   )
+# 
+# # light blue / light green colorblind-friendly from colorbrewer
+# # paired_colors <- c("#a6cee3", "#b2df8a")
+# # OR dark blue / dark green colorblind-friendly from colorbrewer
+# # paired_colors <- c("#1f78b4", "#33a02c")
+# # OR dark grey / light grey for bw
+# paired_colors <- c("grey55", "grey90")
+# 
+# subplots <- list()
+# 
+# #' Make ridge plots by mapping across nested datasets.
+# plot_results <-
+#   nested_paired_microclimate %>%
+#   right_join(x_ranges) %>%
+#   mutate(min = min - 0.05 * min,
+#          max = max + 0.05 * max,
+#          plot = pmap(list(var, data, x_min = min, x_max = max), 
+#                      plot_ridges, 
+#                      y_var = "site"),
+#          pval = map2(var, data, run_t_test),
+#          pval = case_when(
+#            pval < 0.0001 ~ "***",
+#            pval < 0.001 ~ "**",
+#            pval < 0.05 ~ "*",
+#            TRUE ~ ""
+#          ),
+#          plot = map2(
+#            plot, pval, 
+#            ~ .x + annotate("text", Inf, Inf, 
+#                            label = .y, hjust = 1, vjust = 1))
+#          
+#          # If needed, add annotation for season to make sure subplots
+#          # are positioned correctly
+#          
+#          # ,plot = map2(
+#          #   plot, season,
+#          #   ~ .x + annotate("text", -Inf, Inf,
+#          #                   label = .y, hjust = -1, vjust = 1)),
+#          # season = as_factor(season),
+#          # season = fct_relevel(season, "winter", "spring", "summer", "fall")
+#          
+#   ) %>% 
+#   arrange(season, var)
+# 
+# subplots <- plot_results$plot
+# 
+# #' Manually some subplots to remove redundant labels, etc.
+# subplots[1:9] <- map(subplots[1:9], 
+#                      ~ . + theme(axis.title.x = element_blank(),
+#                                  axis.text.x = element_blank() ))
+# 
+# 
+# subplots[1:12] <- map(subplots[1:12], 
+#                       ~ . + scale_fill_manual(
+#                         values = paired_colors,
+#                         name="Site",
+#                         breaks=c("okutama", "uratakao"),
+#                         labels=c("Okutama", "Uratakao"))
+# )
+# 
+# subplots[[10]] <- subplots[[10]] +
+#   labs(x = expression(paste("DLI (", mol~m^-2~day^-1, ")", sep = "")) )
+# 
+# subplots[[11]] <- subplots[[11]] +
+#   labs(x = expression("Min. Rel. Humidity (%)"))
+# 
+# subplots[[12]] <- subplots[[12]] +
+#   labs(x = expression("Mean Temp. (°C)"))
+# 
+# #' Add titles.
+# subplots <- map(subplots, ~ . + labs(title = "") )
+# 
+# subplots[[2]] <- subplots[[2]] +
+#   labs(title = "Winter\n")
+# 
+# subplots[[5]] <- subplots[[5]] +
+#   labs(title = "Spring\n")
+# 
+# subplots[[8]] <- subplots[[8]] +
+#   labs(title = "Summer\n")
+# 
+# subplots[[11]] <- subplots[[11]] +
+#   labs(title = "Fall\n")
+# 
+# #' Extract legend
+# legend <- paired_microclimate %>%
+#   ggplot(aes(x = temp_mean, y = site, fill = site)) +
+#   geom_density_ridges() +
+#   theme(legend.position = "bottom") +
+#   scale_fill_manual(
+#     values = paired_colors,
+#     name="Site",
+#     breaks=c("okutama", "uratakao"),
+#     labels=c("Okutama", "Uratakao"))
+# 
+# legend <- get_legend(legend)
+# 
+# #' Combine and write out.
+# subplots[[1]] +  subplots[[2]] +  subplots[[3]] + 
+#   subplots[[4]] +  subplots[[5]] +  subplots[[6]] + 
+#   subplots[[7]] +  subplots[[8]] +  subplots[[9]] + 
+#   subplots[[10]] + subplots[[11]] + subplots[[12]] +
+#   plot_spacer() + legend + plot_spacer() + plot_layout(ncol = 3, heights = c(1, 1, 1, 1, 0.2))
+```
 
-# Simple function to calculate maximum y-position for plotting asterisks.
-# Should be just above the mean + error bar height (1 sd).
-maxy <- function(x) {mean(x, na.rm = TRUE) + sd(x, na.rm = TRUE)}
+```{r table-2}
+cols_numeric <- c("r.squared", "adj.r.squared", "sigma", "statistic", "logLik", "AIC", "BIC")
 
-pval_plot_data <- 
-  paired_microclimate %>%
-  select(-date, -month) %>%
-  group_by(season, site) %>%
-  summarize_all(
-    maxy
-  ) %>%
-  group_by(season) %>%
-  summarize_all(
-    max
-  ) %>%
-  select(-site) %>%
-  left_join(p_vals)
-
-#' Format data for plotting: need columns to be mean and sd, by site and season.
-paired_means <- 
-  paired_microclimate %>%
-  select(-date) %>%
-  group_by(site, season) %>%
-  summarize_all(
-    list(~mean(., na.rm = TRUE),
-         ~sd(., na.rm = TRUE))
-  ) %>%
+linear_model_results %>%
+  select(-fits) %>%
+  arrange(factor(x_var, levels = order_vars)) %>%
   mutate(
-    season = factor(season, levels = c("winter", "spring", "summer", "fall"))
+    x_var = case_when(
+      x_var == "rh_min" ~    "Min. Rel. Humidity",
+      x_var == "par_total" ~ "DLI",
+      x_var == "temp_mean" ~ "Mean Temp."
+    ),
+    y_var = case_when(
+      y_var == "total_cover" ~ "Total cover",
+      y_var == "count_mean" ~ "Gemmae count",
+      y_var == "length_mean" ~ "Gemmae length"
+    )
+  ) %>%
+  group_by(x_var) %>%
+  gt() %>%
+  cols_move_to_start(vars(y_var)) %>%
+  cols_move(
+    columns = vars(df.residual),
+    after = vars(df)
+  ) %>% 
+  fmt_number(
+    columns = colnames(.) %in% cols_numeric
+  ) %>%
+  fmt_number(
+    columns = vars(p.value),
+    decimals = 3
+  ) %>%
+  fmt_number(
+    columns = vars(deviance),
+    decimals = 0
+  ) %>%
+  cols_label(
+    y_var = "",
+    r.squared = "r-squared",
+    adj.r.squared = "adj. r-squared",
+    statistic = "t",
+    p.value = "p",
+    df.residual = "df residual"
+  ) %>%
+  tab_style(
+    style = cells_styles(
+      bkgd_color = "white"),
+    locations = cells_data(
+      columns = everything()
+    )
+  ) %>%
+  tab_header(
+    title = "Table 2"
   )
 
-#' Make plot including t-test on three microclimatic variables.
+```
+
+```{r fig-6, fig.width=7, fig.height=8}
+#' Loop through all combination of dep and indep variables and their models,
+#' and make plots for each.
+var_grid <- make_var_grid (c("rh_min", "par_total", "temp_mean"))
+
+subplots <- 
+  pmap(var_grid, 
+       quick_plot_with_stats, 
+       plot_data = combined_monthly_morph, 
+       model_data = linear_model_results)
+
+#' Add axis titles
 #' 
-#' The final plot includes multiple subplots. Each is a ridge plot showing 
-#' the distribution of one of the variables between the two sites, with the
-#' results of a paired t-test showing if they are different or not.
-#' 
-#' Need to manually set x ranges to keep x-axis scale the same across plots
-x_ranges <- tibble(var = selected_vars) %>%
-  mutate(
-    min = map_dbl(var, ~ pull(paired_microclimate, .) %>% min ),
-    max = map_dbl(var, ~ pull(paired_microclimate, .) %>% max )
+#' First, remove all default titles, then add formatted titles.
+subplots <- map(subplots, ~ . + labs(x = "", y = ""))
+subplots[[1]] <- subplots[[1]] + labs(y = expression("Total cover ("~cm^2~")"))
+subplots[[4]] <- subplots[[4]] + labs(y = "Gemmae count")
+subplots[[7]] <- subplots[[7]] + 
+  labs(
+    y = expression(paste("Gemmae len. (", mu, "m)", sep = "")),
+    x = expression(paste("DLI (", mol~m^-2~day^-1, ")", sep = ""))
+  )
+subplots[[8]] <- subplots[[8]] + labs(x = expression("Min. Rel. Humidity (%)"))
+subplots[[9]] <- subplots[[9]] + labs(x = expression("Mean Temp. (°C)"))
+
+#' Set amount of gap to close on left and top
+left_close <- -15
+top_close <- -10
+
+#' Close gaps on left only: 2,3
+subplots[2:3] <- subplots[2:3] %>%
+  map(~ . + theme(plot.margin = margin(0,0,0,left_close)) 
   )
 
-# light blue / light green colorblind-friendly from colorbrewer
-# paired_colors <- c("#a6cee3", "#b2df8a")
-# OR dark blue / dark green colorblind-friendly from colorbrewer
-# paired_colors <- c("#1f78b4", "#33a02c")
-# OR dark grey / light grey for bw
-paired_colors <- c("grey55", "grey90")
+#' Close gaps on left side and top: 5,6,8,9
+subplots[c(5,6,8,9)] <- subplots[c(5,6,8,9)] %>%
+  map(~ . + theme(plot.margin = margin(top_close,0,0,left_close)) 
+  )
+
+#' Close gaps on top only: 4,7
+subplots[c(4,7)] <- subplots[c(4,7)] %>%
+  map(~ . + theme(plot.margin = margin(top_close,0,0,0)) 
+  )
+
+#' Add legend for middle bottom plot, combine, and write out.
+subplots[[8]] <- subplots[[8]] + 
+  theme(legend.position="bottom") + 
+  labs(color = "Month", shape = "Year")
+
+subplots[[1]] + subplots[[2]] + subplots[[3]] + 
+  subplots[[4]] + subplots[[5]] + subplots[[6]] + 
+  subplots[[7]] + subplots[[8]] + subplots[[9]] + 
+  plot_layout(ncol = 3)
+
+#' Black and white version if needed.
+# subplots <- 
+#   map(subplots,
+#       ~ . + scale_color_grey() 
+#   )
+# 
+# subplots[[1]] + subplots[[2]] + subplots[[3]] + 
+#   subplots[[4]] + subplots[[5]] + subplots[[6]] + 
+#   subplots[[7]] + subplots[[8]] + subplots[[9]] + 
+#   plot_layout(ncol = 3)
+```
+
+```{r fig-7, fig.width=7, fig.height=4}
+#' Note there is one outlier with length 46 mm, 
+#' then the rest all less than 19 mm. We will remove this 
+#' before plotting and make a note in the figure caption.
+gameto_size_no_outlier <-
+  gameto_size %>%
+  # Change sex to uppercase for nicer plotting
+  mutate(sex = stringr::str_to_title(sex)) %>%
+  # Remove one outlier
+  filter(length < 40)
+
+#' Make jitter plots overlayed with box plots. Make two
+#' subplots: one for width and one for length, then combine.
+
+# Use colorbrewer palette: 3 diverging, color-blind friendly colors
+cols <- c("#1b9e77","#d95f02","#7570b3")
+
+# Try to make sure dots stay in the same place, but doesn't work
+set.seed(1000)
+
+# Color version
 
 subplots <- list()
 
-#' Make ridge plots by mapping across nested datasets.
-plot_results <-
-  nested_paired_microclimate %>%
-  right_join(x_ranges) %>%
-  mutate(min = min - 0.05 * min,
-         max = max + 0.05 * max,
-         plot = pmap(list(var, data, x_min = min, x_max = max), 
-                     plot_ridges, 
-                     y_var = "site"),
-         pval = map2(var, data, run_t_test),
-         pval = case_when(
-           pval < 0.0001 ~ "***",
-           pval < 0.001 ~ "**",
-           pval < 0.05 ~ "*",
-           TRUE ~ ""
-         ),
-         plot = map2(
-           plot, pval, 
-           ~ .x + annotate("text", Inf, Inf, 
-                           label = .y, hjust = 1, vjust = 1))
-         
-         # If needed, add annotation for season to make sure subplots
-         # are positioned correctly
-         
-         # ,plot = map2(
-         #   plot, season,
-         #   ~ .x + annotate("text", -Inf, Inf,
-         #                   label = .y, hjust = -1, vjust = 1)),
-         # season = as_factor(season),
-         # season = fct_relevel(season, "winter", "spring", "summer", "fall")
-         
-  ) %>% 
-  arrange(season, var)
+subplots[["length"]] <- 
+  ggplot(gameto_size_no_outlier, aes(y = length, x = sex, color = sex)) +
+  labs(
+    subtitle = "a",
+    y = "Length (mm)",
+    x = "",
+    color = "")
 
-subplots <- plot_results$plot
+subplots[["width"]] <-
+  ggplot(gameto_size_no_outlier, aes(y = width, x = sex, color = sex)) +
+  labs(
+    subtitle = "b",
+    y = "Width (mm)",
+    x = "")
 
-#' Manually some subplots to remove redundant labels, etc.
-subplots[1:9] <- map(subplots[1:9], 
-                     ~ . + theme(axis.title.x = element_blank(),
-                                 axis.text.x = element_blank() ))
+subplots <- 
+  map(subplots,
+      ~ . + 
+        geom_jitter(size = 3) +
+        geom_boxplot(
+          outlier.shape = NA,
+          fill = NA,
+          color = "dark grey",
+          alpha = 0.7
+        ) +
+        scale_color_manual(values = cols) +
+        theme(legend.position = "none")
+  )
 
+subplots[[1]] + subplots[[2]] + plot_layout(ncol = 2) 
 
-subplots[1:12] <- map(subplots[1:12], 
-                      ~ . + scale_fill_manual(
-                        values = paired_colors,
-                        name="Site",
-                        breaks=c("okutama", "uratakao"),
-                        labels=c("Okutama", "Uratakao"))
-)
+# Black and white version
+# subplots <- 
+#   map(subplots,
+#       ~ . + 
+#         scale_color_grey() +
+#         theme(legend.position = "none")
+#   )
 
-subplots[[10]] <- subplots[[10]] +
-  labs(x = expression(paste("DLI (", mol~m^-2~day^-1, ")", sep = "")) )
-
-subplots[[11]] <- subplots[[11]] +
-  labs(x = expression("Min. Rel. Humidity (%)"))
-
-subplots[[12]] <- subplots[[12]] +
-  labs(x = expression("Mean Temp. (°C)"))
-
-#' Add titles.
-subplots <- map(subplots, ~ . + labs(title = "") )
-
-subplots[[2]] <- subplots[[2]] +
-  labs(title = "Winter\n")
-
-subplots[[5]] <- subplots[[5]] +
-  labs(title = "Spring\n")
-
-subplots[[8]] <- subplots[[8]] +
-  labs(title = "Summer\n")
-
-subplots[[11]] <- subplots[[11]] +
-  labs(title = "Fall\n")
-
-#' Extract legend
-legend <- paired_microclimate %>%
-  ggplot(aes(x = temp_mean, y = site, fill = site)) +
-  geom_density_ridges() +
-  theme(legend.position = "bottom") +
-  scale_fill_manual(
-    values = paired_colors,
-    name="Site",
-    breaks=c("okutama", "uratakao"),
-    labels=c("Okutama", "Uratakao"))
-
-legend <- get_legend(legend)
-
-#' Combine and write out.
-subplots[[1]] +  subplots[[2]] +  subplots[[3]] + 
-  subplots[[4]] +  subplots[[5]] +  subplots[[6]] + 
-  subplots[[7]] +  subplots[[8]] +  subplots[[9]] + 
-  subplots[[10]] + subplots[[11]] + subplots[[12]] +
-  plot_spacer() + legend + plot_spacer() + plot_layout(ncol = 3, heights = c(1, 1, 1, 1, 0.2))
 ```
+

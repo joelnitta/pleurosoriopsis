@@ -1,6 +1,6 @@
 # make.R 
 
-# Master script for running T_angustifrons analyses.
+# Master script for running Pleurorosiopsis analyses.
 # This project uses drake to manage workflows.
 # For more information about drake, see
 # https://ropensci.github.io/drake/
@@ -20,7 +20,6 @@ pkgconfig::set_config("drake::strings_in_dots" = "literals")
 
 # General functions
 source("code/functions.R")
-source("code/drake_functions.R")
 
 # Data processing
 source("code/plan.R")

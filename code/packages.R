@@ -1,33 +1,35 @@
 # Load the packages this workflow depends on
 
-# Install ferncollectR (Fern collection data)
-# This is updated frequently, so try to install 
-# the newest package first. The pacakge is a private 
-# github repo, so need have GITHUB_PAT defined in 
-# .Renviron to access.
-
-library(conflicted)
-library(assertthat)
 library(assertr)
+library(assertthat)
+library(broom)
+library(conflicted)
+library(cowplot)
 library(drake)
 library(glue)
+library(gt)
 library(here)
 library(jntools)
 library(lubridate)
 library(magrittr)
+library(patchwork)
 library(readxl)
+library(scales)
 library(tidyverse)
-library(broom)
+# library(ggridges)
 
-# Resolve conflicting functions
-collapse <- dplyr::collapse
-count <- dplyr::count
-expand <- tidyr::expand
-extract <- magrittr::extract
-filter <- dplyr::filter
-gather <- tidyr::gather
-intersect <- dplyr::intersect
-here <- here::here
-map <- purrr::map
-select <- dplyr::select
-setdiff <- dplyr::setdiff
+# Resolve conflicts
+col_factor <- conflict_prefer("col_factor", "readr")
+collapse   <- conflict_prefer("collapse", "dplyr")
+discard    <- conflict_prefer("discard", "purrr")
+expand     <- conflict_prefer("expand", "tidyr")
+extract    <- conflict_prefer("extract", "magrittr")
+filter     <- conflict_prefer("filter", "dplyr")
+gather     <- conflict_prefer("gather", "tidyr")
+ggsave     <- conflict_prefer("ggsave", "ggplot2")
+here       <- conflict_prefer("here", "here")
+intersect  <- conflict_prefer("intersect", "dplyr")
+lag        <- conflict_prefer("lag", "dplyr")
+Position   <- conflict_prefer("Position", "ggplot2")
+setdiff    <- conflict_prefer("setdiff", "dplyr")
+union      <- conflict_prefer("union", "dplyr")

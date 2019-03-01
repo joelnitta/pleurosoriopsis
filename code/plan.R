@@ -118,6 +118,11 @@ data_cleaning_plan <- drake_plan (
     size_with_antheridia
   ),
   
+  #' ### Clean data
+  #' 
+  #' Select microclimate variables to use in downstream analyses
+  selected_vars = c("rh_min", "par_total", "temp_mean"),
+  
   #' Clean microclimate data
   okutama_microclimate = clean_microclimate(
     okutama_microclimate_raw),
@@ -146,7 +151,13 @@ data_cleaning_plan <- drake_plan (
   combined_morph = combine_morph_data (
     cover_data = cover,
     gemmae_data = gemmae_data
-  )
+  ),
+  
+  #' Combine morphology and Okutama climate into single tibble
+  combined_monthly_morph = combine_okutama_data (
+    okutama_microclimate = okutama_microclimate, 
+    combined_morph = combined_morph,
+    selected_vars = selected_vars)
 
 )
 
@@ -194,7 +205,7 @@ daily_summary_plan <- drake_plan (
   # Make nested data frame for looping.
   nested_paired_microclimate = nest_microclimate(
     paired_microclimate,
-    selected_vars = c("rh_min", "par_total", "temp_mean")
+    selected_vars = selected_vars
   )
  
 )
@@ -204,8 +215,20 @@ analysis_plan <- drake_plan (
   t_test_results = compare_microclimate(
     paired_microclimate = paired_microclimate,
     nested_paired_microclimate = nested_paired_microclimate,
-    selected_vars = c("rh_min", "par_total", "temp_mean")
-    )
+    selected_vars = selected_vars
+    ),
+  
+  linear_model_results = make_climate_morph_lm(
+    selected_vars = selected_vars,
+    combined_monthly_morph = combined_monthly_morph
+  ),
+  
+  # Write out MS
+  ms = rmarkdown::render(
+    knitr_in("ms.Rmd"),
+    output_format = "html_document",
+    output_file = file_out("ms.html"),
+    quiet = TRUE) 
   
 )
 
