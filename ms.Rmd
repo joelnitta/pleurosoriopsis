@@ -1,5 +1,5 @@
 ---
-title: "Growth Dynamics of the Independent Gametophytes of *Pleurorosiopsis makinoi* (Polypodiaceae)"
+title: "Growth Dynamics of the Independent Gametophytes of *Pleurosoriopsis makinoi* (Polypodiaceae)"
 output: html_document
 editor_options: 
   chunk_output_type: console
@@ -25,7 +25,7 @@ loadd(gameto_size)
 
 Atsushi Ebihara^1^\*, Joel H. Nitta^1^\*\*, Yurika Matsumoto^2^, Yuri Fukazawa^2^, Marie Kurihara^2^, Hitomi Yokote^2^, Kaoru Sakuma^2^, Otowa Azakami^2^, Yumiko Hirayama1 and Ryoko Imaichi^2^
 
-^1^Department of Botany, National Museum of Nature and Science, Amakubo 4–1–1, Tsukuba, Ibaraki 305–0005, Japan
+^1^Department of Botany, National Museum of Nature and Science, 4–1–1 Amakubo, Tsukuba, Ibaraki 305–0005, Japan
 
 ^2^Department of Chemical and Biological Sciences, Japan Women’s University, 2-8-1 Mejirodai, Bunkyo-ku, Tokyo 112-8681, Japan
 
@@ -35,7 +35,7 @@ Atsushi Ebihara^1^\*, Joel H. Nitta^1^\*\*, Yurika Matsumoto^2^, Yuri Fukazawa^2
 
 (Received \*\*\*\*\*; accepted \*\*\*\*\*)
 
-Abstract Despite their importance to the fern life cycle, little is known about the ecology of fern gametophytes due to their cryptic morphology and small size. This study documents growth dynamics over five years in a population of Pleurosiopsis makinoi gametophytes growing independently of sporophytes in Okutama-machi, Tokyo, Japan. Cover was measured in four 10 x 10 cm quadrats, and the number and size of gemmae born on gametophytes measured ca. every two months from March 2009 to March 2014. The population survived for the duration of the study, and no seasonality was observed in the cover measurements. Gemmae gradually grow throughout the spring and summer, and mostly detach in winter. Based on our preliminary comparison between the microenvironment of the independent gametophyte site and a site supporting sporophytes of the same species, a possible cause of suppression of sporophyte formation is low light conditions in winter due to planting of evergreen conifers. 
+Abstract Despite their importance to the fern life cycle, little is known about the ecology of fern gametophytes due to their cryptic morphology and small size. This study documents growth dynamics over five years in a population of Pleurosoriopsis makinoi gametophytes growing independently of sporophytes in Okutama-machi, Tokyo, Japan. Cover was measured in four 10 x 10 cm quadrats, and the number and size of gemmae born on gametophytes measured ca. every two months from March 2009 to March 2014. The population survived for the duration of the study, and no seasonality was observed in the cover measurements. Gemmae gradually grow throughout the spring and summer, and mostly detach in winter. Based on our preliminary comparison between the microenvironment of the independent gametophyte site and a site supporting sporophytes of the same species, a possible cause of suppression of sporophyte formation is low light conditions in winter due to planting of evergreen conifers. 
 
 Key words: fern, gametophyte, gemma, microenvironment, sporophyte
 
@@ -155,7 +155,7 @@ magick::image_read_pdf(here("ms/Fig2_gemma_sexualorgans.pdf"))
 
 ```
 
-```{r fig-3, fig.width=8, fig.height=7, fig.cap="Fig. 3. Change in growth of P. makinoi gametophytes observed from May 2009 to May 2014. a. Cover (cm2) of gametophytes in four 10 x 10 cm quadrats. b. Mean gemma length. c. Mean number of gemmae per individual. For b and c, n = 10 individuals per observation; grey bars show SD. Shaded bars show alternating years."}
+```{r fig-3, fig.width=8, fig.height=7, fig.cap="Fig. 3. Change in growth of Pleurosoriopsis makinoi gametophytes observed from May 2009 to May 2014. a. Cover (cm2) of gametophytes in four 10 x 10 cm quadrats. b. Mean gemma length. c. Mean number of gemmae per individual. For b and c, n = 10 individuals per observation; grey bars show SD. Shaded bars show alternating years."}
 #' Set x-limits manually since the automatically set limits will vary
 #' when we subset the data.
 start_date <- combined_morph %>%
@@ -282,7 +282,7 @@ subplots[[1]] + subplots[[2]] + subplots[[3]] +
 
 ```
 
-```{r fig-4, fig.width=8, fig.height=7, fig.cap = "Fig. 4. Change in microclimate at site with P. makinoi independent gametophytes (Okutama) and sporophytes (Uratakao) from 2013 to 2014. a. Daily minimum relative humidity (%). b. Daily mean temperature (°C). c. Daily light integral (DLI) (mol m-2 day-1). Shaded bars show alternating years. Data collected at Okutama from September 22, 2012 to July 22, 2014 and at Uratakao from August 20, 2013 to November 22, 2014. Some data missing due to equipment malfunction (see Results)."}
+```{r fig-4, fig.width=8, fig.height=7, fig.cap = "Fig. 4. Change in microclimate at site with Pleurosoriopsis makinoi independent gametophytes (Okutama) and sporophytes (Uratakao) from 2013 to 2014. a. Daily minimum relative humidity (%). b. Daily mean temperature (°C). c. Daily light integral (DLI) (mol m-2 day-1). Shaded bars show alternating years. Data collected at Okutama from September 22, 2012 to July 22, 2014 and at Uratakao from August 20, 2013 to November 22, 2014. Some data missing due to equipment malfunction (see Results)."}
 
 #' Extract common start and end dates so x-axis are same across subplots.
 start_date <- daily_microclimate %>% pull(date) %>% min
@@ -422,7 +422,7 @@ subplots[[1]] + subplots[[2]] + subplots[[3]] +
 
 ```
 
-```{r fig-5, evaluate = FALSE, fig.width=7, fig.height=8, fig.cap="Fig. 5. Density plots showing difference between microclimate at P. makinoi independent gametophyte site (Okutama) and sporophyte site (Uratakao). Significant differences (paired t-test) shown by asterisks: ***, p < 0.001; **, p < 0.01; * p < 0.05.  Y-axis is relative probability density; curves scaled so that total probability of each scales to 1. Vertical lines shown medians."}
+```{r fig-5, evaluate = FALSE, fig.width=7, fig.height=8, fig.cap="Fig. 5. Density plots showing difference between microclimate at Pleurosoriopsis makinoi independent gametophyte site (Okutama) and sporophyte site (Uratakao). Significant differences (paired t-test) shown by asterisks: ***, p < 0.001; **, p < 0.01; * p < 0.05.  Y-axis is relative probability density; curves scaled so that total probability of each scales to 1. Vertical lines shown medians."}
 # #' Extract p-values for plotting, and put into data frame
 # #' with xvals specifying season and yvals specifying height 
 # #' to plot asterisks.
@@ -590,7 +590,7 @@ subplots[[1]] + subplots[[2]] + subplots[[3]] +
 #   plot_spacer() + legend + plot_spacer() + plot_layout(ncol = 3, heights = c(1, 1, 1, 1, 0.2))
 ```
 
-```{r fig-6, fig.width=7, fig.height=8, fig.cap="Fig. 6. Relationships between growth of P. makinoi gametophytes (total cover, mean gemma number, and mean gemma length) and microclimate at the Okutama site. Microclimatic variables are monthly means of daily minimum relative humidity (%), daily mean temperature (°C), and daily light integral (DLI) (mol m-2 day-1). Grey bars show SD (except for total cover, which is a sum, not a mean). Significant relationships (linear model) shown with a line."}
+```{r fig-6, fig.width=7, fig.height=8, fig.cap="Fig. 6. Relationships between growth of Pleurosoriopsis makinoi gametophytes (total cover, mean gemma number, and mean gemma length) and microclimate at the Okutama site. Microclimatic variables are monthly means of daily minimum relative humidity (%), daily mean temperature (°C), and daily light integral (DLI) (mol m-2 day-1). Grey bars show SD (except for total cover, which is a sum, not a mean). Significant relationships (linear model) shown with a line."}
 #' Loop through all combination of dep and indep variables and their models,
 #' and make plots for each.
 var_grid <- make_var_grid (c("rh_min", "par_total", "temp_mean"))
