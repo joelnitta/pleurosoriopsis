@@ -1,20 +1,11 @@
 version: "3"
 services:
   analysis:
-    image: joelnitta/eupoly2_capture
+    image: joelnitta/pleurosoriopsis
     ports:
       - "8787:8787"
     volumes:
-      - ".:/home/rstudio/Pleurosoriopsis"
-    environment:
-      PASSWORD: "ilover"
-      ROOT: "true"
-  rmd:
-    image: joelnitta/rmd
-    ports:
-      - "7070:8787"
-    volumes:
-      - ".:/home/rstudio/Pleurosoriopsis"
+      - ".:/home/rstudio/pleurosoriopsis"
     environment:
       PASSWORD: "ilover"
       ROOT: "true"
