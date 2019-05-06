@@ -68,7 +68,10 @@ plan <- drake_plan (
   #' four 10 x 10 cm plots at the Okutama site. 
   cover_raw = read_excel(
     file_in("data_raw/pleurosoriopsis_data_figs.xlsx"),
-    sheet = 1),
+    sheet = 1, 
+    skip = 1,
+    col_names = c("date", "q_1", "q_2", "q_3", "q_4")
+    ),
   
   #' ### Gemmae
   #'

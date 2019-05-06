@@ -285,8 +285,8 @@ clean_microclimate <- function(raw_microclimate_data) {
 #' @return Tibble
 calculate_daily_microclimate <- function (site_1_data, site_1_name, site_2_data, site_2_name) {
   bind_rows(
-    mutate(okutama_microclimate, site = site_1_name),
-    mutate(takao_microclimate, site = site_2_name)
+    mutate(site_1_data, site = site_1_name),
+    mutate(site_2_data, site = site_2_name)
   ) %>%
     # only include days with data at both sites
     filter(complete.cases(.)) %>% 
@@ -317,7 +317,6 @@ calculate_daily_microclimate <- function (site_1_data, site_1_name, site_2_data,
 #' @return Tibble.
 clean_cover_data <- function(cover_raw) {
   cover_raw %>%
-    rename(date = "X__1", q_1 = `No. 1`, q_2 = `No. 2`, q_3 = `No. 3`, q_4 = `No. 4`) %>%
     mutate(date = lubridate::date(date)) %>%
     rowwise %>%
     mutate(total_cover = sum(q_1, q_2, q_3, q_4)) %>%
