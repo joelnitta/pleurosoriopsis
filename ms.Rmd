@@ -423,171 +423,171 @@ subplots[[1]] + subplots[[2]] + subplots[[3]] +
 ```
 
 ```{r fig-5, evaluate = FALSE, fig.width=7, fig.height=8, fig.cap="Fig. 5. Density plots showing difference between microclimate at Pleurosoriopsis makinoi independent gametophyte site (Okutama) and sporophyte site (Uratakao). Significant differences (paired t-test) shown by asterisks: ***, p < 0.001; **, p < 0.01; * p < 0.05.  Y-axis is relative probability density; curves scaled so that total probability of each scales to 1. Vertical lines shown medians."}
-# #' Extract p-values for plotting, and put into data frame
-# #' with xvals specifying season and yvals specifying height 
-# #' to plot asterisks.
-# p_vals <-
-#   t_test_results %>%
-#   mutate(pval = case_when(
-#     pval < 0.0001 ~ "***",
-#     pval < 0.001 ~ "**",
-#     pval < 0.05 ~ "*",
-#     TRUE ~ ""
-#   )) %>%
-#   select(season, var, pval) %>%
-#   spread(var, pval) %>%
-#   rename(
-#     par_total_pval = par_total,
-#     rh_min_pval = rh_min,
-#     temp_mean_pval = temp_mean
-#   )
-# 
-# # Simple function to calculate maximum y-position for plotting asterisks.
-# # Should be just above the mean + error bar height (1 sd).
-# maxy <- function(x) {mean(x, na.rm = TRUE) + sd(x, na.rm = TRUE)}
-# 
-# pval_plot_data <- 
-#   paired_microclimate %>%
-#   select(-date, -month) %>%
-#   group_by(season, site) %>%
-#   summarize_all(
-#     maxy
-#   ) %>%
-#   group_by(season) %>%
-#   summarize_all(
-#     max
-#   ) %>%
-#   select(-site) %>%
-#   left_join(p_vals)
-# 
-# #' Format data for plotting: need columns to be mean and sd, by site and season.
-# paired_means <- 
-#   paired_microclimate %>%
-#   select(-date) %>%
-#   group_by(site, season) %>%
-#   summarize_all(
-#     list(~mean(., na.rm = TRUE),
-#          ~sd(., na.rm = TRUE))
-#   ) %>%
-#   mutate(
-#     season = factor(season, levels = c("winter", "spring", "summer", "fall"))
-#   )
-# 
-# #' Make plot including t-test on three microclimatic variables.
-# #' 
-# #' The final plot includes multiple subplots. Each is a ridge plot showing 
-# #' the distribution of one of the variables between the two sites, with the
-# #' results of a paired t-test showing if they are different or not.
-# #' 
-# #' Need to manually set x ranges to keep x-axis scale the same across plots
-# x_ranges <- tibble(var = selected_vars) %>%
-#   mutate(
-#     min = map_dbl(var, ~ pull(paired_microclimate, .) %>% min ),
-#     max = map_dbl(var, ~ pull(paired_microclimate, .) %>% max )
-#   )
-# 
-# # light blue / light green colorblind-friendly from colorbrewer
-# # paired_colors <- c("#a6cee3", "#b2df8a")
-# # OR dark blue / dark green colorblind-friendly from colorbrewer
-# # paired_colors <- c("#1f78b4", "#33a02c")
-# # OR dark grey / light grey for bw
-# paired_colors <- c("grey55", "grey90")
-# 
-# subplots <- list()
-# 
-# #' Make ridge plots by mapping across nested datasets.
-# plot_results <-
-#   nested_paired_microclimate %>%
-#   right_join(x_ranges) %>%
-#   mutate(min = min - 0.05 * min,
-#          max = max + 0.05 * max,
-#          plot = pmap(list(var, data, x_min = min, x_max = max), 
-#                      plot_ridges, 
-#                      y_var = "site"),
-#          pval = map2(var, data, run_t_test),
-#          pval = case_when(
-#            pval < 0.0001 ~ "***",
-#            pval < 0.001 ~ "**",
-#            pval < 0.05 ~ "*",
-#            TRUE ~ ""
-#          ),
-#          plot = map2(
-#            plot, pval, 
-#            ~ .x + annotate("text", Inf, Inf, 
-#                            label = .y, hjust = 1, vjust = 1))
-#          
-#          # If needed, add annotation for season to make sure subplots
-#          # are positioned correctly
-#          
-#          # ,plot = map2(
-#          #   plot, season,
-#          #   ~ .x + annotate("text", -Inf, Inf,
-#          #                   label = .y, hjust = -1, vjust = 1)),
-#          # season = as_factor(season),
-#          # season = fct_relevel(season, "winter", "spring", "summer", "fall")
-#          
-#   ) %>% 
-#   arrange(season, var)
-# 
-# subplots <- plot_results$plot
-# 
-# #' Manually some subplots to remove redundant labels, etc.
-# subplots[1:9] <- map(subplots[1:9], 
-#                      ~ . + theme(axis.title.x = element_blank(),
-#                                  axis.text.x = element_blank() ))
-# 
-# 
-# subplots[1:12] <- map(subplots[1:12], 
-#                       ~ . + scale_fill_manual(
-#                         values = paired_colors,
-#                         name="Site",
-#                         breaks=c("okutama", "uratakao"),
-#                         labels=c("Okutama", "Uratakao"))
-# )
-# 
-# subplots[[10]] <- subplots[[10]] +
-#   labs(x = expression(paste("DLI (", mol~m^-2~day^-1, ")", sep = "")) )
-# 
-# subplots[[11]] <- subplots[[11]] +
-#   labs(x = expression("Min. Rel. Humidity (%)"))
-# 
-# subplots[[12]] <- subplots[[12]] +
-#   labs(x = expression("Mean Temp. (°C)"))
-# 
-# #' Add titles.
-# subplots <- map(subplots, ~ . + labs(title = "") )
-# 
-# subplots[[2]] <- subplots[[2]] +
-#   labs(title = "Winter\n")
-# 
-# subplots[[5]] <- subplots[[5]] +
-#   labs(title = "Spring\n")
-# 
-# subplots[[8]] <- subplots[[8]] +
-#   labs(title = "Summer\n")
-# 
-# subplots[[11]] <- subplots[[11]] +
-#   labs(title = "Fall\n")
-# 
-# #' Extract legend
-# legend <- paired_microclimate %>%
-#   ggplot(aes(x = temp_mean, y = site, fill = site)) +
-#   geom_density_ridges() +
-#   theme(legend.position = "bottom") +
-#   scale_fill_manual(
-#     values = paired_colors,
-#     name="Site",
-#     breaks=c("okutama", "uratakao"),
-#     labels=c("Okutama", "Uratakao"))
-# 
-# legend <- get_legend(legend)
-# 
-# #' Combine and write out.
-# subplots[[1]] +  subplots[[2]] +  subplots[[3]] + 
-#   subplots[[4]] +  subplots[[5]] +  subplots[[6]] + 
-#   subplots[[7]] +  subplots[[8]] +  subplots[[9]] + 
-#   subplots[[10]] + subplots[[11]] + subplots[[12]] +
-#   plot_spacer() + legend + plot_spacer() + plot_layout(ncol = 3, heights = c(1, 1, 1, 1, 0.2))
+#' Extract p-values for plotting, and put into data frame
+#' with xvals specifying season and yvals specifying height
+#' to plot asterisks.
+p_vals <-
+  t_test_results %>%
+  mutate(pval = case_when(
+    pval < 0.0001 ~ "***",
+    pval < 0.001 ~ "**",
+    pval < 0.05 ~ "*",
+    TRUE ~ ""
+  )) %>%
+  select(season, var, pval) %>%
+  spread(var, pval) %>%
+  rename(
+    par_total_pval = par_total,
+    rh_min_pval = rh_min,
+    temp_mean_pval = temp_mean
+  )
+
+# Simple function to calculate maximum y-position for plotting asterisks.
+# Should be just above the mean + error bar height (1 sd).
+maxy <- function(x) {mean(x, na.rm = TRUE) + sd(x, na.rm = TRUE)}
+
+pval_plot_data <-
+  paired_microclimate %>%
+  select(-date, -month) %>%
+  group_by(season, site) %>%
+  summarize_all(
+    maxy
+  ) %>%
+  group_by(season) %>%
+  summarize_all(
+    max
+  ) %>%
+  select(-site) %>%
+  left_join(p_vals)
+
+#' Format data for plotting: need columns to be mean and sd, by site and season.
+paired_means <-
+  paired_microclimate %>%
+  select(-date) %>%
+  group_by(site, season) %>%
+  summarize_all(
+    list(~mean(., na.rm = TRUE),
+         ~sd(., na.rm = TRUE))
+  ) %>%
+  mutate(
+    season = factor(season, levels = c("winter", "spring", "summer", "fall"))
+  )
+
+#' Make plot including t-test on three microclimatic variables.
+#'
+#' The final plot includes multiple subplots. Each is a ridge plot showing
+#' the distribution of one of the variables between the two sites, with the
+#' results of a paired t-test showing if they are different or not.
+#'
+#' Need to manually set x ranges to keep x-axis scale the same across plots
+x_ranges <- tibble(var = selected_vars) %>%
+  mutate(
+    min = map_dbl(var, ~ pull(paired_microclimate, .) %>% min ),
+    max = map_dbl(var, ~ pull(paired_microclimate, .) %>% max )
+  )
+
+# light blue / light green colorblind-friendly from colorbrewer
+# paired_colors <- c("#a6cee3", "#b2df8a")
+# OR dark blue / dark green colorblind-friendly from colorbrewer
+# paired_colors <- c("#1f78b4", "#33a02c")
+# OR dark grey / light grey for bw
+paired_colors <- c("grey55", "grey90")
+
+subplots <- list()
+
+#' Make ridge plots by mapping across nested datasets.
+plot_results <-
+  nested_paired_microclimate %>%
+  right_join(x_ranges) %>%
+  mutate(min = min - 0.05 * min,
+         max = max + 0.05 * max,
+         plot = pmap(list(var, data, x_min = min, x_max = max),
+                     plot_ridges,
+                     y_var = "site"),
+         pval = map2(var, data, run_t_test),
+         pval = case_when(
+           pval < 0.0001 ~ "***",
+           pval < 0.001 ~ "**",
+           pval < 0.05 ~ "*",
+           TRUE ~ ""
+         ),
+         plot = map2(
+           plot, pval,
+           ~ .x + annotate("text", Inf, Inf,
+                           label = .y, hjust = 1, vjust = 1))
+
+         # If needed, add annotation for season to make sure subplots
+         # are positioned correctly
+
+         # ,plot = map2(
+         #   plot, season,
+         #   ~ .x + annotate("text", -Inf, Inf,
+         #                   label = .y, hjust = -1, vjust = 1)),
+         # season = as_factor(season),
+         # season = fct_relevel(season, "winter", "spring", "summer", "fall")
+
+  ) %>%
+  arrange(season, var)
+
+subplots <- plot_results$plot
+
+#' Manually some subplots to remove redundant labels, etc.
+subplots[1:9] <- map(subplots[1:9],
+                     ~ . + theme(axis.title.x = element_blank(),
+                                 axis.text.x = element_blank() ))
+
+
+subplots[1:12] <- map(subplots[1:12],
+                      ~ . + scale_fill_manual(
+                        values = paired_colors,
+                        name="Site",
+                        breaks=c("okutama", "uratakao"),
+                        labels=c("Okutama", "Uratakao"))
+)
+
+subplots[[10]] <- subplots[[10]] +
+  labs(x = expression(paste("DLI (", mol~m^-2~day^-1, ")", sep = "")) )
+
+subplots[[11]] <- subplots[[11]] +
+  labs(x = expression("Min. Rel. Humidity (%)"))
+
+subplots[[12]] <- subplots[[12]] +
+  labs(x = expression("Mean Temp. (°C)"))
+
+#' Add titles.
+subplots <- map(subplots, ~ . + labs(title = "") )
+
+subplots[[2]] <- subplots[[2]] +
+  labs(title = "Winter\n")
+
+subplots[[5]] <- subplots[[5]] +
+  labs(title = "Spring\n")
+
+subplots[[8]] <- subplots[[8]] +
+  labs(title = "Summer\n")
+
+subplots[[11]] <- subplots[[11]] +
+  labs(title = "Fall\n")
+
+#' Extract legend
+legend <- paired_microclimate %>%
+  ggplot(aes(x = temp_mean, y = site, fill = site)) +
+  geom_density_ridges() +
+  theme(legend.position = "bottom") +
+  scale_fill_manual(
+    values = paired_colors,
+    name="Site",
+    breaks=c("okutama", "uratakao"),
+    labels=c("Okutama", "Uratakao"))
+
+legend <- get_legend(legend)
+
+#' Combine and write out.
+subplots[[1]] +  subplots[[2]] +  subplots[[3]] +
+  subplots[[4]] +  subplots[[5]] +  subplots[[6]] +
+  subplots[[7]] +  subplots[[8]] +  subplots[[9]] +
+  subplots[[10]] + subplots[[11]] + subplots[[12]] +
+  plot_spacer() + legend + plot_spacer() + plot_layout(ncol = 3, heights = c(1, 1, 1, 1, 0.2))
 ```
 
 ```{r fig-6, fig.width=7, fig.height=8, fig.cap="Fig. 6. Relationships between growth of Pleurosoriopsis makinoi gametophytes (total cover, mean gemma number, and mean gemma length) and microclimate at the Okutama site. Microclimatic variables are monthly means of daily minimum relative humidity (%), daily mean temperature (°C), and daily light integral (DLI) (mol m-2 day-1). Grey bars show SD (except for total cover, which is a sum, not a mean). Significant relationships (linear model) shown with a line."}
