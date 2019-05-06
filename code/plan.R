@@ -8,7 +8,9 @@
 #' The files include some additional analsyes and other data that won't 
 #' be used here.
 
-data_cleaning_plan <- drake_plan (
+plan <- drake_plan (
+  
+  # Load and clean data ----
   
   #' ### Microclimate data
   #'
@@ -157,11 +159,9 @@ data_cleaning_plan <- drake_plan (
   combined_monthly_morph = combine_okutama_data (
     okutama_microclimate = okutama_microclimate, 
     combined_morph = combined_morph,
-    selected_vars = selected_vars)
-
-)
-
-#' Calculate daily summary variables.
+    selected_vars = selected_vars),
+  
+# Calculate daily summary variables ----
 #' 
 #' In order to compare data across sites, we need to use daily values since
 #' the measurement times are slightly different between sites. 
@@ -185,8 +185,6 @@ data_cleaning_plan <- drake_plan (
 #' 
 #' sum of all μmol PAR in 30 min values in one day / 1,000,000 = total mol PAR for the day (DLI)
 
-daily_summary_plan <- drake_plan (
-  
   # Combine clean microclimata data from Okutama and Uratakao
   # into a single tibble with rows of daily values.
   daily_microclimate = calculate_daily_microclimate (
@@ -206,11 +204,9 @@ daily_summary_plan <- drake_plan (
   nested_paired_microclimate = nest_microclimate(
     paired_microclimate,
     selected_vars = selected_vars
-  )
- 
-)
+  ),
 
-analysis_plan <- drake_plan (
+# Analysis ----
   
   t_test_results = compare_microclimate(
     paired_microclimate = paired_microclimate,
@@ -233,5 +229,3 @@ analysis_plan <- drake_plan (
 )
 
 #### TO DO: start from 05_analyze_growth_microclimate
-
-plan <- bind_plans(data_cleaning_plan, daily_summary_plan, analysis_plan)
