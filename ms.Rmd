@@ -468,9 +468,6 @@ paired_means <-
   summarize_all(
     list(~mean(., na.rm = TRUE),
          ~sd(., na.rm = TRUE))
-  ) %>%
-  mutate(
-    season = factor(season, levels = c("winter", "spring", "summer", "fall"))
   )
 
 #' Make plot including t-test on three microclimatic variables.
@@ -526,6 +523,9 @@ plot_results <-
          # season = as_factor(season),
          # season = fct_relevel(season, "winter", "spring", "summer", "fall")
 
+  ) %>%
+  mutate(
+    season = factor(season, levels = c("winter", "spring", "summer", "fall"))
   ) %>%
   arrange(season, var)
 
@@ -583,14 +583,16 @@ legend <- paired_microclimate %>%
 legend <- get_legend(legend)
 
 #' Combine and write out.
-subplots[[1]] +  subplots[[2]] +  subplots[[3]] +
-  subplots[[4]] +  subplots[[5]] +  subplots[[6]] +
-  subplots[[7]] +  subplots[[8]] +  subplots[[9]] +
-  subplots[[10]] + subplots[[11]] + subplots[[12]] +
-  plot_spacer() + legend + plot_spacer() + plot_layout(ncol = 3, heights = c(1, 1, 1, 1, 0.2))
+subplots[[1]] +  subplots[[2]] +  subplots[[3]] + # Winter
+subplots[[4]] +  subplots[[5]] +  subplots[[6]] + # Spring
+subplots[[7]] +  subplots[[8]] +  subplots[[9]] + # Summer
+subplots[[10]] + subplots[[11]] + subplots[[12]] + # Fall
+plot_spacer() + legend + plot_spacer() + plot_layout(ncol = 3, heights = c(1, 1, 1, 1, 0.2))
+
+ggsave(glue::glue("fig-5_{Sys.Date()}.pdf"), width = 7, height = 8, units = "in")
 ```
 
-```{r fig-6, fig.width=7, fig.height=8, fig.cap="Fig. 6. Relationships between growth of Pleurosoriopsis makinoi gametophytes (total cover, mean gemma number, and mean gemma length) and microclimate at the Okutama site. Microclimatic variables are monthly means of daily minimum relative humidity (%), daily mean temperature (°C), and daily light integral (DLI) (mol m-2 day-1). Grey bars show SD (except for total cover, which is a sum, not a mean). Significant relationships (linear model) shown with a line."}
+```{r fig-6, fig.width=7, fig.height=8, fig.cap="Fig. 6. Relationships between growth of *Pleurosoriopsis makinoi* gametophytes (total cover, mean gemma number, and mean gemma length) and microclimate at the Okutama site. Microclimatic variables are monthly means of daily light integral (DLI) (mol m^-2^ day^-1^), daily minimum relative humidity (%), and daily mean temperature (°C). Grey bars show SD (except for total cover, which is a sum, not a mean). Significant relationships (linear model) shown with a line."}
 #' Loop through all combination of dep and indep variables and their models,
 #' and make plots for each.
 var_grid <- make_var_grid (c("rh_min", "par_total", "temp_mean"))
