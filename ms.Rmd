@@ -33,16 +33,17 @@ Atsushi Ebihara^1^\*, Joel H. Nitta^1^\*\*, Yurika Matsumoto^2^, Yuri Fukazawa^2
 
 \*\* Current affiliation: Department of Botany, National Museum of Natural History, Smithsonian Institute, Washington, D.C., 20013, U.S.A.
 
-(Received \*\*\*\*\*; accepted \*\*\*\*\*)
+(Received 12 February 2019; accepted 27 March 2019)
 
-Abstract Despite their importance to the fern life cycle, little is known about the ecology of fern gametophytes due to their cryptic morphology and small size. This study documents growth dynamics over five years in a population of Pleurosoriopsis makinoi gametophytes growing independently of sporophytes in Okutama-machi, Tokyo, Japan. Cover was measured in four 10 x 10 cm quadrats, and the number and size of gemmae born on gametophytes measured ca. every two months from March 2009 to March 2014. The population survived for the duration of the study, and no seasonality was observed in the cover measurements. Gemmae gradually grow throughout the spring and summer, and mostly detach in winter. Based on our preliminary comparison between the microenvironment of the independent gametophyte site and a site supporting sporophytes of the same species, a possible cause of suppression of sporophyte formation is low light conditions in winter due to planting of evergreen conifers. 
+**Abstract** Despite their importance to the fern life cycle, little is known about the ecology of fern gametophytes due to their cryptic morphology and small size. This study documents growth dynamics over five years in a population of *Pleurosoriopsis makinoi* gametophytes growing independently of sporophytes in Okutama-machi, Tokyo, Japan. Cover was measured in four 10 × 10 cm quadrats, and the number and size of gemmae born on gametophytes measured ca. every two months from March 2009 to March 2014. The population survived for the duration of the study, and no seasonality was observed in the cover measurements. Gemmae gradually grow throughout the spring and summer, and mostly detach in winter. Based on our preliminary comparison between the microenvironment of the independent gametophyte site and a site supporting sporophytes of the same species, a possible cause of suppression of sporophyte formation is low light conditions in winter due to planting of evergreen conifers. 
 
-Key words: fern, gametophyte, gemma, microenvironment, sporophyte
+**Key words**: fern, gemma, microenvironment, sporophyte.
 
-Ferns possess an unusual life cycle consisting of two morphologically distinct, free-living stages: the diploid sporophyte and the haploid gametophyte. Unlike seed plants, in which the gametophyte is nutritionally dependent upon the sporophyte, in ferns gametophytes may grow separately from sporophytes. The phenomenon of ‘independent gametophytes’ includes fern gametophyte populations in various degrees of independence from sporophytes (Pinson et al., 2017). Independent gametophyte species, lacking any known counterpart sporophyte, are rather extreme cases (Farrar, 1967, 1978, 1992). Conversely, facultatively independent species, which may or may not grow separately from sporophytes depending on environmental conditions, have been observed in many more species (Rumsey and Sheffield, 1996). Almost without exception, species capable of growing as independent gametophytes have noncordiform morphology with indeterminate growth (Ebihara et al., 2013). Facultatively independent fern gametophytes represent an understudied but useful group for understanding the ecological correlates of the transition from haploid to diploid phase in land plants.
+Ferns possess an unusual life cycle consisting of two morphologically distinct, free-living stages: the diploid sporophyte and the haploid gametophyte. Unlike seed plants, in which the gametophyte is nutritionally dependent upon the sporophyte, in ferns gametophytes may grow separately from sporophytes. The phenomenon of ‘independent gametophytes’ includes fern gametophyte populations in various degrees of independence from sporophytes (Pinson *et al.*, 2017). Independent gametophyte species, lacking any known counterpart sporophyte, are rather extreme cases (Farrar, 1967, 1978, 1992). Conversely, facultatively independent species, which may or may not grow separately from sporophytes depending on environmental conditions, have been observed in many more species (Rumsey and Sheffield, 1996). Almost without exception, species capable of growing as independent gametophytes have noncordiform morphology with indeterminate growth (Ebihara *et al.*, 2013). Facultatively independent fern gametophytes represent an understudied but useful group for understanding the ecological correlates of the transition from haploid to diploid phase in land plants.
 
-We recently conducted a survey of the fern gametophyte flora of Japan (Ebihara et al., 2013). During the survey, we located a population of Pleurosoriopsis makinoi (Maxim. ex Makino) Fomin (Polypodiaceae) gametophytes in Unazawa Valley, Okutama-machi, Tokyo, Japan growing without any sporophytes nearby as far as we searched --- its sporophyte population has evidently been observed in the valley, but is very small and rare (S. Fujimoto, personal communication). We therefore considered it an ‘independent gametophyte’ in the broad sense. Pleurosoriopsis makinoi is a small-leaved fern species often growing with long-creeping rhizomes among bryophyte mats on rocks distributed in East Asia (China, Japan, Korea and Russian Far East) (Zhang et al., 2013). It has ribbon-like gametophytes, and gemmae and sexual organs have been observed both in the wild and in cultivation from sown spores (Masuyama, 1975). 
- We conducted a continuous observational study on the wild independent gametophytes of P. makinoi in Unazawa Valley to answer the following questions: 
+We recently conducted a survey of the fern gametophyte flora of Japan (Ebihara *et al.*, 2013). During the survey, we located a population of *Pleurosoriopsis makinoi* (Maxim. ex Makino) Fomin (Polypodiaceae) gametophytes in Unazawa Valley, Okutama-machi, Tokyo, Japan growing without any sporophytes nearby as far as we searched --- its sporophyte population has evidently been observed in the valley, but is very small and rare (S. Fujimoto, personal communication). We therefore considered it an ‘independent gametophyte’ in the broad sense. *Pleurosoriopsis makinoi* is a small-leaved fern species often growing with long-creeping rhizomes among bryophyte mats on rocks distributed in East Asia (China, Japan, Korea and Russian Far East) (Zhang *et al.*, 2013). It has ribbon-like gametophytes, and gemmae and sexual organs have been observed both in the wild and in cultivation from sown spores (Masuyama, 1975). 
+
+We conducted a continuous observational study on the wild independent gametophytes of *P. makinoi* in Unazawa Valley to answer the following questions: 
 1.	How stable is the size of independent gametophyte populations over long periods of time?
 2.	Do independent gametophytes produce sexual organs (archegonia and antheridia) or possess the ability to produce sporophytes?
 3.	Do the gemmae of independent gametophytes contribute to sustainment/expansion of populations?
@@ -52,17 +53,17 @@ We recently conducted a survey of the fern gametophyte flora of Japan (Ebihara e
 
 ### Location and habitat
 
-The independent gametophyte site is located in Unazawa Valley, Okutama-machi, Tokyo, Japan, at ca. 315 m elevation. It grows on a small north-facing bank along a river (Fig. 1). The population is ca. 1 x 5 m in size.
+The independent gametophyte site is located in Unazawa Valley, Okutama-machi, Tokyo, Japan, at ca. 315 m elevation. It grows on a small north-facing bank along a river (Fig. 1). The population is ca. 1 × 5 m in size.
 
 ### Measurement of cover
 
-Four 10 cm × 10 cm quadrats (q1, q2, q3 and q4) were designated on the rockface (Fig. 1) where the independent gametophyte population grows to measure cover (growth area). As the ribbon-like gametophytes of Hymenophyllum barbatum (Bosch) Baker (Hymenophyllaceae) also grow on the rockface, we carefully situated the quadrats to include only P. makinoi. We were able to distinguish between gametophytes of the two species based on the results of Ebihara et al. (2013) and morphological observation --- unlike P. makinoi, gametophytes of H. barbatum do not produce gemmae. Each quadrat was photographed using a digital camera. The image files were printed out, and a 1 cm2 grid was overlayed on the photo with tracing paper. Cover scores for each 1 cm2 cell in the grid were estimated in four discrete levels ranging from zero to 1, i.e. 1.0 cm2 (100% ≥ cover > 50%), 0.5 cm2 (50% ≥ cover > 25%), 0.25 cm2 (25% ≥ cover > 0%), 0 (completely absent). Cover was calculated as the sum of the scores for each cell. The measurement was performed ca. every two months by placing the quadrats in exactly the same positions, and was repeated 37 times from March 2009 to March 2014.
+Four 10 cm × 10 cm quadrats (q1, q2, q3 and q4) were designated on the rockface (Fig. 1) where the independent gametophyte population grows to measure cover (growth area). As the ribbon-like gametophytes of *Hymenophyllum barbatum* (Bosch) Baker (Hymenophyllaceae) also grow on the rockface, we carefully situated the quadrats to include only *P. makinoi*. We were able to distinguish between gametophytes of the two species based on the results of Ebihara *et al.* (2013) and morphological observation --- unlike *P. makinoi*, gametophytes of *H. barbatum* do not produce gemmae. Each quadrat was photographed using a digital camera. The image files were printed out, and a 1 cm^2^ grid was overlayed on the photo with tracing paper. Cover scores for each 1 cm^2^ cell in the grid were estimated in four discrete levels ranging from zero to 1, i.e. 1.0 cm^2^ (100% ≥ cover > 50%), 0.5 cm^2^ (50% ≥ cover > 25%), 0.25 cm^2^ (25% ≥ cover > 0%), 0 (completely absent). Cover was calculated as the sum of the scores for each cell. The measurement was performed ca. every two months by placing the quadrats in exactly the same positions, and was repeated 37 times from March 2009 to March 2014.
 
 ### Gametophyte collection, observation and measurements
 
 Living gametophytes were collected from the peripheries of the quadrats, and were brought back to the laboratory in small zipped plastic bags with wet papers. Collections were made 38 times from March 2009 to March 2014. The gametophytes were washed using brushes under a stereomicroscope (Leica M420). The number of gemmae was counted and length of each gemma (Figs. 2a, b) was measured under a light microscope (Olympus BX51) in ten individuals per collection, and mean of the number and the length of gemmae calculated. 
 
-We conducted a survey for reproductive structures in 2015. We collected 90 individuals, measured their size and width, and checked for the presence of antheridia or archegonia. During the 2015 survey, no reproductive structures were observed, so we also inspected images of all vouchers of P. makinoi collected at this site for archegonia or antheridia.
+We conducted a survey for reproductive structures in 2015. We collected 90 individuals, measured their length and width, and checked for the presence of antheridia or archegonia. During the 2015 survey, no reproductive structures were observed, so we also inspected images of all vouchers of *P. makinoi* collected at this site for archegonia or antheridia.
 
 In this study, an individual gametophyte is defined as a single distinct thallus.
 
@@ -74,7 +75,7 @@ The data recorded by the loggers were collected by connecting the logger to a no
 
 ### Statistical analysis
 
-Comparisons of microclimate between the sporophyte site and gametophyte site were made using a paired t-test. To test for the influence of microclimate on total cover (sum of all four quadrats), mean gemmae length, and mean gemmae size, linear models were fit with each of these as the dependent variable and the microclimatic variables as the independent variable. All statistical analysis was done using R 3.5.1 (R Core Team 2018). Plots were made with the “ggplot2” package (Wickham 2016). Raw data and code to replicate all analyses and figures are available at https://github.com/joelnitta/pleurosoriopsis.
+Comparisons of microclimate between the sporophyte site and gametophyte site were made using a paired *t*-test. To test for the influence of microclimate on total cover (sum of all four quadrats), mean gemmae length, and mean gemmae number, linear models were fit with each of these as the dependent variable and the microclimatic variables as the independent variable. All statistical analysis was done using R 3.5.1 (R Core Team 2018). Plots were made with the “ggplot2” package (Wickham 2016). Raw data and code to replicate all analyses and figures are available at https://github.com/joelnitta/pleurosoriopsis.
 
 ## Results
 
@@ -90,26 +91,25 @@ The mean number and length of gemmae per individual are summarized in Figs. 3b a
 
 The measured temperature, humidity and DLI are summarized in Fig 4. At the gametophyte site, data collection was interrupted by technical malfunction during the following periods: March 8–22, 2014, May 4–6, 2014, May 11–July 13, 2014.
 
-The sporophyte site and gametophyte site differed significantly in nearly all measured microclimatic variables (Fig. 5, Table 1). The gametophyte site had lower light levels, especially in fall (0.21 ± 0.06 mmol per day, vs. 0.33 ± 0.12 at the sporophyte site; p < 0.001, paired t¬-test) and winter (0.36 ± 0.27 mmol per day, vs. 1.51 ± 0.74; p < 0.001), and tended to be drier, particularly in spring (50 ± 22% min. rel. humidity, vs. 69 ± 21%; p < 0.001) and winter (78 ± 18%, vs. 91 ± 10%; p < 0.001). Differences in temperature were significant but small (all estimated differences < 1°C; Table 1).
+The sporophyte site and gametophyte site differed significantly in nearly all measured microclimatic variables (Fig. 5, Table 1). The gametophyte site had lower light levels, especially in fall (0.21 ± 0.06 mmol per day, vs. 0.33 ± 0.12 at the sporophyte site; *p* < 0.001, paired *t*-test) and winter (0.36 ± 0.27 mmol per day, vs. 1.51 ± 0.74; *p* < 0.001), and tended to be drier, particularly in spring (50 ± 22% min. rel. humidity, vs. 69 ± 21%; *p* < 0.001) and winter (78 ± 18%, vs. 91 ± 10%; *p* < 0.001). Differences in temperature were significant but small (all estimated differences < 1°C; Table 1).
 
 ### Relationship between growth and climate
 
-No significant relationship was observed between gametophyte growth and microclimate except for length of gemmae, which was negatively related to temperature (linear model; r2 = 0.51, p = 0.013) (Fig. 6, Table 2).
+No significant relationship was observed between gametophyte growth and microclimate except for length of gemmae, which was negatively related to temperature (linear model; *r*^2^ = 0.51, *p* = 0.013) (Fig. 6, Table 2).
 
 ### Reproductive structures
 
-None of the gametophytes surveyed in 2015 possesed any sexual organs (n = 90). When we searched all other images of specimens collected from the Okutama site, archegonia (Figs. 2c, d) were observed in 32 individuals (Fig. 7). Antheridia (Figs. 2e, f) were much less common than archegonia—we only found them in four individuals. Females tended to be larger than asexuals (it was not possible to conduct statistical analysis of size differences between sexes due to the low number of individuals with antheridia and inconsistency in sampling season and effort). No bisexual individuals were observed. We did not observed any juvenile sporophytes on the gametophytes.
+None of the gametophytes surveyed in 2015 possesed any sexual organs (*n* = 90). When we searched all other images of specimens collected from the Okutama site, archegonia (Figs. 2c, d) were observed in 32 individuals (Fig. 7). Antheridia (Figs. 2e, f) were much less common than archegonia --- we only found them in four individuals. Females tended to be larger than asexuals (it was not possible to conduct statistical analysis of size differences between sexes due to the low number of individuals with antheridia and inconsistency in sampling season and effort). No bisexual individuals were observed. We did not observe any juvenile sporophytes on the gametophytes.
 
 ## Discussion
 
 The gametophyte patches in each of the four quadrats survived through all five years of our study. Even though we observed change in cover over time in each quadrat, there seems to be no seasonality in this fluctuation (Fig. 3a). In contrast, clear seasonal patterns were observed in gemmae formation and growth (Figs. 3b, c). Gemmae gradually grow and mostly detach in winter, the coldest and driest season. Considering the fact that no obvious new patches of gametophytes appeared during our study, the function of gemmae as asexual propagules was not demonstrated by our results.  
 
-Although our measurement data of microenvironment are too short-termed to discuss the factors causing the independent gametophyte phenomenon, an interesting trend was observed in the DLI values—they are higher in the sporophyte site than the gametophyte site, particularly in the fall and winter (Fig. 5, Table 1). The difference is undoubtedly caused by the different tree species covering the P. makinoi habitats—summer-green broad-leaved trees at the sporophyte site (Figs. 8a, b) versus evergreen conifer [Chamaecyparis obtusa (Siebold et Zucc.) Endl.] plantation in Unazawa Valley, Okutama, the independent gametophyte site (Figs. 8c, d). It is highly likely that sporophytes of P. makinoi, which have winter-green life history, are probably adapted to the summer-green forest floor environment and are not able to grow and survive on the evergreen forest floor due to a shortage of light. The stable presence of the gametophyte patches in Okutama suggests that the environment is suitable for gametophytes, but not sporophytes. Since we only observed a very small number of individuals with gametangia and no juvenile sporophytes, it seems likely that suppression of sporophyte production occurs prior to fertilization, or shortly thereafter. Archegoniate (female) individuals tended to be larger than asexual individuals (Fig. 7), suggesting that gametophytes may need to reach a size threshold before they are able to sexually reproduce. The low winter light conditions at Okutama may prevent gametophytes from reaching this size consistently and thereby inhibit fertilization.
+Although our measurement data of microenvironment are too short-termed to discuss the factors causing the independent gametophyte phenomenon, an interesting trend was observed in the DLI values --- they are higher in the sporophyte site than the gametophyte site, particularly in the fall and winter (Fig. 5, Table 1). The difference is undoubtedly caused by the different tree species covering the *P. makinoi* habitats --- summer-green broad-leaved trees at the sporophyte site (Figs. 8a, b) versus evergreen conifer [Chamaecyparis obtusa (Siebold et Zucc.) Endl.] plantation in Unazawa Valley, Okutama, the independent gametophyte site (Figs. 8c, d). It is highly likely that sporophytes of *P. makinoi*, which have winter-green life history, are probably adapted to the summer-green forest floor environment and are not able to grow and survive on the evergreen forest floor due to a shortage of light. The stable presence of the gametophyte patches in Okutama suggests that the environment is suitable for gametophytes, but not sporophytes. Since we only observed a very small number of individuals with gametangia and no juvenile sporophytes, it seems likely that suppression of sporophyte production occurs prior to fertilization, or shortly thereafter. Archegoniate (female) individuals tended to be larger than asexual individuals (Fig. 7), suggesting that gametophytes may need to reach a size threshold before they are able to sexually reproduce. The low winter light conditions at Okutama may prevent gametophytes from reaching this size consistently and thereby inhibit fertilization.
 
-“Inter-generational ecological niche separation”, or different ecological preferences between sporophytes and gametophytes of the same species, has been reported in several ferns (Sato and Sakai, 1981, Rumsey and Sheffield 1996, Pinson et al., 2017). In most cases, the gametophyte tends to tolerate a wider range of environments than the conspecific sporophyte (Watkins et al., 2007). This seems also to be the case for P. makinoi with regards to light condition. A possible scenario for formation of the independent gametophyte population in Okutama is as follows: 1) natural vegetation of the area was summer-green forest preferred by both sporophytes and gametophytes of P. makinoi; 2) after evergreen conifer plantations were established in the mid-20th century, sporophyte growth in the plantation areas was hampered by light shortage in winter and eventually ceased; 3) gametophytes still survive by indeterminate growth and vegetative reproduction by gemmae.
+“Inter-generational ecological niche separation”, or different ecological preferences between sporophytes and gametophytes of the same species, has been reported in several ferns (Sato and Sakai, 1981, Rumsey and Sheffield 1996, Pinson *et al.*, 2017). In most cases, the gametophyte tends to tolerate a wider range of environments than the conspecific sporophyte (Watkins *et al.*, 2007). This seems also to be the case for *P. makinoi* with regards to light condition. A possible scenario for formation of the independent gametophyte population in Okutama is as follows: 1) natural vegetation of the area was summer-green forest preferred by both sporophytes and gametophytes of *P. makinoi*; 2) after evergreen conifer plantations were established in the mid-20th century, sporophyte growth in the plantation areas was hampered by light shortage in winter and eventually ceased; 3) gametophytes still survive by indeterminate growth and vegetative reproduction by gemmae.
 
-We could not obtain any evidence for past presence of sporophytes at the site, but we found a similar case in Kyoto City, Kyoto Prefecture, Japan. At that site as well, evergreen conifer plantations dominated the forests starting from almost the same era. At least six herbarium specimens of Pleurosoriopsis sporophytes collected in the mountains surrounding Kyoto from 1928 to 1958 deposited in KYO, TNS and TOFO imply that it was not a very rare species at that time. Nowadays it is quite difficult to find Pleurosoriopsis sporophytes in the same area (Y. Kazumi, personal communication), but independent gametophytes are occasionally found (A. Ebihara, unpublished data). Such gametophytes whose sporophyte formation has been suppressed by recent environmental change during the past 100 years may resume their sexual life cycles when or if the environment returns to its prior condition. Further studies are necessary to determine the conditions needed for sporophyte formation, in particular frequencies of sexual organ formation.
-
+We could not obtain any evidence for past presence of sporophytes at the site, but we found a similar case in Kyoto City, Kyoto Prefecture, Japan. At that site as well, evergreen conifer plantations dominated the forests starting from almost the same era. At least six herbarium specimens of *Pleurosoriopsis* sporophytes collected in the mountains surrounding Kyoto from 1928 to 1958 deposited in KYO, TNS and TOFO imply that it was not a very rare species at that time. Nowadays it is quite difficult to find *Pleurosoriopsis* sporophytes in the same area (Y. Kazumi, personal communication), but independent gametophytes are occasionally found (A. Ebihara, unpublished data). Such gametophytes whose sporophyte formation has been suppressed by recent environmental change during the past 100 years may resume their sexual life cycles when or if the environment returns to its prior condition. Further studies are necessary to determine the conditions needed for sporophyte formation, in particular frequencies of sexual organ formation.
 
 #### Acknowledgements
 
@@ -121,9 +121,9 @@ Ebihara, A., Yamaoka, A., Mizukami, N., Sakoda, A., Nitta, J. H. and Imaichi, R.
 
 Farrar, D. R. 1967. Gametophytes of four tropical fern genera reproducing independently of their sporophytes in the southern Appalachians. Science 155: 1266–1267.
 
-Farrar, D. R. 1978. Problems in the identity and origin of the Appalachian Vittaria gametophyte, a sporophyteless fern of the eastern United States. American Journal of Botany 65: 1–12.
+Farrar, D. R. 1978. Problems in the identity and origin of the Appalachian *Vittaria* gametophyte, a sporophyteless fern of the eastern United States. American Journal of Botany 65: 1–12.
 
-Farrar, D. R. 1992. Trichomanes intricatum: the independent Trichomanes gametophyte in the eastern United States. American Fern Journal 82: 68–74.
+Farrar, D. R. 1992. *Trichomanes intricatum*: the independent *Trichomanes* gametophyte in the eastern United States. American Fern Journal 82: 68–74.
 
 Masuyama, S. 1975. Gametophyte of *Pleurosoriopsis makinoi* (Maxim.) Fomin. Journal of Japanese Botany 50: 105-114.
 
@@ -143,19 +143,19 @@ Zhang, X. C., Lu, S. G., Lin, Y. X., Qi, X. P., Moore, S., Xing, F. W, Wang, F. 
 
 ## Figures
 
-```{r fig-1, fig.width=7, fig.height=8, fig.cap = "Fig. 1. The quadrats for measurement of gametophyte cover of Pleurosoriopsis makinoi in Unazawa Valley, Okutama-machi, Tokyo, Japan. a. A full view of the site with four quadrat positions (q1, q2, q3 and q4). b. A 10 cm x 10 cm quadrat frame."}
+```{r fig-1, fig.width=7, fig.height=8, fig.cap = "Fig. 1. The quadrats for measurement of gametophyte cover of *Pleurosoriopsis makinoi* in Unazawa Valley, Okutama-machi, Tokyo, Japan. a. A full view of the site with four quadrat positions (q1, q2, q3 and q4). b. A 10 cm × 10 cm quadrat frame."}
 
 magick::image_read_pdf(here("ms/Fig1_quadrats.pdf"))
 
 ```
 
-```{r fig-2, fig.width=8, fig.height=7, fig.cap = "Fig. 2. Gametophytes of Pleurosoriopsis makinoi collected in Unazawa Valley, Okutama-machi, Tokyo, Japan. a. A typical ribbon-like gametophyte with gemmae on the apical part (arrowhead), collected in August. b. Gemmae (arrowheads) on a gametophyte collected in November. c. A gametophyte with archegonia (arrowheads), collected in October. d. Archegonia. e. A gametophyte with antheridia (arrowhead) collected in December. f. An antheridium. Scale bars: 2 mm for a, 200 μm for b and d, 1 mm for c and e, 100 μm for f."}
+```{r fig-2, fig.width=8, fig.height=7, fig.cap = "Fig. 2. Gametophytes of *Pleurosoriopsis makinoi* collected in Unazawa Valley, Okutama-machi, Tokyo, Japan. a. A typical ribbon-like gametophyte with gemmae on the apical part (arrowhead), collected in August. b. Gemmae (arrowheads) on a gametophyte collected in November. c. A gametophyte with archegonia (arrowheads), collected in October. d. Archegonia. e. A gametophyte with antheridia (arrowhead) collected in December. f. An antheridium. Scale bars: 2 mm for a, 200 μm for b and d, 1 mm for c and e, 100 μm for f."}
 
 magick::image_read_pdf(here("ms/Fig2_gemma_sexualorgans.pdf"))
 
 ```
 
-```{r fig-3, fig.width=8, fig.height=7, fig.cap="Fig. 3. Change in growth of Pleurosoriopsis makinoi gametophytes observed from May 2009 to May 2014. a. Cover (cm2) of gametophytes in four 10 x 10 cm quadrats. b. Mean gemma length. c. Mean number of gemmae per individual. For b and c, n = 10 individuals per observation; grey bars show SD. Shaded bars show alternating years."}
+```{r fig-3, fig.width=8, fig.height=7, fig.cap="Fig. 3. Change in growth of *Pleurosoriopsis makinoi* gametophytes observed from May 2009 to May 2014. a. Cover (cm^2^) of gametophytes in four 10 × 10 cm quadrats. b. Mean number of gemmae per individual. c. Mean gemma length (μm). For b and c, *n* = 10 individuals per observation; grey bars show SD. Shaded bars show alternating years."}
 #' Set x-limits manually since the automatically set limits will vary
 #' when we subset the data.
 start_date <- combined_morph %>%
@@ -282,7 +282,7 @@ subplots[[1]] + subplots[[2]] + subplots[[3]] +
 
 ```
 
-```{r fig-4, fig.width=8, fig.height=7, fig.cap = "Fig. 4. Change in microclimate at site with Pleurosoriopsis makinoi independent gametophytes (Okutama) and sporophytes (Uratakao) from 2013 to 2014. a. Daily minimum relative humidity (%). b. Daily mean temperature (°C). c. Daily light integral (DLI) (mol m-2 day-1). Shaded bars show alternating years. Data collected at Okutama from September 22, 2012 to July 22, 2014 and at Uratakao from August 20, 2013 to November 22, 2014. Some data missing due to equipment malfunction (see Results)."}
+```{r fig-4, fig.width=8, fig.height=7, fig.cap = "Fig. 4. Change in microclimate at site with *Pleurosoriopsis makinoi* independent gametophytes (Okutama) and sporophytes (Uratakao) from 2013 to 2014. a--b. Daily light integral (DLI) (mol m^-2 day^-1). c--d. Daily minimum relative humidity (%). e--f. Daily mean temperature (°C). Shaded bars show alternating years. Data collected at Okutama from September 22, 2012 to July 22, 2014 and at Uratakao from August 20, 2013 to November 22, 2014. Some data missing due to equipment malfunction (see Results)."}
 
 #' Extract common start and end dates so x-axis are same across subplots.
 start_date <- daily_microclimate %>% pull(date) %>% min
@@ -422,7 +422,7 @@ subplots[[1]] + subplots[[2]] + subplots[[3]] +
 
 ```
 
-```{r fig-5, evaluate = FALSE, fig.width=7, fig.height=8, fig.cap="Fig. 5. Density plots showing difference between microclimate at Pleurosoriopsis makinoi independent gametophyte site (Okutama) and sporophyte site (Uratakao). Significant differences (paired t-test) shown by asterisks: ***, p < 0.001; **, p < 0.01; * p < 0.05.  Y-axis is relative probability density; curves scaled so that total probability of each scales to 1. Vertical lines shown medians."}
+```{r fig-5, evaluate = FALSE, fig.width=7, fig.height=8, fig.cap="Fig. 5. Density plots showing difference between microclimate at *Pleurosoriopsis makinoi* independent gametophyte site (Okutama) and sporophyte site (Uratakao). Significant differences (paired t-test) shown by asterisks: \\*\\*\\*, *p* < 0.001; \\*\\*, *p* < 0.01; \\*, *p* < 0.05.  Y-axis is relative probability density; curves scaled so that total probability of each scales to 1. Vertical lines shown medians."}
 #' Extract p-values for plotting, and put into data frame
 #' with xvals specifying season and yvals specifying height
 #' to plot asterisks.
@@ -723,7 +723,7 @@ subplots[[1]] + subplots[[2]] + plot_layout(ncol = 2)
 
 ```
 
-```{r fig-8, fig.width=7, fig.height=8, fig.cap = "Fig. 8. A comparison of vegetation of the independent gametophyte site with that of a sporophyte site of Pleurosoriopsis. a¬–b. Typical vegetation of sporophyte habitat covered with summer-green broad-leaved trees (Chichibu-shi, Saitama Pref., Japan). c–d. Vegetation of the independent gametophyte site in Unazawa Valley covered with evergreen cypress trees. a, c. in August, b, d. in December.  "}
+```{r fig-8, fig.width=7, fig.height=8, fig.cap = "Fig. 8. A comparison of vegetation of the independent gametophyte site with that of a sporophyte site of Pleurosoriopsis. a--b. Typical vegetation of sporophyte habitat covered with summer-green broad-leaved trees (Chichibu-shi, Saitama Pref., Japan). c--d. Vegetation of the independent gametophyte site in Unazawa Valley covered with evergreen cypress trees. a, c. in August, b, d. in December.  "}
 
 magick::image_read_pdf(here("ms/Fig8_vegetation.pdf"))
 
@@ -731,7 +731,9 @@ magick::image_read_pdf(here("ms/Fig8_vegetation.pdf"))
 
 ## Tables
 
-```{r table-1, caption = "Results of paired t-test for difference in means between microclimatic variables (daily light integral [DLI], daily minimum relative humidity, and daily mean temperature) at two sites in Japan hosting independent gametophytes or sporophytes of Pleurosoriopsis makinoi (Okutama and Uratakao, respectively) by season."}
+Table 1. Results of paired *t*-test for difference in means between microclimatic variables (daily light integral [DLI], daily minimum relative humidity, and daily mean temperature) at two sites in Japan hosting independent gametophytes or sporophytes of *Pleurosoriopsis makinoi* (Okutama and Uratakao, respectively) by season.
+
+```{r table-1}
 #' Format Table 1 and output to RTF using `gt` package.
 t_test_results %>%
   arrange(factor(var, levels = order_vars)) %>%
@@ -785,7 +787,9 @@ t_test_results %>%
 
 ```
 
-```{r table-2, caption = "Results of linear models testing for relationship between growth traits (total cover, count of gemmae, and length of gemmae) as dependent variable on microclimate (monthly averages of daily light integral [DLI], daily minimum relative humidity, and daily mean temperature) as independent variable in gametophytes of Pleurosoriopsis makinoi at Unazawa Valley, Okutama-machi, Tokyo, Japan. Results presented by independent variable."}
+Table 2. Results of linear models testing for relationship between growth traits (total cover, count of gemmae, and length of gemmae) as dependent variable on microclimate (monthly averages of daily light integral [DLI], daily minimum relative humidity, and daily mean temperature) as independent variable in gametophytes of *Pleurosoriopsis makinoi* at Unazawa Valley, Okutama-machi, Tokyo, Japan. Results presented by independent variable.
+
+```{r table-2}
 cols_numeric <- c("r.squared", "adj.r.squared", "sigma", "statistic", "logLik", "AIC", "BIC")
 
 linear_model_results %>%
