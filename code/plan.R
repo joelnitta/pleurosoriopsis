@@ -225,8 +225,6 @@ plan <- drake_plan (
   # Write out MS
   ms = rmarkdown::render(
     knitr_in("ms.Rmd"),
-    output_format = "html_document",
-    output_file = file_out("ms.html"),
     quiet = TRUE) 
   
 )
