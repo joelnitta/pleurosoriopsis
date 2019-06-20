@@ -9,6 +9,7 @@ docker-compose.yml
 .gitconfig
 .git-credential-cache
 .gitignore
+images
 install_packages.R
 kitematic
 make.log
