@@ -1,14 +1,16 @@
-# Pleurosoriopsis
+# *Pleurosoriopsis*
 
 Code repository and raw data for Ebihara *et al.* 2019. "Growth Dynamics of the Independent Gametophytes of *Pleurorosiopsis makinoi* (Polypodiaceae)" *Bulletin of the National Science Museum Series B (Botany)* 45:77-86.
 
-All code is in `R`. To run all analyses and reproduce the manuscript, run `make.R`. 
+All code is in [R](https://cran.r-project.org/), using the [drake package](https://ropensci.github.io/drake/) to manage the workflow. To run all analyses and generate the manuscript, run `make.R`.
 
-## Docker image
+## Reproducible analysis with Docker
 
-`make.R` requires various packages to be installed, and may not work properly if package versions have changed. Therefore, a [Docker image is provided](https://hub.docker.com/r/joelnitta/pleurosoriopsis) to run the code reproducibly. To use it, first [install docker](https://docs.docker.com/install/) and [clone this repository](https://git-scm.com/book/en/v2/Git-Basics-Getting-a-Git-Repository).
+`make.R` requires various packages to be installed, and may not work properly if package versions have changed. Therefore, a [Docker image is provided](https://hub.docker.com/r/joelnitta/pleurosoriopsis) to run the code reproducibly.
 
-Navigate to the cloned repo (where `/path/to/repo` is the path on your machine), and launch the container in the background:
+To use it, first [install docker](https://docs.docker.com/install/) and [clone this repository](https://git-scm.com/book/en/v2/Git-Basics-Getting-a-Git-Repository).
+
+Navigate to the cloned repo (where `/path/to/repo` is the path on your machine), and launch the container:
 
 ```
 cd /path/to/repo
@@ -24,5 +26,13 @@ docker exec -it pleurosoriopsis_analysis_1 bash
 Inside the container, run `make.R`:
 
 ```
-Rscript -e 'source("make.R")'
+Rscript make.R
+```
+
+You will see the targets being built by `drake`, and the final manuscript should be compiled at the end as `ms.pdf`.
+
+When it's finished, take down the container:
+
+```
+docker-compose down
 ```
