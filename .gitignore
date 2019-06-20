@@ -13,7 +13,10 @@ reports
 results
 temp
 ms
+ms.pdf
 *.html
 *.log
+*_cache/
+*_files/
 packrat/*
 !packrat/packrat.lock
