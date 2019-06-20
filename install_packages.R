@@ -30,6 +30,7 @@ cran_packages <- c(
   "assertthat",
   "broom",
   "conflicted",
+  "cowplot",
   "drake",
   "glue",
   "ggridges",
@@ -48,11 +49,14 @@ install.packages(cran_packages)
 ### Install github packages ###
 github_packages <- c(
   "joelnitta/jntools",
-  "rstudio/gt",
   "thomasp85/patchwork"
 )
 
 remotes::install_github(github_packages)
+
+# gt needs to be installed at a specific commit to deal with a bug
+# https://github.com/rstudio/gt/issues/280
+remotes::install_github("rstudio/gt", ref = "51a812ba6a10769bd24e01c82a3e1b7de44a5a40")
 
 ### Take snapshot ###
 
