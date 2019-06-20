@@ -1,12 +1,15 @@
 ---
-title: "Growth Dynamics of the Independent Gametophytes of *Pleurosoriopsis makinoi* (Polypodiaceae)"
-output: html_document
-editor_options: 
+title: Growth Dynamics of the Independent Gametophytes of *Pleurosoriopsis makinoi*
+  (Polypodiaceae)
+output:
+  pdf_document:
+    latex_engine: xelatex
+editor_options:
   chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE, cache = TRUE)
 
 # Set order of microclimate variables for printing.
 order_vars <- c("par_total", "rh_min", "temp_mean")
@@ -35,15 +38,15 @@ Atsushi Ebihara^1^\*, Joel H. Nitta^1^\*\*, Yurika Matsumoto^2^, Yuri Fukazawa^2
 
 (Received 12 February 2019; accepted 27 March 2019)
 
-**Abstract** Despite their importance to the fern life cycle, little is known about the ecology of fern gametophytes due to their cryptic morphology and small size. This study documents growth dynamics over five years in a population of *Pleurosoriopsis makinoi* gametophytes growing independently of sporophytes in Okutama-machi, Tokyo, Japan. Cover was measured in four 10 × 10 cm quadrats, and the number and size of gemmae born on gametophytes measured ca. every two months from March 2009 to March 2014. The population survived for the duration of the study, and no seasonality was observed in the cover measurements. Gemmae gradually grow throughout the spring and summer, and mostly detach in winter. Based on our preliminary comparison between the microenvironment of the independent gametophyte site and a site supporting sporophytes of the same species, a possible cause of suppression of sporophyte formation is low light conditions in winter due to planting of evergreen conifers. 
+**Abstract** Despite their importance to the fern life cycle, little is known about the ecology of fern gametophytes due to their cryptic morphology and small size. This study documents growth dynamics over five years in a population of *Pleurosoriopsis makinoi* gametophytes growing independently of sporophytes in Okutama-machi, Tokyo, Japan. Cover was measured in four 10 × 10 cm quadrats, and the number and size of gemmae born on gametophytes measured ca. every two months from March 2009 to March 2014. The population survived for the duration of the study, and no seasonality was observed in the cover measurements. Gemmae gradually grow throughout the spring and summer, and mostly detach in winter. Based on our preliminary comparison between the microenvironment of the independent gametophyte site and a site supporting sporophytes of the same species, a possible cause of suppression of sporophyte formation is low light conditions in winter due to planting of evergreen conifers.
 
 **Key words**: fern, gemma, microenvironment, sporophyte.
 
 Ferns possess an unusual life cycle consisting of two morphologically distinct, free-living stages: the diploid sporophyte and the haploid gametophyte. Unlike seed plants, in which the gametophyte is nutritionally dependent upon the sporophyte, in ferns gametophytes may grow separately from sporophytes. The phenomenon of ‘independent gametophytes’ includes fern gametophyte populations in various degrees of independence from sporophytes (Pinson *et al.*, 2017). Independent gametophyte species, lacking any known counterpart sporophyte, are rather extreme cases (Farrar, 1967, 1978, 1992). Conversely, facultatively independent species, which may or may not grow separately from sporophytes depending on environmental conditions, have been observed in many more species (Rumsey and Sheffield, 1996). Almost without exception, species capable of growing as independent gametophytes have noncordiform morphology with indeterminate growth (Ebihara *et al.*, 2013). Facultatively independent fern gametophytes represent an understudied but useful group for understanding the ecological correlates of the transition from haploid to diploid phase in land plants.
 
-We recently conducted a survey of the fern gametophyte flora of Japan (Ebihara *et al.*, 2013). During the survey, we located a population of *Pleurosoriopsis makinoi* (Maxim. ex Makino) Fomin (Polypodiaceae) gametophytes in Unazawa Valley, Okutama-machi, Tokyo, Japan growing without any sporophytes nearby as far as we searched --- its sporophyte population has evidently been observed in the valley, but is very small and rare (S. Fujimoto, personal communication). We therefore considered it an ‘independent gametophyte’ in the broad sense. *Pleurosoriopsis makinoi* is a small-leaved fern species often growing with long-creeping rhizomes among bryophyte mats on rocks distributed in East Asia (China, Japan, Korea and Russian Far East) (Zhang *et al.*, 2013). It has ribbon-like gametophytes, and gemmae and sexual organs have been observed both in the wild and in cultivation from sown spores (Masuyama, 1975). 
+We recently conducted a survey of the fern gametophyte flora of Japan (Ebihara *et al.*, 2013). During the survey, we located a population of *Pleurosoriopsis makinoi* (Maxim. ex Makino) Fomin (Polypodiaceae) gametophytes in Unazawa Valley, Okutama-machi, Tokyo, Japan growing without any sporophytes nearby as far as we searched --- its sporophyte population has evidently been observed in the valley, but is very small and rare (S. Fujimoto, personal communication). We therefore considered it an ‘independent gametophyte’ in the broad sense. *Pleurosoriopsis makinoi* is a small-leaved fern species often growing with long-creeping rhizomes among bryophyte mats on rocks distributed in East Asia (China, Japan, Korea and Russian Far East) (Zhang *et al.*, 2013). It has ribbon-like gametophytes, and gemmae and sexual organs have been observed both in the wild and in cultivation from sown spores (Masuyama, 1975).
 
-We conducted a continuous observational study on the wild independent gametophytes of *P. makinoi* in Unazawa Valley to answer the following questions: 
+We conducted a continuous observational study on the wild independent gametophytes of *P. makinoi* in Unazawa Valley to answer the following questions:
 1.	How stable is the size of independent gametophyte populations over long periods of time?
 2.	Do independent gametophytes produce sexual organs (archegonia and antheridia) or possess the ability to produce sporophytes?
 3.	Do the gemmae of independent gametophytes contribute to sustainment/expansion of populations?
@@ -61,7 +64,7 @@ Four 10 cm × 10 cm quadrats (q1, q2, q3 and q4) were designated on the rockface
 
 ### Gametophyte collection, observation and measurements
 
-Living gametophytes were collected from the peripheries of the quadrats, and were brought back to the laboratory in small zipped plastic bags with wet papers. Collections were made 38 times from March 2009 to March 2014. The gametophytes were washed using brushes under a stereomicroscope (Leica M420). The number of gemmae was counted and length of each gemma (Figs. 2a, b) was measured under a light microscope (Olympus BX51) in ten individuals per collection, and mean of the number and the length of gemmae calculated. 
+Living gametophytes were collected from the peripheries of the quadrats, and were brought back to the laboratory in small zipped plastic bags with wet papers. Collections were made 38 times from March 2009 to March 2014. The gametophytes were washed using brushes under a stereomicroscope (Leica M420). The number of gemmae was counted and length of each gemma (Figs. 2a, b) was measured under a light microscope (Olympus BX51) in ten individuals per collection, and mean of the number and the length of gemmae calculated.
 
 We conducted a survey for reproductive structures in 2015. We collected 90 individuals, measured their length and width, and checked for the presence of antheridia or archegonia. During the 2015 survey, no reproductive structures were observed, so we also inspected images of all vouchers of *P. makinoi* collected at this site for archegonia or antheridia.
 
@@ -141,21 +144,23 @@ Wickham, H. 2016. ggplot2: Elegant Graphics for Data Analysis. Springer-Verlag N
 
 Zhang, X. C., Lu, S. G., Lin, Y. X., Qi, X. P., Moore, S., Xing, F. W, Wang, F. G., Hovenkamp, P. H., Gilbert, M. G., Nooteboom, H. P., Parris, B. S., Haufler, C., Kato, M. and Smith, A. R. 2013. Polypodiaceae. In: Wu, Z. Y., Raven, P. H. and Hong, D. Y. (eds.), Flora of China, Vol. 2-3 (Pteridophytes), pp. 758-850. Science Press, Beijing, Missouri Botanical Garden Press, St. Louis.
 
+```{r, results='asis', echo = FALSE, eval=(knitr::opts_knit$get('rmarkdown.pandoc.to') == 'latex')}
+# Add pagebreak if rendering to pdf
+cat('\\pagebreak')
+```
+
 ## Figures
 
-```{r fig-1, fig.width=7, fig.height=8, fig.cap = "Fig. 1. The quadrats for measurement of gametophyte cover of *Pleurosoriopsis makinoi* in Unazawa Valley, Okutama-machi, Tokyo, Japan. a. A full view of the site with four quadrat positions (q1, q2, q3 and q4). b. A 10 cm × 10 cm quadrat frame."}
-
-magick::image_read_pdf(here("ms/Fig1_quadrats.pdf"))
-
-```
-
-```{r fig-2, fig.width=8, fig.height=7, fig.cap = "Fig. 2. Gametophytes of *Pleurosoriopsis makinoi* collected in Unazawa Valley, Okutama-machi, Tokyo, Japan. a. A typical ribbon-like gametophyte with gemmae on the apical part (arrowhead), collected in August. b. Gemmae (arrowheads) on a gametophyte collected in November. c. A gametophyte with archegonia (arrowheads), collected in October. d. Archegonia. e. A gametophyte with antheridia (arrowhead) collected in December. f. An antheridium. Scale bars: 2 mm for a, 200 μm for b and d, 1 mm for c and e, 100 μm for f."}
-
-magick::image_read_pdf(here("ms/Fig2_gemma_sexualorgans.pdf"))
+```{r fig-1, fig.width=7, fig.height=7, fig.cap = "The quadrats for measurement of gametophyte cover of *Pleurosoriopsis makinoi* in Unazawa Valley, Okutama-machi, Tokyo, Japan. a. A full view of the site with four quadrat positions (q1, q2, q3 and q4). b. A 10 cm × 10 cm quadrat frame."}
+knitr::include_graphics(here("images/Fig1_quadrats.pdf"))
 
 ```
 
-```{r fig-3, fig.width=8, fig.height=7, fig.cap="Fig. 3. Change in growth of *Pleurosoriopsis makinoi* gametophytes observed from May 2009 to May 2014. a. Cover (cm^2^) of gametophytes in four 10 × 10 cm quadrats. b. Mean number of gemmae per individual. c. Mean gemma length (μm). For b and c, *n* = 10 individuals per observation; grey bars show SD. Shaded bars show alternating years."}
+```{r fig-2, fig.width=7, fig.height=7, fig.cap = "Gametophytes of *Pleurosoriopsis makinoi* collected in Unazawa Valley, Okutama-machi, Tokyo, Japan. a. A typical ribbon-like gametophyte with gemmae on the apical part (arrowhead), collected in August. b. Gemmae (arrowheads) on a gametophyte collected in November. c. A gametophyte with archegonia (arrowheads), collected in October. d. Archegonia. e. A gametophyte with antheridia (arrowhead) collected in December. f. An antheridium. Scale bars: 2 mm for a, 200 μm for b and d, 1 mm for c and e, 100 μm for f."}
+knitr::include_graphics(here("images/Fig2_gemma_sexualorgans.pdf"))
+```
+
+```{r fig-3, fig.width=8, fig.height=7, fig.cap="Change in growth of *Pleurosoriopsis makinoi* gametophytes observed from May 2009 to May 2014. a. Cover (cm^2^) of gametophytes in four 10 × 10 cm quadrats. b. Mean number of gemmae per individual. c. Mean gemma length (μm). For b and c, *n* = 10 individuals per observation; grey bars show SD. Shaded bars show alternating years."}
 #' Set x-limits manually since the automatically set limits will vary
 #' when we subset the data.
 start_date <- combined_morph %>%
@@ -168,7 +173,7 @@ end_date <- combined_morph %>%
 
 #' Make tibble of years for shading. This dataframe will be passed to `geom_rect()` when
 #' plotting.
-shading_dates <- 
+shading_dates <-
   tibble(date = seq.Date(from = start_date, to = end_date, by = "day")) %>%
   mutate(year = year(date)) %>%
   # shade by alternate years
@@ -180,10 +185,10 @@ shading_dates <-
   )
 
 #' Make list of subplots. Build each one at a time, then add common
-#' formatting. 
+#' formatting.
 subplots <- list()
 
-subplots[["cover"]] <- 
+subplots[["cover"]] <-
   combined_morph %>%
   ungroup %>%
   select(starts_with("q"), date) %>%
@@ -207,19 +212,19 @@ subplots[["cover"]] <-
 
 legend <- get_legend(subplots[["cover"]])
 
-subplots[["cover"]] <- 
+subplots[["cover"]] <-
   subplots[["cover"]] +
   theme(legend.position = "none")
 
-subplots[["gemmae_count"]] <- 
+subplots[["gemmae_count"]] <-
   combined_morph %>%
   select(count_mean, count_sd, date) %>%
   drop_na %>%
   ggplot(aes(x = date, y = count_mean)) %>%
   shade_years(shading_dates) +
   geom_errorbar(
-    aes(ymin=count_mean-count_sd, 
-        ymax=count_mean+count_sd), 
+    aes(ymin=count_mean-count_sd,
+        ymax=count_mean+count_sd),
     width=.1,
     color = "dark grey") +
   geom_line() +
@@ -230,15 +235,15 @@ subplots[["gemmae_count"]] <-
     subtitle = "b"
   )
 
-subplots[["gemmae_length"]] <- 
+subplots[["gemmae_length"]] <-
   combined_morph %>%
   select(length_mean, length_sd, date) %>%
   drop_na %>%
   ggplot(aes(x = date, y = length_mean)) %>%
   shade_years(shading_dates) +
   geom_errorbar(
-    aes(ymin=length_mean-length_sd, 
-        ymax=length_mean+length_sd), 
+    aes(ymin=length_mean-length_sd,
+        ymax=length_mean+length_sd),
     width=.1,
     color = "dark grey") +
   geom_line() +
@@ -250,12 +255,12 @@ subplots[["gemmae_length"]] <-
   )
 
 subplots <- subplots %>%
-  map(~ . + 
+  map(~ . +
         theme(
           axis.text.x = element_text(
-            angle = 30, 
-            hjust = 1, 
-            vjust = 0.5, 
+            angle = 30,
+            hjust = 1,
+            vjust = 0.5,
             margin=margin(-10,0,0,0)
           ),
           plot.margin = margin(0,10,0,10)
@@ -268,31 +273,31 @@ subplots <- subplots %>%
   )
 
 subplots[1:2] <- subplots[1:2] %>%
-  map(~ . + theme(axis.text.x = element_blank()) 
+  map(~ . + theme(axis.text.x = element_blank())
   )
 
 subplots[2:3] <- subplots[2:3] %>%
-  map(~ . + theme(plot.margin = margin(-10,10,0,10)) 
+  map(~ . + theme(plot.margin = margin(-10,10,0,10))
   )
 
 #' Combine subplots and write out
-subplots[[1]] + subplots[[2]] + subplots[[3]] + 
+subplots[[1]] + subplots[[2]] + subplots[[3]] +
   legend +
   plot_layout(ncol = 1, heights = c(1,1,1,0.2))
 
 ```
 
-```{r fig-4, fig.width=8, fig.height=7, fig.cap = "Fig. 4. Change in microclimate at site with *Pleurosoriopsis makinoi* independent gametophytes (Okutama) and sporophytes (Uratakao) from 2013 to 2014. a--b. Daily light integral (DLI) (mol m^-2 day^-1). c--d. Daily minimum relative humidity (%). e--f. Daily mean temperature (°C). Shaded bars show alternating years. Data collected at Okutama from September 22, 2012 to July 22, 2014 and at Uratakao from August 20, 2013 to November 22, 2014. Some data missing due to equipment malfunction (see Results)."}
+```{r fig-4, fig.width=8, fig.height=7, fig.cap = "Change in microclimate at site with *Pleurosoriopsis makinoi* independent gametophytes (Okutama) and sporophytes (Uratakao) from 2013 to 2014. a--b. Daily light integral (DLI) (mol m^-2 day^-1). c--d. Daily minimum relative humidity (%). e--f. Daily mean temperature (°C). Shaded bars show alternating years. Data collected at Okutama from September 22, 2012 to July 22, 2014 and at Uratakao from August 20, 2013 to November 22, 2014. Some data missing due to equipment malfunction (see Results)."}
 
 #' Extract common start and end dates so x-axis are same across subplots.
 start_date <- daily_microclimate %>% pull(date) %>% min
 end_date <- daily_microclimate %>% pull(date) %>% max
-all_days <- tibble( 
+all_days <- tibble(
   date = seq(start_date, end_date, by = "day")
 )
 
 #' Make tibble of years for shading.
-shading_dates <- 
+shading_dates <-
   tibble(date = seq.Date(from = start_date, to = end_date, by = "day")) %>%
   mutate(year = year(date)) %>%
   # shade by odd years
@@ -322,7 +327,7 @@ daily_microclimate_with_na <- bind_rows(
 #' Make list of subplots.
 subplots <- list()
 
-subplots[[1]] <- 
+subplots[[1]] <-
   daily_microclimate_okutama %>%
   ggplot(aes(x = date, y = par_total)) %>%
   shade_years(shading_dates) +
@@ -333,7 +338,7 @@ subplots[[1]] <-
        title = "Okutama",
        subtitle = "a")
 
-subplots[[2]] <- 
+subplots[[2]] <-
   daily_microclimate_takao %>%
   ggplot(aes(x = date, y = par_total)) %>%
   shade_years(shading_dates) +
@@ -344,7 +349,7 @@ subplots[[2]] <-
        title = "Uratakao",
        subtitle = "b")
 
-subplots[[3]] <- 
+subplots[[3]] <-
   daily_microclimate_okutama %>%
   ggplot(aes(x = date, y = rh_min)) %>%
   shade_years(shading_dates) +
@@ -354,7 +359,7 @@ subplots[[3]] <-
        x = "",
        subtitle = "c")
 
-subplots[[4]] <- 
+subplots[[4]] <-
   daily_microclimate_takao %>%
   ggplot(aes(x = date, y = rh_min)) %>%
   shade_years(shading_dates) +
@@ -364,7 +369,7 @@ subplots[[4]] <-
        x = "",
        subtitle = "d")
 
-subplots[[5]] <- 
+subplots[[5]] <-
   daily_microclimate_okutama %>%
   ggplot(aes(x = date, y = temp_mean)) %>%
   shade_years(shading_dates) +
@@ -373,7 +378,7 @@ subplots[[5]] <-
        x = "",
        subtitle = "e")
 
-subplots[[6]] <- 
+subplots[[6]] <-
   daily_microclimate_takao %>%
   ggplot(aes(x = date, y = temp_mean)) %>%
   shade_years(shading_dates) +
@@ -384,12 +389,12 @@ subplots[[6]] <-
 
 #' Apply common formatting.
 subplots <- subplots %>%
-  map(~ . + 
+  map(~ . +
         theme(
           axis.text.x = element_text(
-            angle = 30, 
-            hjust = 1, 
-            vjust = 0.5, 
+            angle = 30,
+            hjust = 1,
+            vjust = 0.5,
             margin=margin(-10,0,0,0)
           )
         ) +
@@ -402,27 +407,27 @@ subplots <- subplots %>%
 
 #' Remove x-axis lables from upper plots.
 subplots[1:4] <- subplots[1:4] %>%
-  map(~ . + theme(axis.text.x = element_blank()) 
+  map(~ . + theme(axis.text.x = element_blank())
   )
 
 #' Close gaps on top margins for lower plots.
 subplots[c(3,5)] <- subplots[c(3,5)] %>%
-  map(~ . + theme(plot.margin = margin(-10,10,0,10)) 
+  map(~ . + theme(plot.margin = margin(-10,10,0,10))
   )
 
 #' Close gaps on left side for RHS plots.
 subplots[c(2,4,6)] <- subplots[c(2,4,6)] %>%
-  map(~ . + theme(plot.margin = margin(-10,10,0,-40)) 
+  map(~ . + theme(plot.margin = margin(-10,10,0,-40))
   )
 
 #' Combine plots and write out.
-subplots[[1]] + subplots[[2]] + subplots[[3]] + 
-  subplots[[4]] + subplots[[5]] + subplots[[6]] + 
+subplots[[1]] + subplots[[2]] + subplots[[3]] +
+  subplots[[4]] + subplots[[5]] + subplots[[6]] +
   plot_layout(ncol = 2)
 
 ```
 
-```{r fig-5, evaluate = FALSE, fig.width=7, fig.height=8, fig.cap="Fig. 5. Density plots showing difference between microclimate at *Pleurosoriopsis makinoi* independent gametophyte site (Okutama) and sporophyte site (Uratakao). Significant differences (paired t-test) shown by asterisks: \\*\\*\\*, *p* < 0.001; \\*\\*, *p* < 0.01; \\*, *p* < 0.05.  Y-axis is relative probability density; curves scaled so that total probability of each scales to 1. Vertical lines shown medians."}
+```{r fig-5, evaluate = FALSE, fig.width=7, fig.height=8, fig.cap="Density plots showing difference between microclimate at *Pleurosoriopsis makinoi* independent gametophyte site (Okutama) and sporophyte site (Uratakao). Significant differences (paired t-test) shown by asterisks: \\*\\*\\*, *p* < 0.001; \\*\\*, *p* < 0.01; \\*, *p* < 0.05.  Y-axis is relative probability density; curves scaled so that total probability of each scales to 1. Vertical lines shown medians."}
 #' Extract p-values for plotting, and put into data frame
 #' with xvals specifying season and yvals specifying height
 #' to plot asterisks.
@@ -589,27 +594,26 @@ subplots[[7]] +  subplots[[8]] +  subplots[[9]] + # Summer
 subplots[[10]] + subplots[[11]] + subplots[[12]] + # Fall
 plot_spacer() + legend + plot_spacer() + plot_layout(ncol = 3, heights = c(1, 1, 1, 1, 0.2))
 
-ggsave(glue::glue("fig-5_{Sys.Date()}.pdf"), width = 7, height = 8, units = "in")
 ```
 
-```{r fig-6, fig.width=7, fig.height=8, fig.cap="Fig. 6. Relationships between growth of *Pleurosoriopsis makinoi* gametophytes (total cover, mean gemma number, and mean gemma length) and microclimate at the Okutama site. Microclimatic variables are monthly means of daily light integral (DLI) (mol m^-2^ day^-1^), daily minimum relative humidity (%), and daily mean temperature (°C). Grey bars show SD (except for total cover, which is a sum, not a mean). Significant relationships (linear model) shown with a line."}
+```{r fig-6, fig.width=7, fig.height=8, fig.cap="Relationships between growth of *Pleurosoriopsis makinoi* gametophytes (total cover, mean gemma number, and mean gemma length) and microclimate at the Okutama site. Microclimatic variables are monthly means of daily light integral (DLI) (mol m^-2^ day^-1^), daily minimum relative humidity (%), and daily mean temperature (°C). Grey bars show SD (except for total cover, which is a sum, not a mean). Significant relationships (linear model) shown with a line."}
 #' Loop through all combination of dep and indep variables and their models,
 #' and make plots for each.
 var_grid <- make_var_grid (c("rh_min", "par_total", "temp_mean"))
 
-subplots <- 
-  pmap(var_grid, 
-       quick_plot_with_stats, 
-       plot_data = combined_monthly_morph, 
+subplots <-
+  pmap(var_grid,
+       quick_plot_with_stats,
+       plot_data = combined_monthly_morph,
        model_data = linear_model_results)
 
 #' Add axis titles
-#' 
+#'
 #' First, remove all default titles, then add formatted titles.
 subplots <- map(subplots, ~ . + labs(x = "", y = ""))
 subplots[[1]] <- subplots[[1]] + labs(y = expression("Total cover ("~cm^2~")"))
 subplots[[4]] <- subplots[[4]] + labs(y = "Gemmae count")
-subplots[[7]] <- subplots[[7]] + 
+subplots[[7]] <- subplots[[7]] +
   labs(
     y = expression(paste("Gemmae len. (", mu, "m)", sep = "")),
     x = expression(paste("DLI (", mol~m^-2~day^-1, ")", sep = ""))
@@ -623,44 +627,44 @@ top_close <- -10
 
 #' Close gaps on left only: 2,3
 subplots[2:3] <- subplots[2:3] %>%
-  map(~ . + theme(plot.margin = margin(0,0,0,left_close)) 
+  map(~ . + theme(plot.margin = margin(0,0,0,left_close))
   )
 
 #' Close gaps on left side and top: 5,6,8,9
 subplots[c(5,6,8,9)] <- subplots[c(5,6,8,9)] %>%
-  map(~ . + theme(plot.margin = margin(top_close,0,0,left_close)) 
+  map(~ . + theme(plot.margin = margin(top_close,0,0,left_close))
   )
 
 #' Close gaps on top only: 4,7
 subplots[c(4,7)] <- subplots[c(4,7)] %>%
-  map(~ . + theme(plot.margin = margin(top_close,0,0,0)) 
+  map(~ . + theme(plot.margin = margin(top_close,0,0,0))
   )
 
 #' Add legend for middle bottom plot, combine, and write out.
-subplots[[8]] <- subplots[[8]] + 
-  theme(legend.position="bottom") + 
+subplots[[8]] <- subplots[[8]] +
+  theme(legend.position="bottom") +
   labs(color = "Month", shape = "Year")
 
-subplots[[1]] + subplots[[2]] + subplots[[3]] + 
-  subplots[[4]] + subplots[[5]] + subplots[[6]] + 
-  subplots[[7]] + subplots[[8]] + subplots[[9]] + 
+subplots[[1]] + subplots[[2]] + subplots[[3]] +
+  subplots[[4]] + subplots[[5]] + subplots[[6]] +
+  subplots[[7]] + subplots[[8]] + subplots[[9]] +
   plot_layout(ncol = 3)
 
 #' Black and white version if needed.
-# subplots <- 
+# subplots <-
 #   map(subplots,
-#       ~ . + scale_color_grey() 
+#       ~ . + scale_color_grey()
 #   )
-# 
-# subplots[[1]] + subplots[[2]] + subplots[[3]] + 
-#   subplots[[4]] + subplots[[5]] + subplots[[6]] + 
-#   subplots[[7]] + subplots[[8]] + subplots[[9]] + 
+#
+# subplots[[1]] + subplots[[2]] + subplots[[3]] +
+#   subplots[[4]] + subplots[[5]] + subplots[[6]] +
+#   subplots[[7]] + subplots[[8]] + subplots[[9]] +
 #   plot_layout(ncol = 3)
 ```
 
-```{r fig-7, fig.width=7, fig.height=4, fig.cap = "Fig. 7. Sizes of gametophytes with antheridia (male), archegonia (female), or no reproductive structures (asexual). a. Length (mm). b. Width (mm). Boxplots show medians and extend to the first and third quartile; whiskers extend to 1.5× the interquartile range. A single archegoniate (female) outlier with length of 46.6 mm was removed prior to plotting. Points randomly scattered within each x-axis category to reduce overlap."}
-#' Note there is one outlier with length 46 mm, 
-#' then the rest all less than 19 mm. We will remove this 
+```{r fig-7, fig.width=7, fig.height=4, fig.cap = "Sizes of gametophytes with antheridia (male), archegonia (female), or no reproductive structures (asexual). a. Length (mm). b. Width (mm). Boxplots show medians and extend to the first and third quartile; whiskers extend to 1.5× the interquartile range. A single archegoniate (female) outlier with length of 46.6 mm was removed prior to plotting. Points randomly scattered within each x-axis category to reduce overlap."}
+#' Note there is one outlier with length 46 mm,
+#' then the rest all less than 19 mm. We will remove this
 #' before plotting and make a note in the figure caption.
 gameto_size_no_outlier <-
   gameto_size %>%
@@ -682,7 +686,7 @@ set.seed(1000)
 
 subplots <- list()
 
-subplots[["length"]] <- 
+subplots[["length"]] <-
   ggplot(gameto_size_no_outlier, aes(y = length, x = sex, color = sex)) +
   labs(
     subtitle = "a",
@@ -697,9 +701,9 @@ subplots[["width"]] <-
     y = "Width (mm)",
     x = "")
 
-subplots <- 
+subplots <-
   map(subplots,
-      ~ . + 
+      ~ . +
         geom_jitter(size = 3) +
         geom_boxplot(
           outlier.shape = NA,
@@ -711,22 +715,25 @@ subplots <-
         theme(legend.position = "none")
   )
 
-subplots[[1]] + subplots[[2]] + plot_layout(ncol = 2) 
+subplots[[1]] + subplots[[2]] + plot_layout(ncol = 2)
 
 # Black and white version
-# subplots <- 
+# subplots <-
 #   map(subplots,
-#       ~ . + 
+#       ~ . +
 #         scale_color_grey() +
 #         theme(legend.position = "none")
 #   )
 
 ```
 
-```{r fig-8, fig.width=7, fig.height=8, fig.cap = "Fig. 8. A comparison of vegetation of the independent gametophyte site with that of a sporophyte site of Pleurosoriopsis. a--b. Typical vegetation of sporophyte habitat covered with summer-green broad-leaved trees (Chichibu-shi, Saitama Pref., Japan). c--d. Vegetation of the independent gametophyte site in Unazawa Valley covered with evergreen cypress trees. a, c. in August, b, d. in December.  "}
+```{r fig-8, fig.width=7, fig.height=7, fig.cap = "A comparison of vegetation of the independent gametophyte site with that of a sporophyte site of Pleurosoriopsis. a--b. Typical vegetation of sporophyte habitat covered with summer-green broad-leaved trees (Chichibu-shi, Saitama Pref., Japan). c--d. Vegetation of the independent gametophyte site in Unazawa Valley covered with evergreen cypress trees. a, c. in August, b, d. in December.  "}
+knitr::include_graphics(here("images/Fig8_vegetation.pdf"))
+```
 
-magick::image_read_pdf(here("ms/Fig8_vegetation.pdf"))
-
+```{r, results='asis', echo = FALSE, eval=(knitr::opts_knit$get('rmarkdown.pandoc.to') == 'latex')}
+# Add pagebreak if rendering to pdf
+cat('\\pagebreak')
 ```
 
 ## Tables
@@ -746,8 +753,8 @@ t_test_results %>%
   group_by(season) %>%
   gt() %>%
   fmt_number(
-    columns = vars(estimate, statistic, conf.low, conf.high, 
-                   okutama_mean, okutama_sd, 
+    columns = vars(estimate, statistic, conf.low, conf.high,
+                   okutama_mean, okutama_sd,
                    uratakao_mean, uratakao_sd)
   ) %>%
   cols_move(
@@ -764,8 +771,8 @@ t_test_results %>%
   ) %>%
   cols_label(
     var = "",
-    statistic = "t",
-    pval = "p",
+    statistic = md("*t*"),
+    pval = md("*p*"),
     parameter = "df",
     conf.low = "Lower",
     conf.high = "Upper",
@@ -782,9 +789,15 @@ t_test_results %>%
     )
   ) %>%
   tab_header(
-    title = "Table 1"
+    title = "Table 1",
+    subtitle = md("&nbsp;") # work-around for https://github.com/rstudio/gt/issues/197
   )
 
+```
+
+```{r, results='asis', echo = FALSE, eval=(knitr::opts_knit$get('rmarkdown.pandoc.to') == 'latex')}
+# Add pagebreak if rendering to pdf
+cat('\\pagebreak')
 ```
 
 Table 2. Results of linear models testing for relationship between growth traits (total cover, count of gemmae, and length of gemmae) as dependent variable on microclimate (monthly averages of daily light integral [DLI], daily minimum relative humidity, and daily mean temperature) as independent variable in gametophytes of *Pleurosoriopsis makinoi* at Unazawa Valley, Okutama-machi, Tokyo, Japan. Results presented by independent variable.
@@ -813,7 +826,7 @@ linear_model_results %>%
   cols_move(
     columns = vars(df.residual),
     after = vars(df)
-  ) %>% 
+  ) %>%
   fmt_number(
     columns = colnames(.) %in% cols_numeric
   ) %>%
@@ -827,11 +840,11 @@ linear_model_results %>%
   ) %>%
   cols_label(
     y_var = "",
-    r.squared = "r-squared",
-    adj.r.squared = "adj. r-squared",
-    statistic = "t",
-    p.value = "p",
-    df.residual = "df residual"
+    r.squared = md("r2"),
+    adj.r.squared = md("adj. r2"),
+    statistic = md("*t*"),
+    p.value = md("*p*"),
+    df.residual = "df resid."
   ) %>%
   tab_style(
     style = cells_styles(
@@ -841,7 +854,8 @@ linear_model_results %>%
     )
   ) %>%
   tab_header(
-    title = "Table 2"
+    title = "Table 2",
+    subtitle = md("&nbsp;") # work-around for https://github.com/rstudio/gt/issues/197
   )
 
 ```
