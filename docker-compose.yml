@@ -7,5 +7,5 @@ services:
     volumes:
       - ".:/home/rstudio/pleurosoriopsis"
     environment:
-      PASSWORD: "ilover"
-      ROOT: "true"
+      DISABLE_AUTH: "true"
+    working_dir: /home/rstudio/pleurosoriopsis
