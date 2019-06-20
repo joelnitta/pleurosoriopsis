@@ -6,6 +6,7 @@
 .bash_history
 .gitconfig
 .rstudio
+.Rprofile
 .drake/
 data
 reports
@@ -14,3 +15,5 @@ temp
 ms
 *.html
 *.log
+packrat/*
+!packrat/packrat.lock
