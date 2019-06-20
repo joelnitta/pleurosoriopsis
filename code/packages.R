@@ -17,7 +17,6 @@ library(patchwork)
 library(readxl)
 library(scales)
 library(tidyverse)
-# library(ggridges)
 
 # Resolve conflicts
 col_factor <- conflict_prefer("col_factor", "readr")
