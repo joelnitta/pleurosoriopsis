@@ -25,4 +25,4 @@ source("code/functions.R")
 source("code/plan.R")
 
 # Run analyses ----
-make(plan, lock_envir = FALSE)
+make(plan)
