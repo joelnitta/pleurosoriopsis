@@ -1,4 +1,4 @@
-# make.R 
+# make.R
 
 # Master script for running Pleurorosiopsis analyses.
 # This project uses drake to manage workflows.
@@ -17,11 +17,7 @@ source("code/packages.R")
 pkgconfig::set_config("drake::strings_in_dots" = "literals")
 
 # Load functions and plans  ----
-
-# General functions
 source("code/functions.R")
-
-# Data processing
 source("code/plan.R")
 
 # Run analyses ----
