@@ -171,12 +171,6 @@
       "Source": "CRAN",
       "Requirements": []
     },
-    "drake": {
-      "Package": "drake",
-      "Version": "7.4.0",
-      "Source": "CRAN",
-      "Requirements": []
-    },
     "ellipsis": {
       "Package": "ellipsis",
       "Version": "0.1.0",
@@ -291,12 +285,6 @@
       "Source": "CRAN",
       "Requirements": []
     },
-    "igraph": {
-      "Package": "igraph",
-      "Version": "1.2.4.1",
-      "Source": "CRAN",
-      "Requirements": []
-    },
     "jntools": {
       "Package": "jntools",
       "Version": "0.1.0",
@@ -336,12 +324,6 @@
     "lubridate": {
       "Package": "lubridate",
       "Version": "1.7.4",
-      "Source": "CRAN",
-      "Requirements": []
-    },
-    "magick": {
-      "Package": "magick",
-      "Version": "2.0",
       "Source": "CRAN",
       "Requirements": []
     },
@@ -558,12 +540,6 @@
     "storr": {
       "Package": "storr",
       "Version": "1.2.1",
-      "Source": "CRAN",
-      "Requirements": []
-    },
-    "stringi": {
-      "Package": "stringi",
-      "Version": "1.4.3",
       "Source": "CRAN",
       "Requirements": []
     },
