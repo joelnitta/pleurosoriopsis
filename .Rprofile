@@ -1,0 +1,18 @@
+source("renv/activate.R")
+
+# Resolve conflicts
+library(conflicted)
+conflict_prefer("col_factor", "readr")
+conflict_prefer("collapse", "dplyr")
+conflict_prefer("discard", "purrr")
+conflict_prefer("expand", "tidyr")
+conflict_prefer("extract", "magrittr")
+conflict_prefer("filter", "dplyr")
+conflict_prefer("gather", "tidyr")
+conflict_prefer("ggsave", "ggplot2")
+conflict_prefer("here", "here")
+conflict_prefer("intersect", "dplyr")
+conflict_prefer("lag", "dplyr")
+conflict_prefer("Position", "ggplot2")
+conflict_prefer("setdiff", "dplyr")
+conflict_prefer("union", "dplyr")
