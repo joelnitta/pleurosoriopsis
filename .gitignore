@@ -6,8 +6,6 @@
 .bash_history
 .gitconfig
 .rstudio
-.Rprofile
-.drake/
 data
 reports
 results
@@ -18,5 +16,7 @@ ms.pdf
 *.log
 *_cache/
 *_files/
-packrat/*
-!packrat/packrat.lock
+*cache/
+*files/
+_targets
+

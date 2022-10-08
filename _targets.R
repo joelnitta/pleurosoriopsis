@@ -2,6 +2,7 @@
 library(targets)
 library(tarchetypes)
 source("code/packages.R")
+source("code/functions.R")
 
 # Workflow Plans
 #
@@ -37,19 +38,19 @@ tar_plan(
   # in the `xlsx` file, so read in each variable separately.
 
   okutama_temp_raw = read_excel(
-    file_in("data_raw/datalogger_raw.xlsm"),
+    "data_raw/datalogger_raw.xlsm",
     sheet = 1,
     range = "A2:B28683",
     col_names = c("date_time", "temp")),
 
   okutama_rh_raw = read_excel(
-    file_in("data_raw/datalogger_raw.xlsm"),
+    "data_raw/datalogger_raw.xlsm",
     sheet = 1,
     range = "C2:D28683",
     col_names = c("date_time", "rh")),
 
   okutama_par_raw = read_excel(
-    file_in("data_raw/datalogger_raw.xlsm"),
+    "data_raw/datalogger_raw.xlsm",
     sheet = 1,
     range = "F2:G28204",
     col_names = c("date_time", "par")),
@@ -62,7 +63,7 @@ tar_plan(
   # Uratakao raw data have a single column for time of the three microclimate
   # variables, so these can be read in all at once.
   takao_microclimate_raw = read_excel(
-    file_in("data_raw/datalogger_raw.xlsm"),
+    "data_raw/datalogger_raw.xlsm",
     sheet = 2,
     range = "D2:G21459",
     col_names = c("date_time", "par", "temp", "rh")),
@@ -73,7 +74,7 @@ tar_plan(
   # measured once per month for
   # four 10 x 10 cm plots at the Okutama site.
   cover_raw = read_excel(
-    file_in("data_raw/pleurosoriopsis_data_figs.xlsx"),
+    "data_raw/pleurosoriopsis_data_figs.xlsx",
     sheet = 1,
     skip = 1,
     col_names = c("date", "q_1", "q_2", "q_3", "q_4")
@@ -86,12 +87,12 @@ tar_plan(
   # already cacluated.
 
   gemmae_count_raw = read_xlsx(
-    file_in("data_raw/pleurosoriopsis_data_figs.xlsx"),
+    "data_raw/pleurosoriopsis_data_figs.xlsx",
     sheet = 3,
     range = "A2:C62"),
 
   gemmae_length_raw = read_xlsx(
-    file_in("data_raw/pleurosoriopsis_data_figs.xlsx"),
+    "data_raw/pleurosoriopsis_data_figs.xlsx",
     sheet = 3,
     range = "E2:G62",
     col_types = c("text", "numeric", "numeric")),
@@ -104,21 +105,21 @@ tar_plan(
   #
   # Read in size data for individuals without gametangia
   size_asexual_raw = read_excel(
-    file_in("data_raw/okutama_gameto_size.xlsx"),
+    "data_raw/okutama_gameto_size.xlsx",
     sheet = 1,
     range = "B4:D94"),
 
   # Read in size data for individuals with gametangia.
   # (No dates here)
   size_with_archegonia = read_excel(
-    file_in("data_raw/okutama_gameto_size.xlsx"),
+    "data_raw/okutama_gameto_size.xlsx",
     sheet = 2,
     range = "B4:D36") %>%
     rename(id = `番号`, length = `長さ（㎜）`, width = `　幅（㎜）`) %>%
     mutate(sex = "female"),
 
   size_with_antheridia = read_excel(
-    file_in("data_raw/okutama_gameto_size.xlsx"),
+    "data_raw/okutama_gameto_size.xlsx",
     sheet = 2,
     range = "O5:Q9")  %>%
     rename(id = `番号`, length = `長さ（㎜）　`, width = `幅（㎜）`) %>%
@@ -226,11 +227,12 @@ tar_plan(
   linear_model_results = make_climate_morph_lm(
     selected_vars = selected_vars,
     combined_monthly_morph = combined_monthly_morph
-  ),
+  ) #,
 
   # Write out MS
-  ms = rmarkdown::render(
-    knitr_in("ms.Rmd"),
-    quiet = TRUE)
+  # tar_knit(
+  #   ms,
+  #   "ms.Rmd"
+  # )
 
 )
