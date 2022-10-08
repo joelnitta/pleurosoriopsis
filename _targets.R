@@ -227,12 +227,12 @@ tar_plan(
   linear_model_results = make_climate_morph_lm(
     selected_vars = selected_vars,
     combined_monthly_morph = combined_monthly_morph
-  ) #,
+  ),
 
   # Write out MS
-  # tar_knit(
-  #   ms,
-  #   "ms.Rmd"
-  # )
+  tar_render(
+    ms,
+    "ms.Rmd"
+  )
 
 )

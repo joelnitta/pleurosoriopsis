@@ -15,15 +15,17 @@ knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE, cache = TR
 order_vars <- c("par_total", "rh_min", "temp_mean")
 
 # Load objects from drake workflow into memory
-loadd(selected_vars)
-loadd(combined_morph)
-loadd(daily_microclimate)
-loadd(t_test_results)
-loadd(paired_microclimate)
-loadd(nested_paired_microclimate)
-loadd(combined_monthly_morph)
-loadd(linear_model_results)
-loadd(gameto_size)
+tar_load(c(
+  selected_vars,
+  combined_morph,
+  daily_microclimate,
+  t_test_results,
+  paired_microclimate,
+  nested_paired_microclimate,
+  combined_monthly_morph,
+  linear_model_results,
+  gameto_size)
+)
 ```
 
 Atsushi Ebihara^1^\*, Joel H. Nitta^1^\*\*, Yurika Matsumoto^2^, Yuri Fukazawa^2^, Marie Kurihara^2^, Hitomi Yokote^2^, Kaoru Sakuma^2^, Otowa Azakami^2^, Yumiko Hirayama1 and Ryoko Imaichi^2^
