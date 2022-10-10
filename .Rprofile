@@ -3,7 +3,7 @@ source("renv/activate.R")
 # Resolve conflicts
 library(conflicted)
 conflict_prefer("col_factor", "readr", quiet = TRUE)
-conflict_prefer("col_factor", "readr", quiet = TRUE˝)
+conflict_prefer("col_factor", "readr", quiet = TRUE)
 conflict_prefer("collapse", "dplyr", quiet = TRUE)
 conflict_prefer("discard", "purrr", quiet = TRUE)
 conflict_prefer("expand", "tidyr", quiet = TRUE)
