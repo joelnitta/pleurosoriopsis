@@ -27,7 +27,7 @@ RUN Rscript install_latex.R
 
 # Add script to clone repo and run analysis
 
-COPY make.sh .
+COPY make.sh /tmp/.
 
 # Default command is to clone repo and run analysis
-CMD ["bash make.sh"]
+CMD ["bash", "/tmp/make.sh"]
