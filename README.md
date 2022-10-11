@@ -2,38 +2,43 @@
 
 Code repository and raw data for [Ebihara *et al.* 2019. "Growth Dynamics of the Independent Gametophytes of *Pleurorosiopsis makinoi* (Polypodiaceae)" *Bulletin of the National Science Museum Series B (Botany)* 45:77-86.](https://www.kahaku.go.jp/research/publication/botany.html)
 
-All code is in [R](https://cran.r-project.org/). The [drake package](https://ropensci.github.io/drake/) is used to manage the workflow. To run all analyses and generate the manuscript, simply [clone this repository](https://git-scm.com/book/en/v2/Git-Basics-Getting-a-Git-Repository) and run `make.R`.
+All code is in [R](https://cran.r-project.org/). The [targets package](https://docs.ropensci.org/targets/) is used to manage the workflow. To run all analyses and generate the manuscript, [clone this repository](https://git-scm.com/book/en/v2/Git-Basics-Getting-a-Git-Repository) and run `_targets.R`.
 
 ## Reproducible analysis with Docker
 
-`make.R` requires various packages to be installed, and may not work properly if package versions have changed. Therefore, a [Docker image is provided](https://hub.docker.com/r/joelnitta/pleurosoriopsis) to run the code reproducibly.
+`_targets.R` requires various packages to be installed, and may not work properly if package versions have changed. Therefore, a [Docker image is provided](https://hub.docker.com/r/joelnitta/pleurosoriopsis) to run the code reproducibly.
 
-To use it, first [install docker](https://docs.docker.com/install/) and clone this repository.
+To use it, first [install docker](https://docs.docker.com/install/).
 
-Navigate to the cloned repository (where `/path/to/repo` is the path on your machine), and launch the container:
-
-```
-cd /path/to/repo
-docker-compose up -d
-```
-
-Enter the container:
+To run the analysis, execute this code in your console:
 
 ```
-docker exec -it pleurosoriopsis_analysis_1 bash
+docker run --rm -v ${PWD}:/wd -w /wd joelnitta/pleurosoriopsis:targets \
+  bash /tmp/make.sh
 ```
 
-Inside the container, run `make.R`:
+You will see the targets being built by {targets}, and the final manuscript should be compiled at the end as `pleurosoriopsis/ms.pdf`.
+
+## Interacting with the code
+
+You can run RStudio inside the Docker container.
+
+First run this code in your console (must be run from within the `pleurosoriopsis` folder):
 
 ```
-Rscript make.R
+docker run --rm -dt -v ${PWD}:/home/rstudio/ \
+  -p 8787:8787 \
+  -e DISABLE_AUTH=true \
+  --name pleuro \
+  joelnitta/pleurosoriopsis:targets
 ```
 
-You will see the targets being built by `drake`, and the final manuscript should be compiled at the end as `ms.pdf`.
+Then, navigate to <localhost:8787/> in your browser.
 
-When it's finished, exit the container and take it down:
+In the RStudio "Files" pane, click `Pleurosoriopsis.Rproj` to open the project.
+
+When you are done, stop and remove the container:
 
 ```
-exit
-docker-compose down
+docker kill pleuro
 ```
