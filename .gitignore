@@ -20,3 +20,6 @@ ms.pdf
 *_files/
 packrat/*
 !packrat/packrat.lock
+_targets
+cache
+renv
