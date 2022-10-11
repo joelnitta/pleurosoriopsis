@@ -2,6 +2,8 @@
 
 Code repository and raw data for [Ebihara *et al.* 2019. "Growth Dynamics of the Independent Gametophytes of *Pleurorosiopsis makinoi* (Polypodiaceae)" *Bulletin of the National Science Museum Series B (Botany)* 45:77-86.](https://www.kahaku.go.jp/research/publication/botany.html)
 
+## Workflow
+
 All code is in [R](https://cran.r-project.org/). The [targets package](https://docs.ropensci.org/targets/) is used to manage the workflow. To run all analyses and generate the manuscript, [clone this repository](https://git-scm.com/book/en/v2/Git-Basics-Getting-a-Git-Repository) and run `_targets.R`.
 
 ## Reproducible analysis with Docker
